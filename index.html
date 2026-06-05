@@ -740,11 +740,21 @@ const ALPINE_DAYS=[
   ]}
 ];
 
+// Put every day (including the optional add-ons defined at the array's end) into true
+// chronological loop order, so any subset a preset keeps renders in the right sequence.
+const ALPINE_ORDER=['garda','lucerne','jungfrau1','jungfraujoch','first','zermatt','matterhorn','liecht','innsbruck1','innsbruck2','salzburg','hallstatt','bled','grossglockner','stelvio','toblach','braies','seceda','bolzano','return'];
+ALPINE_DAYS.sort((a,b)=>ALPINE_ORDER.indexOf(a.id)-ALPINE_ORDER.indexOf(b.id));
+
+// Presets list day-ids in loop order; an entry may be ['id', nights] to linger multiple
+// nights at one stop. Every preset is sized to fill the full 16-night van rental.
 const ALPINE_PRESETS={
   grand:['garda','lucerne','jungfrau1','jungfraujoch','first','zermatt','matterhorn','innsbruck1','innsbruck2','salzburg','hallstatt','grossglockner','toblach','braies','seceda','return'],
-  easy:['garda','innsbruck1','innsbruck2','salzburg','hallstatt','grossglockner','toblach','braies','seceda','return','bolzano'],
-  swissdolo:['garda','lucerne','jungfrau1','jungfraujoch','first','zermatt','matterhorn','innsbruck1','stelvio','toblach','braies','seceda','return']
+  easy:['garda','innsbruck1','innsbruck2',['salzburg',2],'hallstatt',['bled',2],'grossglockner',['toblach',2],'braies',['seceda',2],'bolzano','return'],
+  swissdolo:['garda','lucerne',['jungfrau1',2],'jungfraujoch','first','zermatt','matterhorn','innsbruck1','stelvio','toblach','braies',['seceda',2],'bolzano','return']
 };
+// id -> nights for a preset (entries default to 1 night)
+function presetIds(set){return set.map(e=>Array.isArray(e)?e[0]:e);}
+function presetNights(set){const m={};set.forEach(e=>{if(Array.isArray(e))m[e[0]]=e[1];else m[e]=1;});return m;}
 
 /* rough per-couple spend per day, in the day's native currency (Swiss legs = CHF).
    act can be a flat number, or {sp,bu} for splurge vs budget. x = tolls/vignettes/misc. */
@@ -919,10 +929,11 @@ const ALPINE_META={
   startCard:{title:'Pick up the van — Venice',meta:'FRI 1 AUG · afternoon collection · stock groceries, fuel up'},
   endCard:{title:'Return van AM → Rialto, Venice',meta:'MON 17 AUG · Venice 17–19 · train to Milan 19th · fly Iceland 20th'},
   curSymbol:'€',hasSecondary:true,fuelPerH:13,xLabel:'Tolls &amp; vignettes',
+  start:[2026,7,1],  // Sat 1 Aug 2026 — night 0; dates flow from here across kept nights
   presets:[
-    {key:'grand',label:'🏔 The Grand Loop',desc:'All three countries — Switzerland, Austria & the Dolomites. The full bucket-list run.',om:'16 nights · ~32h driving · most ambitious'},
-    {key:'easy',label:'🌿 Easy Pace',desc:'Skip Switzerland. Austria + Dolomites only — fewer, shorter drives, more lingering.',om:'10 nights · ~14h driving · most relaxed'},
-    {key:'swissdolo',label:'🇨🇭 Swiss & Dolomites',desc:'Switzerland + Dolomites with the Stelvio Pass, trimming deeper Austria.',om:'13 nights · ~26h driving · scenery max'}
+    {key:'grand',label:'🏔 The Grand Loop',desc:'All three countries — Switzerland, Austria & the Dolomites, a stop a night.',om:'16 nights · ~26h driving · most ambitious'},
+    {key:'easy',label:'🌿 Easy Pace',desc:'Skip Switzerland. The same 16 nights spent slower across Austria, a Lake Bled detour & the Dolomites.',om:'16 nights · ~21h driving · most relaxed'},
+    {key:'swissdolo',label:'🇨🇭 Swiss & Dolomites',desc:'Switzerland + the Dolomites via the Stelvio Pass, with extra nights to linger instead of deeper Austria.',om:'16 nights · ~22h driving · scenery max'}
   ]
 };
 
@@ -936,6 +947,7 @@ const ICELAND_META={
   startCard:{title:'Pick up the van — Keflavík',meta:'THU 20 AUG · 11:00 collection · Iðavellir 11 · stock up at Bónus, fuel up'},
   endCard:{title:'Drop off the van — Keflavík',meta:'SAT 29 AUG · 09:30 return · refuel near KEF, leave 90 min buffer'},
   curSymbol:'ISK ',hasSecondary:false,fuelPerH:0,xLabel:'Fuel',
+  start:[2026,7,20],  // Thu 20 Aug 2026 — night 0
   presets:[
     {key:'ring',label:'🌋 Full Ring Road',desc:'All 9 nights — the complete anti-clockwise loop.'},
     {key:'south',label:'🌊 South & West',desc:'Skip the long east/north legs — Golden Circle, South Coast to Jökulsárlón, then Snæfellsnes.'}
@@ -973,7 +985,7 @@ DAYS.forEach((day,i)=>{
           <span class="expand-hint">click to explore ↗</span>
         </div>
         <div class="card-body">
-          <div class="meta"><span>${day.date}</span><span class="drive">${day.drive>0?'🚐 '+day.drive+'h':'⛺ no transit'}</span></div>
+          <div class="meta"><span data-cd="${day.id}">${day.date}</span><span class="drive">${day.drive>0?'🚐 '+day.drive+'h':'⛺ no transit'}</span></div>
           <h3>${day.short}</h3>
           <div class="wikiline" id="wiki-${day.id}"></div>
           <div class="note">${day.note}</div>
@@ -1003,7 +1015,7 @@ function applyKeptUI(day){
   btn.classList.toggle('kept',day.kept);btn.classList.toggle('dropped',!day.kept);
   btn.textContent=day.kept?'✓ Keeping':(day.optional?'+ Add to trip':'+ Add back');
 }
-function setKept(day,kept){day.kept=kept;applyKeptUI(day);if(drawer.dataset.id===day.id)syncDrawerKeep(day);recalc();drawMap();saveTrip();}
+function setKept(day,kept){day.kept=kept;if(kept)day._n=1;applyKeptUI(day);if(drawer.dataset.id===day.id)syncDrawerKeep(day);recalc();drawMap();saveTrip();}
 
 /* ---------- persistence ---------- */
 const TRIP_KEY=ACTIVE+'_trip_v1';
@@ -1015,7 +1027,8 @@ function saveTrip(){try{localStorage.setItem(TRIP_KEY,JSON.stringify({
 function restoreTrip(){
   let s;try{s=JSON.parse(localStorage.getItem(TRIP_KEY));}catch(e){}
   if(!s)return;
-  if(Array.isArray(s.kept)){const ks=new Set(s.kept);DAYS.forEach(d=>{d.kept=ks.has(d.id);applyKeptUI(d);});}
+  const nm=(s.preset&&PRESETS[s.preset])?presetNights(PRESETS[s.preset]):{};
+  if(Array.isArray(s.kept)){const ks=new Set(s.kept);DAYS.forEach(d=>{d.kept=ks.has(d.id);d._n=nm[d.id]||1;applyKeptUI(d);});}
   document.querySelectorAll('.opt').forEach(o=>o.classList.toggle('active',o.dataset.preset===s.preset));
   swissToggle.classList.toggle('on',DAYS.some(d=>d.swiss&&d.kept));
   if(s.showAttr){showAttr=true;document.getElementById('attrToggle').classList.add('on');}
@@ -1029,7 +1042,8 @@ document.querySelectorAll('.opt').forEach(opt=>{
     document.querySelectorAll('.opt').forEach(o=>o.classList.remove('active'));
     opt.classList.add('active');
     const set=PRESETS[opt.dataset.preset];
-    DAYS.forEach(d=>{d.kept=set.includes(d.id);applyKeptUI(d);});
+    const ids=new Set(presetIds(set)),nm=presetNights(set);
+    DAYS.forEach(d=>{d.kept=ids.has(d.id);d._n=nm[d.id]||1;applyKeptUI(d);});
     swissToggle.classList.toggle('on',DAYS.some(d=>d.swiss&&d.kept));
     recalc();drawMap();saveTrip();
   });
@@ -1039,16 +1053,31 @@ wireOptRow();
 const swissToggle=document.getElementById('swissToggle');
 swissToggle.addEventListener('click',()=>{
   const on=swissToggle.classList.toggle('on');
-  DAYS.filter(d=>d.swiss&&!d.optional).forEach(d=>{d.kept=on;applyKeptUI(d);});
+  DAYS.filter(d=>d.swiss&&!d.optional).forEach(d=>{d.kept=on;d._n=1;applyKeptUI(d);});
   recalc();drawMap();saveTrip();
 });
 
 /* ---------- summary ---------- */
+// Flow calendar dates across kept nights from META.start; multi-night stays show a range.
+function flowLabel(off,n){
+  const st=META.start||[2026,7,1];
+  const DN=['SUN','MON','TUE','WED','THU','FRI','SAT'],MN=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const a=new Date(st[0],st[1],st[2]+off);
+  if(n<=1)return `${DN[a.getDay()]} ${a.getDate()} ${MN[a.getMonth()]}`;
+  const b=new Date(st[0],st[1],st[2]+off+n-1);
+  return `${DN[a.getDay()]} ${a.getDate()}–${DN[b.getDay()]} ${b.getDate()} ${MN[b.getMonth()]}`;
+}
+function reflowDates(){
+  let off=0;
+  DAYS.forEach(d=>{ if(!d.kept){d._date=d.date;return;} const n=d._n||1; d._date=flowLabel(off,n); off+=n; });
+  DAYS.forEach(d=>{const sp=document.querySelector(`[data-cd="${d.id}"]`); if(sp)sp.textContent=d._date;});
+}
 function recalc(){
   const kept=DAYS.filter(d=>d.kept);
-  const nights=kept.length,drive=kept.reduce((s,d)=>s+d.drive,0);
+  reflowDates();
+  const nights=kept.reduce((s,d)=>s+(d._n||1),0),drive=kept.reduce((s,d)=>s+d.drive,0);
   ['c-nights','s-nights'].forEach(id=>document.getElementById(id).textContent=nights);
-  ['c-stops','s-stops'].forEach(id=>document.getElementById(id).textContent=nights);
+  ['c-stops','s-stops'].forEach(id=>document.getElementById(id).textContent=kept.length);
   document.getElementById('c-drive').textContent='~'+Math.round(drive)+'h';
   document.getElementById('s-drive').textContent=Math.round(drive)+'h';
   const picks=document.getElementById('picks');
@@ -1059,10 +1088,11 @@ function recalc(){
   const swissKept=DAYS.filter(d=>d.swiss&&!d.optional&&d.kept).length;
   let msg='';
   if(ACTIVE==='alpine'){
-    if(swissKept===0&&nights>0)msg=`Switzerland dropped — frees ~<b>6 nights</b> and cuts the brutal Aug 8 drive. Pour them into the Dolomites or a Slovenia detour.`;
-    else if(drive>30)msg=`<b>${Math.round(drive)}h</b> driving — a full, ambitious loop. The Zermatt→Innsbruck leg is the strain; drop Zermatt to ease it.`;
-    else if(nights<11)msg=`Relaxed — <b>${nights} nights</b>, only <b>${Math.round(drive)}h</b> driving. Lots of room to linger.`;
-    else msg=`Well-balanced — <b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving. A strong loop.`;
+    if(swissKept===0&&nights>=14)msg=`Switzerland skipped — its nights reinvested in longer stays across Austria, a Lake Bled detour and the Dolomites. Full <b>${nights} nights</b>, just <b>${Math.round(drive)}h</b> driving.`;
+    else if(swissKept===0&&nights>0)msg=`Switzerland dropped — <b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving. Add linger nights or a Bled detour to use the full rental.`;
+    else if(drive>24)msg=`<b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving — the full ambitious loop across all three countries. The Zermatt→Innsbruck leg is the strain.`;
+    else if(nights<16)msg=`<b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving — you've a few nights of the van rental spare; linger longer or add a stop.`;
+    else msg=`Well-balanced — the full <b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving. A strong loop that uses every night of the van.`;
   } else {
     if(nights>=9)msg=`A full anti-clockwise Ring — <b>${nights} nights</b>, ~<b>${Math.round(drive)}h</b> driving. The long hauls are Egilsstaðir→Mývatn and Akureyri→Snæfellsnes; set off early on those mornings.`;
     else if(nights<7)msg=`Trimmed to the south & west — <b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving. A relaxed pace with more time per stop.`;
@@ -1089,8 +1119,8 @@ function renderBudget(){
   let driveH=0;
   kept.forEach(d=>{
     driveH+=d.drive;
-    const dc=dayCosts(d),t=dc.cur==='CHF'?c:e;
-    t.camp+=dc.camp;t.food+=dc.food;t.act+=dc.act;t.x+=dc.x;
+    const dc=dayCosts(d),t=dc.cur==='CHF'?c:e,n=d._n||1;
+    t.camp+=dc.camp*n;t.food+=dc.food*n;t.act+=dc.act;t.x+=dc.x;  // lodging+food per night; activities once
   });
   const fuel=driveH*(META.fuelPerH!=null?META.fuelPerH:FUEL_PER_H);
   const chfTotal=c.camp+c.food+c.act+c.x;
@@ -1180,7 +1210,7 @@ function openDetail(id){
   const d=DAYS.find(x=>x.id===id);if(!d)return;
   drawer.dataset.id=id;const r=REGION[d.region];
   drHero.style.background=`linear-gradient(135deg,${r.color},#7a8b80)`;
-  drHero.innerHTML=`<div class="grad"></div><div class="htitle"><div class="rg">${r.name} · ${d.date}</div><h2>${d.short}</h2></div>`;
+  drHero.innerHTML=`<div class="grad"></div><div class="htitle"><div class="rg">${r.name} · ${d._date||d.date}</div><h2>${d.short}</h2></div>`;
   drBody.innerHTML=`
     <div class="dr-meta">
       <span>${d.drive>0?'🚐 '+d.drive+'h drive':'⛺ no transit'}</span>
@@ -1238,7 +1268,7 @@ function renderCatBrowser(){
   const fbtns=`<button class="cat-fbtn ${catFilter.size===0?'active':''}" data-f="all">✦ All</button>`+
     Object.keys(CATLABEL).map(c=>`<button class="cat-fbtn ${catFilter.has(c)?'active':''}" data-f="${c}">${CATLABEL[c]}</button>`).join('');
   const list=matches.length
-    ? matches.map(({st,d})=>`<div><button class="cat-day" data-jump="${d.id}">📅 ${d.date} · ${d.short}${d.kept?'':' · <span style="opacity:.65">not in current route</span>'} ↗</button>${stopHTML(st)}</div>`).join('')
+    ? matches.map(({st,d})=>`<div><button class="cat-day" data-jump="${d.id}">📅 ${d._date||d.date} · ${d.short}${d.kept?'':' · <span style="opacity:.65">not in current route</span>'} ↗</button>${stopHTML(st)}</div>`).join('')
     : `<div class="dr-sec"><p style="font-size:14px;color:var(--ink-soft)">Nothing matches that filter — pick another category above.</p></div>`;
   drBody.innerHTML=`<div class="cat-filters">${fbtns}</div><div>${list}</div>`;
   drBody.querySelectorAll('.cat-fbtn').forEach(b=>b.addEventListener('click',()=>{
@@ -1361,7 +1391,7 @@ function renderCampTab(){
   const wrap=document.getElementById('campNights');if(!wrap)return;
   const kept=DAYS.filter(d=>d.kept&&d.ll);
   wrap.innerHTML=kept.length?kept.map(d=>`<div class="camp-night" data-dayid="${d.id}">
-    <div class="camp-night-h"><span class="cn-date">${d.date}</span><span class="cn-town">${d.short}</span><span class="cn-sleep">▲ ${d.sleep}</span></div>
+    <div class="camp-night-h"><span class="cn-date">${d._date||d.date}</span><span class="cn-town">${d.short}</span><span class="cn-sleep">▲ ${d.sleep}</span></div>
     <div class="camp-target"><span class="camp-msg">finding campsites…</span></div>
   </div>`).join(''):'<p style="color:var(--ink-soft);font-style:italic">No nights in your route yet — keep some days on the Itinerary tab.</p>';
   // load each night one at a time, top-down; cache makes repeats instant, sequential keeps Overpass happy
@@ -1508,7 +1538,7 @@ function inBucket(id){return bucket.some(b=>b.id===id);}
 // Paste the deployed Google Apps Script /exec URL below to turn ON shared two-person sync
 // (the list lives in your Google Sheet; both phones see the same thing + Telegram pings).
 // Leave empty = offline-only, on-device list with no sharing. Nothing breaks either way.
-const SAVE_URL='';
+const SAVE_URL='https://script.google.com/macros/s/AKfycbzcw4HovYZqIgX03WrDFowf-4emtX3FEkPFSFzL7vD8G--u0viPbIV3Ry5Ev1LofziZwg/exec';
 // who's planning — used for "added by" + pinging the OTHER person. One-time pick, stored on device.
 const WHO_KEY='alpine_who';
 const getWho=()=>localStorage.getItem(WHO_KEY)||'';
