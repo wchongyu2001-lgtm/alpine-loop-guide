@@ -1538,23 +1538,23 @@ function inBucket(id){return bucket.some(b=>b.id===id);}
 // Paste the deployed Google Apps Script /exec URL below to turn ON shared two-person sync
 // (the list lives in your Google Sheet; both phones see the same thing + Telegram pings).
 // Leave empty = offline-only, on-device list with no sharing. Nothing breaks either way.
-const SAVE_URL='https://script.google.com/macros/s/AKfycbzcw4HovYZqIgX03WrDFowf-4emtX3FEkPFSFzL7vD8G--u0viPbIV3Ry5Ev1LofziZwg/exec';
+const SAVE_URL='https://script.google.com/macros/s/AKfycbzNFRxTK7BrEqpV_-ImugOUgaiqoKDLYbhjwN8JJ7UspF26n5saVPCrIhuCHRCjUhyMFg/exec';
 // who's planning — used for "added by" + pinging the OTHER person. One-time pick, stored on device.
 const WHO_KEY='alpine_who';
 const getWho=()=>localStorage.getItem(WHO_KEY)||'';
 const setWho=w=>localStorage.setItem(WHO_KEY,w);
-// pull the shared list from the sheet and replace the local copy
+// pull THIS trip's shared list from the sheet and replace the local copy (scoped by ACTIVE trip)
 function syncPull(){
   if(!SAVE_URL)return Promise.resolve();
-  return fetch(SAVE_URL+'?t='+Date.now()).then(r=>r.json()).then(d=>{
+  return fetch(SAVE_URL+'?trip='+encodeURIComponent(ACTIVE)+'&t='+Date.now()).then(r=>r.json()).then(d=>{
     if(d&&Array.isArray(d.items)){bucket=d.items;saveBucket();renderBucket();renderIdeas();}
   }).catch(()=>{});
 }
-// push one change (add / remove) to the shared sheet; fire-and-forget, never blocks the local save
+// push one change (add / remove) for THIS trip; fire-and-forget, never blocks the local save
 function syncPush(action,item){
   if(!SAVE_URL)return;
   try{fetch(SAVE_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify({action,who:getWho(),item})});}catch(e){}
+    body:JSON.stringify({action,who:getWho(),trip:ACTIVE,item})});}catch(e){}
 }
 
 let ideaFilter='all',ideaQuery='';
