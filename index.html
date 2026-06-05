@@ -161,6 +161,31 @@
   .wx-links{display:flex;gap:11px;margin-top:10px}
   .wx-links a{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--line)}
   .wx-links a:hover{color:var(--terra)}
+
+  /* campsites — shared cards */
+  .camp-list{display:flex;flex-direction:column;gap:9px}
+  .camp{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px 14px}
+  .camp-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .camp-n{font-family:'Fraunces',serif;font-size:16px;font-weight:600;line-height:1.15}
+  .camp-dist{font-family:'DM Mono',monospace;font-size:11px;color:var(--terra);white-space:nowrap}
+  .camp-am{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+  .camp-am span{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--ink-soft);background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:2px 8px}
+  .camp-links{display:flex;gap:13px;margin-top:9px}
+  .camp-links a,.camp-fallback a{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--line)}
+  .camp-links a:hover,.camp-fallback a:hover{color:var(--terra)}
+  .camp-msg{font-size:13px;color:var(--ink-soft);font-style:italic}
+  .camp-fallback{margin-top:9px;display:flex;gap:13px;flex-wrap:wrap}
+  /* campsites tab */
+  .camp-head{margin:22px 0 6px}
+  .camp-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,4.5vw,44px);line-height:1;letter-spacing:-.01em}
+  .camp-head h2 em{font-style:italic;color:var(--terra)}
+  .camp-head p{max-width:640px;margin-top:10px;font-size:15px;color:var(--ink-soft)}
+  #campNights{margin:22px 0 60px}
+  .camp-night{margin:0 0 26px}
+  .camp-night-h{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:12px}
+  .camp-night-h .cn-date{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra)}
+  .camp-night-h .cn-town{font-family:'Fraunces',serif;font-size:22px;font-weight:600}
+  .camp-night-h .cn-sleep{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft)}
   @media(max-width:940px){
     .summary{position:fixed;bottom:0;left:0;right:0;top:auto;z-index:50}
     .summary .panel{border-radius:14px 14px 0 0}
@@ -342,6 +367,7 @@
   <div class="viewtabs">
     <button class="vtab active" data-view="trip">🗺 Itinerary</button>
     <button class="vtab" data-view="ideas">✨ Ideas &amp; Bucket List <span class="vcount" id="bk-count">0</span></button>
+    <button class="vtab" data-view="camp">🏕 Campsites</button>
   </div>
 </div>
 
@@ -428,6 +454,14 @@
       </div>
     </aside>
   </div>
+</section>
+
+<section class="wrap" id="view-camp" hidden>
+  <div class="camp-head">
+    <h2>Where you'll <em>sleep</em></h2>
+    <p>Real campsites &amp; aires near each night's stop, live from OpenStreetMap. Updates with your route — drop a region or switch presets and the list reflows to just your nights. Distances are from the map anchor; positions to confirm.</p>
+  </div>
+  <div id="campNights"></div>
 </section>
 
 <footer>Built for Yuanxin &amp; Chongyu · photos &amp; text live from Wikipedia · drive times, costs &amp; sub-stop pin positions are estimates to confirm</footer>
@@ -962,6 +996,9 @@ function openDetail(id){
         <a href="https://www.google.com/search?q=${encodeURIComponent(d.short+' webcam')}" target="_blank">Live webcams ↗</a>
       </div>
     </div>
+    <div class="dr-sec"><h4>Campsites near tonight's stop</h4>
+      <div id="dr-camp"><span class="camp-msg">finding campsites…</span></div>
+    </div>
     <div class="dr-sec"><h4>Stops along this leg</h4>${(d.stops||[]).map(stopHTML).join('')||'<p style="font-size:14px;color:var(--ink-soft)">Transit leg — pick stops from neighbouring days.</p>'}</div>
     <div class="dr-sec"><h4>Photos</h4><div class="gallery" id="dr-gallery"><span style="font-size:13px;color:var(--ink-soft)">loading…</span></div></div>
     <div class="dr-sec simple"><h4>Why this leg</h4><ul>${d.why.map(x=>`<li>${x}</li>`).join('')}</ul></div>
@@ -974,7 +1011,7 @@ function openDetail(id){
     </div>`;
   document.getElementById('drKeep').addEventListener('click',()=>setKept(d,!d.kept));
   overlay.classList.add('open');drawer.classList.add('open');document.body.style.overflow='hidden';
-  drawer.scrollTop=0;loadExtract(d.wiki);loadGallery(d.wiki);loadWeather(d.ll);
+  drawer.scrollTop=0;loadExtract(d.wiki);loadGallery(d.wiki);loadWeather(d.ll);loadCampsites(d,document.getElementById('dr-camp'));
 }
 function syncDrawerKeep(d){const b=document.getElementById('drKeep');if(b){b.className='dr-keep '+(d.kept?'':'dropped');b.textContent=d.kept?'✓ In your trip':'+ Add to trip';}}
 function closeDrawer(){overlay.classList.remove('open');drawer.classList.remove('open');drawer.dataset.id='';document.body.style.overflow='';}
@@ -1055,6 +1092,87 @@ function loadPhoto(box){
 }
 const io=new IntersectionObserver((ents,obs)=>{ents.forEach(e=>{if(e.isIntersecting){loadPhoto(e.target);obs.unobserve(e.target);}});},{rootMargin:'250px'});
 document.querySelectorAll('.photo[data-wiki]').forEach(p=>io.observe(p));
+
+/* ---------- CAMPSITE FINDER (live OpenStreetMap via Overpass) ---------- */
+const campCache={};   // day.id -> [campsites] | 'error'
+function haversine(a,b){const R=6371,toR=x=>x*Math.PI/180;
+  const dLat=toR(b[0]-a[0]),dLng=toR(b[1]-a[1]);
+  const s=Math.sin(dLat/2)**2+Math.cos(toR(a[0]))*Math.cos(toR(b[0]))*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(s));}
+const CAMP_AM=[['shower','🚿 Showers'],['drinking_water','🚰 Water'],['toilets','🚻 Toilets'],['power_supply','⚡ Power'],['internet_access','📶 Wi-Fi']];
+function campAmenities(t){
+  const out=[];
+  CAMP_AM.forEach(([k,label])=>{const v=t[k];if(v&&v!=='no')out.push(label);});
+  if(t.fee==='no')out.push('🆓 Free');else if(t.fee==='yes')out.push('💶 Fee');
+  return out.slice(0,5);
+}
+function fetchCampsites(day){
+  if(campCache[day.id])return Promise.resolve(campCache[day.id]);   // only successes are cached
+  const [lat,lng]=day.ll;
+  const q=`[out:json][timeout:20];(node["tourism"="camp_site"](around:15000,${lat},${lng});way["tourism"="camp_site"](around:15000,${lat},${lng});node["tourism"="caravan_site"](around:15000,${lat},${lng});way["tourism"="caravan_site"](around:15000,${lat},${lng}););out center 60;`;
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),11000);   // never hang the UI — fall back to deep-links
+  return fetch('https://overpass-api.de/api/interpreter',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(q),signal:ctrl.signal})
+    .then(r=>r.ok?r.json():Promise.reject()).then(j=>{
+      clearTimeout(timer);
+      const seen=new Set();
+      const list=(j.elements||[]).map(e=>{
+        const p=e.type==='node'?[e.lat,e.lon]:(e.center?[e.center.lat,e.center.lon]:null);
+        if(!p)return null;const t=e.tags||{};
+        const name=t.name||t.operator||(t.tourism==='caravan_site'?'Caravan site (unnamed)':'Campsite (unnamed)');
+        return {name,ll:p,tags:t,type:e.type,id:e.id,dist:haversine(day.ll,p)};
+      }).filter(Boolean)
+        .filter(c=>{const k=c.name+'@'+c.ll[0].toFixed(3)+c.ll[1].toFixed(3);if(seen.has(k))return false;seen.add(k);return true;})
+        .sort((a,b)=>a.dist-b.dist).slice(0,6);
+      campCache[day.id]=list;return list;
+    }).catch(()=>{clearTimeout(timer);return 'error';});   // not cached → reopening retries
+}
+function campFallback(day){
+  const sleep=day.sleep.split('/')[0].trim(),[lat,lng]=day.ll;
+  return `<div class="camp-fallback">`+
+    `<a href="https://www.google.com/maps/search/${encodeURIComponent('campsite '+sleep)}/@${lat},${lng},12z" target="_blank">Campsites on Google Maps ↗</a>`+
+    `<a href="https://park4night.com/en/search?lat=${lat}&lng=${lng}" target="_blank">Park4Night ↗</a></div>`;
+}
+function campCardHTML(c,day){
+  const am=campAmenities(c.tags);
+  const web=c.tags.website||c.tags['contact:website'];
+  const site=web&&/^https?:\/\//.test(web)?web:`https://www.openstreetmap.org/${c.type}/${c.id}`;
+  const dist=c.dist<10?c.dist.toFixed(1):Math.round(c.dist);
+  const sleep=day.sleep.split('/')[0].trim();
+  return `<div class="camp">
+    <div class="camp-h"><div class="camp-n">⛺ ${c.name}</div><div class="camp-dist">${dist} km · ${sleep}</div></div>
+    ${am.length?`<div class="camp-am">${am.map(a=>`<span>${a}</span>`).join('')}</div>`:''}
+    <div class="camp-links">
+      <a href="https://www.google.com/maps/dir/?api=1&destination=${c.ll[0]},${c.ll[1]}" target="_blank">Directions ↗</a>
+      <a href="${site}" target="_blank">${web?'Website':'OSM'} ↗</a>
+    </div></div>`;
+}
+function renderCampsites(list,el,day){
+  if(!el)return;
+  if(list==='error'){el.innerHTML=`<div class="camp-msg">Couldn't reach the campsite service — try these:</div>${campFallback(day)}`;return;}
+  if(!list.length){el.innerHTML=`<div class="camp-msg">No campsites tagged near ${day.sleep.split('/')[0].trim()} in OpenStreetMap — try:</div>${campFallback(day)}`;return;}
+  el.innerHTML=`<div class="camp-list">${list.map(c=>campCardHTML(c,day)).join('')}</div>`;
+}
+function loadCampsites(day,el){
+  if(!el||!day||!day.ll)return;
+  fetchCampsites(day).then(list=>renderCampsites(list,el,day));
+}
+let campTabRun=0;
+function renderCampTab(){
+  const wrap=document.getElementById('campNights');if(!wrap)return;
+  const kept=DAYS.filter(d=>d.kept&&d.ll);
+  wrap.innerHTML=kept.length?kept.map(d=>`<div class="camp-night" data-dayid="${d.id}">
+    <div class="camp-night-h"><span class="cn-date">${d.date}</span><span class="cn-town">${d.short}</span><span class="cn-sleep">▲ ${d.sleep}</span></div>
+    <div class="camp-target"><span class="camp-msg">finding campsites…</span></div>
+  </div>`).join(''):'<p style="color:var(--ink-soft);font-style:italic">No nights in your route yet — keep some days on the Itinerary tab.</p>';
+  // load each night one at a time, top-down; cache makes repeats instant, sequential keeps Overpass happy
+  const run=++campTabRun;
+  (async()=>{for(const d of kept){
+    if(run!==campTabRun)return;                                  // a newer render superseded this one
+    const el=wrap.querySelector(`.camp-night[data-dayid="${d.id}"] .camp-target`);
+    if(el)await fetchCampsites(d).then(list=>renderCampsites(list,el,d));
+  }})();
+}
 
 document.getElementById('panelHead').addEventListener('click',()=>{if(window.innerWidth<=940)document.getElementById('summary').classList.toggle('collapsed');});
 
@@ -1262,14 +1380,17 @@ document.getElementById('ideaSearch').addEventListener('input',e=>{ideaQuery=e.t
 document.querySelectorAll('.vtab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelectorAll('.vtab').forEach(o=>o.classList.remove('active'));
   t.classList.add('active');
-  const ideas=t.dataset.view==='ideas';
-  document.getElementById('view-trip').hidden=ideas;
-  document.getElementById('view-ideas').hidden=!ideas;
-  document.querySelector('.controls').style.display=ideas?'none':'';
-  document.getElementById('summary').style.display=ideas?'none':'';
+  const view=t.dataset.view;
+  document.getElementById('view-trip').hidden=view!=='trip';
+  document.getElementById('view-ideas').hidden=view!=='ideas';
+  document.getElementById('view-camp').hidden=view!=='camp';
+  const tripChrome=view==='trip';
+  document.querySelector('.controls').style.display=tripChrome?'':'none';
+  document.getElementById('summary').style.display=tripChrome?'':'none';
   window.scrollTo({top:0,behavior:'smooth'});
-  if(ideas)renderIdeas();                              // re-attach observer while visible
-  if(!ideas&&map)setTimeout(()=>map.invalidateSize(),60);
+  if(view==='ideas')renderIdeas();                     // re-attach observer while visible
+  if(view==='camp')renderCampTab();                    // rebuilds from current kept set
+  if(tripChrome&&map)setTimeout(()=>map.invalidateSize(),60);
 }));
 
 renderFilters();renderIdeas();renderBucket();
