@@ -298,6 +298,9 @@
   /* ---------- bucket list panel ---------- */
   .bucket{position:sticky;top:74px}
   .bucket .panel-h{background:var(--terra)}
+  .bk-who{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:12px;opacity:.8}
+  .bk-who select{font-family:'DM Mono',monospace;font-size:11px;background:var(--paper);border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;color:var(--ink);cursor:pointer;outline:none}
+  .bk-byline{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.03em;color:var(--terra);margin-top:3px;opacity:.85}
   .bk-add{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
   .bk-add input{font-family:'Archivo',sans-serif;font-size:14px;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:10px 13px;outline:none}
   .bk-add input:focus{border-color:var(--terra)}
@@ -429,7 +432,7 @@
 <section class="wrap" id="view-ideas" hidden>
   <div class="ideas-head">
     <h2>Travel <em>ideas</em> &amp; your bucket list</h2>
-    <p>Browse alternatives and detours beyond the core loop — extra lakes, scenic passes, hidden valleys and nearby countries. Save any to your bucket list, or jot your own. It all persists on this device.</p>
+    <p>Browse alternatives and detours beyond the core loop — extra lakes, scenic passes, hidden valleys and nearby countries. Save any to your bucket list, or jot your own. It's a <b>shared list</b> — whatever either of you adds shows up for both.</p>
   </div>
   <div class="ideas-grid">
     <div>
@@ -444,6 +447,8 @@
       <div class="panel">
         <div class="panel-h" id="bk-panel-h">⭐ Your Bucket List</div>
         <div class="panel-b">
+          <div class="bk-who" id="bk-who" hidden>Planning as
+            <select id="whoSel"><option value="">— pick —</option><option value="Yuanxin">Yuanxin</option><option value="Chongyu">Chongyu</option></select></div>
           <div class="bk-add">
             <input type="text" id="bkTitle" placeholder="Add your own idea…" />
             <input type="text" id="bkNote" placeholder="Note (optional) — why, where, when" />
@@ -475,13 +480,14 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const REGION={italy:{name:'Italy',color:'#c0552c'},swiss:{name:'Switzerland',color:'#4d7c8a'},austria:{name:'Austria',color:'#2f4a3a'},dolomites:{name:'Dolomites',color:'#9c5a6a'}};
+const REGION={italy:{name:'Italy',color:'#c0552c'},swiss:{name:'Switzerland',color:'#4d7c8a'},austria:{name:'Austria',color:'#2f4a3a'},dolomites:{name:'Dolomites',color:'#9c5a6a'},
+  reykjavik:{color:'#3f6f8c',name:'Reykjavík'},golden:{color:'#c79a2e',name:'Golden Circle'},south:{color:'#2f8f6b',name:'South Coast'},east:{color:'#7d5ba6',name:'East Fjords'},north:{color:'#2b6d8a',name:'North'},west:{color:'#b5552c',name:'Snæfellsnes / West'}};
 const TAG={view:'🔭',hike:'🥾',swim:'🏊',act:'🪂',town:'🏘',food:'🍽',gem:'💎',van:'🌙'};
 
 // s(name, tag, [lat,lng], desc, {cost, sp, bu, must, wiki})
 function s(n,t,ll,d,o={}){return Object.assign({n,t,ll,d},o);}
 
-const DAYS=[
+const ALPINE_DAYS=[
  {id:'garda',date:'SAT 1 AUG',drive:2,region:'italy',ll:[45.55,10.62],wiki:'Lake Garda',short:'Lake Garda',
   note:"Ease into van life on Italy's biggest lake — a warm first night before the mountains begin.",
   sleep:'Peschiera / Sirmione',badges:[],
@@ -734,7 +740,7 @@ const DAYS=[
   ]}
 ];
 
-const PRESETS={
+const ALPINE_PRESETS={
   grand:['garda','lucerne','jungfrau1','jungfraujoch','first','zermatt','matterhorn','innsbruck1','innsbruck2','salzburg','hallstatt','grossglockner','toblach','braies','seceda','return'],
   easy:['garda','innsbruck1','innsbruck2','salzburg','hallstatt','grossglockner','toblach','braies','seceda','return','bolzano'],
   swissdolo:['garda','lucerne','jungfrau1','jungfraujoch','first','zermatt','matterhorn','innsbruck1','stelvio','toblach','braies','seceda','return']
@@ -742,7 +748,7 @@ const PRESETS={
 
 /* rough per-couple spend per day, in the day's native currency (Swiss legs = CHF).
    act can be a flat number, or {sp,bu} for splurge vs budget. x = tolls/vignettes/misc. */
-const BUD={
+const ALPINE_BUD={
   garda:{camp:45,food:60,act:16},
   lucerne:{camp:50,food:25,act:{sp:180,bu:74},x:40},
   jungfrau1:{camp:55,food:56,act:360,x:28},
@@ -764,6 +770,188 @@ const BUD={
   bolzano:{camp:35,food:30,act:44},
   bled:{camp:30,food:40,act:86}
 };
+
+/* ===================== ICELAND TRIP DATA ===================== */
+const ICELAND_DAYS=[
+ {id:'reykjavik1',date:'THU 20 AUG',drive:1,region:'reykjavik',ll:[64.14,-21.93],wiki:'Reykjavík',short:'Arrival & Sky Lagoon',
+  note:"Land, grab the van at KEF, load up at Bónus, then ease into Iceland with an evening dip — the geothermal scene starts now.",
+  sleep:'Reykjavík / Reykjanesbær',badges:[{t:'Pre-book Sky Lagoon online — sells out',w:true},{t:'Buy groceries at Bónus near KEF today',w:false}],
+  why:["Van pickup and first feel of the open road — the Ring Road starts here","Sky Lagoon's infinity edge merges with the Atlantic horizon at golden hour","Bónus supermarket run sets you up to cook cheaply all week"],
+  tips:["Iðavellir 11 is 5 min from KEF arrivals — pick up at 11:00, ask for a van orientation walk-through and test the gas burner","Late August sun sets around 21:30; Sky Lagoon is magical 19:00–21:00 — book the Sér ritual package if budget allows"],
+  cost:"Van incl. · Sky Lagoon ~6,990 ISK pp (Pure) or 11,490 ISK pp (Sér ritual) · Bónus shop ~3,000–5,000 ISK",
+  stops:[
+    s('KEF Van Pickup – Iðavellir 11','van',[63.993,-22.556],"Collect the campervan at Iðavellir 11, 230 Keflavík. Do a full walk-around, test the gas stove and heating, and fill a water jug at the depot before rolling.",{must:true}),
+    s('Bónus Supermarket (Keflavík)','town',[63.996,-22.556],"Stock up here — Bónus is Iceland's cheapest chain. Load pasta, oats, eggs, cheese, canned fish, fresh veg and coffee. Supermarket prices in Reykjavík proper are higher.",{cost:'Groceries ~3,500–5,000 ISK',must:true}),
+    s('Sky Lagoon','swim',[64.101,-21.993],"Infinity-edge geothermal pool jutting over the Atlantic, opened 2021. The seven-step Skjól ritual — steam, cold plunge, sauna, scrub, lagoon — is worth the upgrade. Towel rental available.",{cost:'6,990–11,490 ISK pp',sp:'Sér ritual package (private changing + scrub) 11,490 ISK pp',bu:'Pure pass (no ritual) 6,990 ISK pp — still the same lagoon'}),
+    s('Reykjavík Old Harbour stroll','town',[64.152,-21.944],"Walk the harbour front past colourful fishing boats to Harpa concert hall. Grab a hot dog from Bæjarins Beztu (Iceland's most famous street food, ~600 ISK) and watch the sunset light on the bay.",{cost:'Free + hot dog ~600 ISK'})
+  ]},
+
+ {id:'golden',date:'FRI 21 AUG',drive:3,region:'golden',ll:[64.27,-20.3],wiki:'Golden Circle',short:'Golden Circle Loop',
+  note:"Iceland's greatest hits in one long day — tectonic rifts, erupting geysers and a thundering double waterfall, capped by a soak in the Secret Lagoon.",
+  sleep:'Flúðir / Selfoss',badges:[{t:'Book Secret Lagoon online (sells out in summer)',w:true}],
+  why:["Strokkur erupts every 5–10 minutes — you will get drenched if you stand downwind","Gullfoss two-tier plunge into a canyon is legitimately one of Iceland's most powerful sights","Þingvellir is where you literally stand between the Eurasian and North American tectonic plates"],
+  tips:["Drive the loop anticlockwise (Þingvellir → Geysir → Gullfoss → Kerið → Secret Lagoon) to dodge coach buses at each stop","Secret Lagoon in Flúðir is far cheaper and less crowded than Blue Lagoon — save Blue Lagoon for the last night near KEF"],
+  cost:"Þingvellir parking 750 ISK · Geysir free · Gullfoss free · Kerið 900 ISK pp · Secret Lagoon ~3,200 ISK pp · campsite ~2,500 ISK pp",
+  stops:[
+    s('Þingvellir National Park','hike',[64.255,-21.13],"Walk the Almannagjá rift — a 7km canyon that IS the boundary between two tectonic plates. In late August the birches turn copper-gold. The Öxará river path to Lögberg (Law Rock) takes about 45 min and requires no special gear.",{must:true,cost:'Parking 750 ISK, park free'}),
+    s('Geysir Geothermal Area & Strokkur','view',[64.313,-20.302],"Strokkur hurls a column of boiling water 15–30m into the air every 5–8 minutes. Stand on the south side for the best spray-free view. The surrounding hot spring field is eerie and free to wander.",{must:true,cost:'Free'}),
+    s('Gullfoss Waterfall','view',[64.327,-20.12],"The Hvítá river drops 32m in two thunderous stages into a narrow canyon. Walk down to the lower viewing platform — you'll feel the spray from 50 m away. Late afternoon light turns the mist golden.",{cost:'Free'}),
+    s('Secret Lagoon (Gamla Laugin), Flúðir','swim',[63.929,-20.305],"Iceland's oldest public pool (1891), in a farm village. Constant 38–40°C, natural geothermal source, small geyser that burps beside you in the pool. Far more authentic than the tourist lagoons — book ahead.",{cost:'~3,200 ISK pp',sp:'Blue Lagoon if you skip it today (save for Day 9)',bu:'Selfoss public swimming pool 1,100 ISK pp — hot pots, waterslide, locals only'})
+  ]},
+
+ {id:'southcoast',date:'SAT 22 AUG',drive:3.5,region:'south',ll:[63.42,-19],wiki:'Skógafoss',short:'South Coast to Vík',
+  note:"Waterfall behind a waterfall, a glacier you can touch, puffins on black sea stacks, and the most dramatic beach in Iceland — all in one stunning drive to Vík.",
+  sleep:'Vík',badges:[{t:'Book glacier hike guide at Sólheimajökull in advance',w:true},{t:'Vík campsites fill fast in August — arrive by 17:00',w:false}],
+  why:["Seljalandsfoss lets you walk behind the curtain of water — wear waterproofs and embrace the soaking","Sólheimajökull glacier is accessible without a guide for the moraine viewpoint, but an ice-walk takes you onto the blue ice","Reynisfjara's stacked basalt columns, booming surf and puffin-topped sea stacks are unlike anywhere else on earth"],
+  tips:["Seljalandsfoss is best in morning or evening light — the falls face west and glow amber in the afternoon","Sneaker waves at Reynisfjara beach have killed visitors — stay above the high-tide line and never turn your back on the ocean"],
+  cost:"Seljalandsfoss parking 900 ISK · Skógafoss free · glacier hike ~12,900 ISK pp (Troll Expeditions or Arcanum) · Reynisfjara free · campsite ~2,000 ISK pp",
+  stops:[
+    s('Seljalandsfoss & Gljúfrabúi','view',[63.615,-19.989],"Walk the muddy path behind the main falls curtain — fully encircled by water and spray. Then scramble 200m north into a hidden canyon to find Gljúfrabúi, a waterfall sealed inside a cave. Wear waterproofs for both.",{must:true,cost:'Parking 900 ISK, falls free'}),
+    s('Skógafoss','hike',[63.532,-19.511],"60m-wide falls drop 62m straight off the plateau edge. Climb the 527-step staircase beside the falls to the top for views of the coast and Eyjafjallajökull. The first kilometre of the Fimmvörðuháls trail continues to a viewpoint above — 20 min return and worth it.",{cost:'Free'}),
+    s('Sólheimajökull Glacier','act',[63.531,-19.353],"A tongue of the Mýrdalsjökull ice cap creeps down to a lagoon — you can walk to the moraine edge for free or strap crampons on and walk the glacier with a guide. The ice is full of ash layers from the 2010 Eyjafjallajökull eruption. Book a 2-hour ice walk; departs from the car park.",{must:true,cost:'Car park free · ice walk ~12,900 ISK pp',sp:'3-hour glacier hike with ice climbing section ~17,900 ISK pp',bu:'Walk to the glacier lagoon viewpoint — free and still spectacular, 10 min from car park'}),
+    s('Reynisfjara Black Beach & Dyrhólaey','view',[63.403,-19.045],"Jet-black volcanic sand, Reynisdrangar sea stacks (inhabited by puffins in August), and the Hálsanefshellir basalt column cave. Dyrhólaey arch viewpoint is 5 min drive east — the 120m sea arch and puffin cliffs at sunset are the end-of-day reward. Respect sneaker wave warnings.",{cost:'Free'})
+  ]},
+
+ {id:'jokulsarlon',date:'SUN 23 AUG',drive:3.5,region:'south',ll:[64.048,-16.179],wiki:'Jökulsárlón',short:'Glaciers & Diamond Beach',
+  note:"Your most photogenic day — canyon, ice, and icebergs drifting past a black sand shore all before dinner.",
+  sleep:'Höfn',badges:[{t:'Book Skaftafell glacier hike NOW',w:true}],
+  why:["Fjaðrárgljúfur — a cathedral canyon carved by a glacial flood, walls draped in moss","Skaftafell's Svínafellsjökull hike puts crampons on your feet and a glacier under them","Jökulsárlón icebergs calving into a tidal lagoon, then washing ashore as diamonds at sunset"],
+  tips:["Guide-led glacier hike (3–4 h) must be booked ahead — Icelandic Mountain Guides or Local Guide; solo walking on glacier ice is prohibited","Diamond Beach light is best in the evening when the low August sun backlights the ice — time it for 19:00–21:00"],
+  cost:"Fjaðrárgljúfur free · glacier hike ~6,500 ISK pp · lagoon boat ~7,500 ISK pp",
+  stops:[
+    s('Fjaðrárgljúfur Canyon','view',[63.775,-18.174],"A 100 m deep, 2 km long basalt canyon sliced by glacial meltwater. The rim trail (30 min return) gives staggering top-down views of the ribbon river below. Go early before tour buses.",{must:true,cost:'Free'}),
+    s('Svínafellsjökull Glacier Hike (Skaftafell)','hike',[64.016,-16.974],"Strap on crampons and walk an actual outlet glacier — blue ice tunnels, crevasse edges, and panoramas of Vatnajökull. 3–4 h guided hike departing from the Skaftafell car park.",{must:true,cost:'~6,500 ISK pp',sp:'Private glacier guide + ice-climbing add-on ~15,000 ISK pp',bu:'Self-guided Skaftafell gorge + Svartifoss waterfall hike is free and stunning'}),
+    s('Jökulsárlón Glacier Lagoon','view',[64.048,-16.179],"Milky-blue icebergs the size of houses drift past on their way to the sea. The zodiac or amphibian boat tour (~45 min) gets you right among them — seals often ride the bergs. Even watching from shore free is jaw-dropping.",{must:true,cost:'Shore: free · Zodiac boat ~7,500 ISK pp',sp:'Amphibian boat tour (drives into lagoon) ~9,000 ISK pp',bu:'Walk the shore and watch seals from the bridge — 100% free'}),
+    s('Diamond Beach','gem',[64.044,-16.184],"Cross Route 1 from the lagoon and icebergs from Jökulsárlón litter the black sand like scattered crystal. Stay for the evening light — it's only 100 m from the car park, and it's the best photo of the trip.",{cost:'Free'})
+  ]},
+
+ {id:'eastfjords',date:'MON 24 AUG',drive:4.5,region:'east',ll:[65.264,-14.401],wiki:'East Fjords',short:'East Fjords & Seyðisfjörður',
+  note:"A long winding drive rewards you with Iceland's quietest beauty — a dramatic mountain backdrop at dawn, wild reindeer in the highlands, and a rainbow street in a fairy-tale ferry village.",
+  sleep:'Egilsstaðir',badges:[],
+  why:["Vestrahorn's serrated black peaks reflected in a tidal lagoon — Iceland's most dramatic mountain portrait","The East Fjords road barely sees tourists; you'll have entire viewpoints to yourselves","Seyðisfjörður's painted rainbow road and tin-clad church feel like stumbling into a Wes Anderson set"],
+  tips:["Stokksnes/Vestrahorn access road charges a small fee at a café hut (800 ISK pp) — it's worth every króna; arrive before 09:00 for calm reflections","Fill your tank in Höfn before leaving — fuel stations are sparse through the fjords; Djúpivogur has one"],
+  cost:"Vestrahorn access ~800 ISK pp · most fjord stops free",
+  stops:[
+    s('Vestrahorn & Stokksnes Beach','view',[64.254,-14.978],"Jagged 454 m black peaks rise straight from a tidal sand spit. Walk the dune ridge at low tide for reflection shots — the mountain doubles itself perfectly in the shallow water. Wild, desolate, unforgettable.",{must:true,cost:'~800 ISK pp access fee'}),
+    s('Djúpivogur & Eggin í Gleðivík','town',[64.656,-14.282],"A tiny fishing village with a fuel stop and a peculiar sculpture park: 34 giant stone eggs on the shoreline, each representing a local bird species. Stretch your legs, grab a coffee, and watch eider ducks potter around the harbour.",{cost:'Free'}),
+    s('Seyðisfjörður','gem',[65.264,-14.001],"A 20 km detour down a dramatic mountain pass leads to Iceland's most charming town — a Norwegian-built fishing village of colourful tin houses at the end of a deep fjord. The rainbow road leads to the blue church. Reindeer sometimes graze the hillsides above town.",{must:true,cost:'Free · dinner at Skaftfell Bistro ~3,500 ISK pp',sp:'Stay the night here instead of Egilsstaðir — Við Lónið guesthouse overlooks the fjord',bu:'Van pitch at the town campsite with fjord views ~2,800 ISK'}),
+    s('Lagarfljót Lakeside van cook','van',[65.174,-14.686],"Pull over at the long black-sand shore of Iceland's third-largest lake on the way back into Egilsstaðir. Cook pasta in the van while loons call across the water. The lake is supposedly home to Iceland's own Loch Ness monster — Lagarfljótsormur.",{cost:'Free'})
+  ]},
+
+ {id:'myvatn',date:'TUE 25 AUG',drive:3,region:'north',ll:[65.6,-16.98],wiki:'Mývatn',short:'Dettifoss & Mývatn Geothermal',
+  note:"Europe's most powerful waterfall before lunch, then an afternoon spent hopping between boiling mud pots, a secret warm cave, and a milky-blue geothermal lagoon — Iceland's geothermal heartland in a single day.",
+  sleep:'Mývatn',badges:[{t:'Book Mývatn Nature Baths ahead',w:true}],
+  why:["Dettifoss thunders 44 m into a grey gorge — 500 tonnes of glacial water per second, the most powerful falls in Europe","Hverir's boiling mud pots and sulphur vents look exactly like the surface of another planet","Grjótagjá's geothermally-warmed cave pool glows brilliant blue — you can wade in (water is ~50°C; bathe at the edges)"],
+  tips:["Approach Dettifoss from the east bank (Route 862 gravel) for the most dramatic viewpoint and fewer people than the west side","Midge season at Mývatn peaks July–August — a buff or head net is genuinely useful at dusk; they don't bite but swarm thickly"],
+  cost:"Dettifoss free · Mývatn Nature Baths ~7,000 ISK pp · Grjótagjá free",
+  stops:[
+    s('Dettifoss','view',[65.814,-16.385],"A grey wall of glacial water 100 m wide crashes 44 m into the Jökulsárgljúfur canyon in a permanent rainbow of spray. The east-bank approach trail (15 min walk) puts you right at the lip. Bring a waterproof jacket — the mist soaks you from 50 m away.",{must:true,cost:'Free (parking fee ~750 ISK)'}),
+    s('Hverir & Námafjall Geothermal Field','view',[65.638,-16.817],"Ochre and crimson hillside studded with boiling mud pools, hissing steam vents, and sulphur chimneys. The smell of rotten eggs hits you 200 m before you arrive. Walk the marked paths carefully — the crust is thin and the mud is genuinely boiling. No fee, no crowds.",{must:true,cost:'Free'}),
+    s('Grjótagjá Cave Pool','swim',[65.627,-16.882],"A lava cave split by the mid-Atlantic rift holds a crystal-clear geothermally-heated pool glowing aquamarine. Famous as a filming location in Game of Thrones. You can wade in at the shallower edges (~42–48°C) — bliss after the drive. The cave is tiny and moody.",{cost:'Free',bu:'Free thermal bathing — a genuine hidden gem compared to the paid lagoons'}),
+    s('Mývatn Nature Baths','swim',[65.595,-16.991],"Silica-rich geothermal lagoon with volcano views and almost nobody from tour groups in the evenings. Less famous than the Blue Lagoon, far more authentic. Book the 20:00 slot for moody late light over the lake and a long quiet soak after a full day.",{must:true,cost:'~7,000 ISK pp',sp:'Add the private in-water steam tunnel experience',bu:'Grjótagjá cave (free, above) scratches the same itch'})
+  ]},
+
+ {id:'akureyri',date:'WED 26 AUG',drive:3,region:'north',ll:[65.6835,-18.1002],wiki:'Húsavík',short:'Húsavík Whales & Vatnsnes',
+  note:"Your wildlife day — breaching humpbacks in Skjálfandi Bay, then harbour seals on the Vatnsnes peninsula, with Akureyri's surprising botanical garden squeezed in.",
+  sleep:'Akureyri / Varmahlíð',badges:[{t:'Book whale watching NOW — Aug boats fill weeks out',w:true}],
+  why:["Húsavík is Iceland's whale-watching capital — humpbacks feed in Skjálfandi Bay all summer and sightings are near-certain in late August","Vatnsnes peninsula hosts one of Iceland's densest harbour seal colonies at Hvítserkur; the basalt sea stack itself is eerily photogenic at dusk","Akureyri punches above its size: colourful timber houses, a free botanical garden at 66°N, and the best coffee outside Reykjavík"],
+  tips:["North Sailing or Gentle Giants both run 3-hour whale tours; book the morning departure (09:00) so you have the afternoon for Vatnsnes — the 130 km detour is worth it","Vatnsnes road (Route 711) is a 60 km gravel loop — fine for 2WD campervans but slow; allow 2 hours including seal stops at Illugastaðir and the Hvítserkur viewpoint"],
+  cost:"Whale tour ~6,900 ISK pp · Vatnsnes free · Botanical garden free · campsite ~4,500 ISK",
+  stops:[
+    s('Húsavík whale watching','act',[66.044,-17.3388],"3-hour boat tour into Skjálfandi Bay where humpbacks, minkes and white-beaked dolphins feed. Late August is peak season — multiple whales per trip is the norm, not the exception.",{must:true,cost:'~6,900 ISK pp',sp:'Gentle Giants oak schooner (silent sailing) ~9,900 ISK pp — worth every króna',bu:'Húsavík Whale Museum on the harbour (~2,200 ISK) if weather scrubs the boat'}),
+    s("Goðafoss — 'Waterfall of the Gods'",'view',[65.6833,-17.55],"A 30-metre horseshoe of water where the Skjálfandafljót river drops in a wide arc. Legend says the old law-speaker threw his Norse idols in here when Iceland converted to Christianity in AD 1000. Both banks are accessible; the west side viewpoint is best.",{must:true,cost:'Free'}),
+    s('Hvítserkur & Vatnsnes seal colony','view',[65.6024,-20.6362],"A 15-metre basalt stack rising from the sea that looks uncannily like a drinking dragon. Walk down to Illugastaðir farm beach beforehand — harbour seals laze on the rocks here year-round, unbothered by visitors who keep a respectful distance.",{cost:'Free (parking fee ~700 ISK at Illugastaðir)'}),
+    s('Akureyri botanical garden & town wander','town',[65.6771,-18.0929],"The world's northernmost botanic garden is absurdly lush in August — roses, arctic poppies, even bananas. Walk down Hafnarstraeti for a coffee at Bláa Kannan, then spot the heart-shaped traffic lights that are Akureyri's signature. Free parking on the harbour.",{cost:'Garden free · coffee ~800 ISK'})
+  ]},
+
+ {id:'snaefellsnes',date:'THU 27 AUG',drive:4.5,region:'west',ll:[64.768,-23.915],wiki:'Snæfellsjökull',short:'Snæfellsnes — Kirkjufell to the Glacier',
+  note:"Iceland's 'miniature' in one day: a glacier volcano, lava-crunch beaches, sea-cave arches, and the cone that Jules Verne sent his heroes into the earth through.",
+  sleep:'Snæfellsnes / Borgarnes',badges:[],
+  why:["Kirkjufell is Iceland's most-photographed mountain — the double waterfall foreground at dawn or dusk is genuinely one of the great landscape shots on earth","Snæfellsjökull glacier caps a dormant stratovolcano at the peninsula's tip; on a clear late-August day you can see Reykjavík, 120 km away","Djúpalónssandur is a black pebble beach strewn with shipwreck iron and lifting stones — tactile, eerie and completely free"],
+  tips:["It's a 4–5 hour drive from Akureyri/Varmahlíð: leave by 07:30 to have a full afternoon on the peninsula. Route 54 west along the south shore is faster; save the north shore for the return crawl to Borgarnes","Snæfellsjökull glacier hike requires a guide — Summit Adventures runs small-group glacier walks (~10,000 ISK pp, 3 h); book online or call on approach. If skipping the guided glacier, the Arnarstapi–Hellnar coastal walk (2.5 km each way) is superb and completely free"],
+  cost:"Kirkjufell free · Glacier hike ~10,000 ISK pp · Djúpalónssandur free · campsite ~4,500 ISK",
+  stops:[
+    s('Kirkjufell & Kirkjufellsfoss','view',[64.9406,-23.3053],"Iceland's iconic arrowhead mountain with the multi-strand Kirkjufellsfoss waterfall in the foreground. The classic shot is from the east bank footbridge at blue hour — in late August that means around 22:00. Park in the signed car park on Route 54 in Grundarfjörður.",{must:true,cost:'Free (parking fee ~700 ISK)'}),
+    s('Arnarstapi–Hellnar coastal walk','hike',[64.7669,-23.6272],"A 2.5 km path between two tiny fishing villages along raw lava cliffs riddled with sea arches, blowholes and Arctic tern colonies. August terns still dive-bomb walkers — a hat helps. Café Hellnar at the far end does the best fish soup on the peninsula.",{must:true,cost:'Walk free · soup ~2,500 ISK'}),
+    s('Snæfellsjökull glacier hike','act',[64.8076,-23.7764],"Crampons on, guide leading, you cross the ice cap of the glacier Jules Verne used as his gateway to the centre of the earth. The 360° view from the rim on a clear day takes in Reykjavík, the Westfjords, and the whole peninsula below.",{cost:'~10,000 ISK pp (guided)',sp:"Summit Adventures 'Glacier & Crater' full-day ~18,000 ISK pp",bu:'Drive to the Snæfellsjökull National Park visitor centre at Malarif lighthouse — free views across the ice, no gear needed'}),
+    s('Djúpalónssandur black pebble beach','view',[64.7535,-24.031],"A secluded cove of jet-black pebbles scattered with rusted iron from a British trawler wrecked in 1948 — touching the wreck pieces is prohibited but haunting to walk among. Four lifting stones ('strength stones') test the old fishermen's fitness scale: Fullsterkur (full strong) at 154 kg down to Amlóði (useless) at 23 kg.",{cost:'Free'})
+  ]},
+
+ {id:'reykjanes',date:'FRI 28 AUG',drive:2,region:'reykjavik',ll:[63.88,-22.449],wiki:'Reykjanes Peninsula',short:'Reykjanes — Blue Lagoon, Tectonic Ridge & Last Night',
+  note:"The Ring Road ends where it began — on a volcanic peninsula that smells of sulphur and holds both the world's most famous geothermal spa and the exact crack between two tectonic plates.",
+  sleep:'near Keflavík',badges:[{t:'Pre-book Blue Lagoon slot ASAP — sell out weeks ahead',w:true}],
+  why:["Blue Lagoon's silica-milky water and black lava surround is genuinely unlike anywhere else on earth — a fitting final splurge on your last evening","Bridge Between Continents is a free 15-minute stop where you literally walk across the rift between the Eurasian and North American plates","Gunnuhver is Iceland's largest hot-spring mud-pool area — free, dramatically steamy at dusk, and 5 minutes from the van drop"],
+  tips:["Van drop is at 09:30 Sat at Iðavellir 11, Keflavík — about 5 minutes' drive from the Blue Lagoon. Book a late Blue Lagoon slot (19:00–21:00) so you can do Gunnuhver and the Bridge in the afternoon without rushing, then soak at dusk","Fill up on groceries in Reykjavík or Hafnarfjörður on the way through — Keflavík options are limited and expensive. Cook your last van dinner at a Reykjanes campsite with geothermal views before the lagoon"],
+  cost:"Blue Lagoon from ~10,990 ISK pp (Comfort entry) · Bridge free · Gunnuhver free · campsite ~4,000 ISK",
+  stops:[
+    s('Bridge Between Continents','gem',[63.8719,-22.6753],"A footbridge spanning the Leif Eriksson Rift — the visible crack between the Eurasian and North American tectonic plates. It's genuinely surreal to stand in the gap. A certificate of crossing is available for a fee at the nearby gift hut, but the bridge itself is free and takes 15 minutes.",{cost:'Free (certificate ~1,500 ISK if you want the souvenir)'}),
+    s('Gunnuhver hot-spring mud pools','view',[63.8183,-22.6878],"Iceland's most powerful geothermal area: thundering steam vents and grey mud pools that bubble and roar continuously. Named after a ghost said to have been lured into the boiling water by a priest. Boardwalk paths get you close — stay on them, the crust is dangerously thin. Completely free, open 24 hours.",{must:true,cost:'Free'}),
+    s('Blue Lagoon','swim',[63.8801,-22.449],"The classic Iceland farewell: soak in 38–40°C silica-rich water surrounded by black lava as steam rises into the Arctic sky. Book the 19:00 slot for golden-hour light on the water. The white silica mud mask is included in all tiers — slather it on, it's part of the ritual.",{must:true,cost:'Comfort from ~10,990 ISK pp',sp:'Premium entry ~15,990 ISK pp — includes towel, robe, one drink at the lagoon bar',bu:'Grindavík village pool (Sundlaug Grindavíkur) ~900 ISK pp — geothermal, local, no queues'}),
+    s('Reykjanes van pitch & last-night dinner','van',[63.9837,-22.5561],"Pick a campsite near Keflavík (Keflavík Campsite or Reykjanesbær) for the last night — you need to be within 10 minutes of Iðavellir 11 for the 09:30 drop. Cook your last van meal, open that bottle you've been saving, and watch the sun dip behind the Atlantic.",{cost:'~4,000 ISK'})
+  ]}
+];
+
+const ICELAND_PRESETS={
+  ring:['reykjavik1','golden','southcoast','jokulsarlon','eastfjords','myvatn','akureyri','snaefellsnes','reykjanes'],
+  south:['reykjavik1','golden','southcoast','jokulsarlon','snaefellsnes','reykjanes']
+};
+
+/* per-couple spend per day, in ISK. act flat number, or {sp,bu}. x = fuel/tolls/misc. */
+const ICELAND_BUD={
+  reykjavik1:{camp:5500,food:7000,act:{sp:17000,bu:12000},x:4000},
+  golden:{camp:5000,food:6500,act:7600,x:5000},
+  southcoast:{camp:5000,food:6500,act:0,x:6000},
+  jokulsarlon:{camp:5000,food:6000,act:{sp:36000,bu:28000},x:5500},
+  eastfjords:{camp:4500,food:6000,act:0,x:6500},
+  myvatn:{camp:4500,food:6500,act:{sp:18000,bu:12000},x:6000},
+  akureyri:{camp:5000,food:7000,act:{sp:22000,bu:14000},x:6500},
+  snaefellsnes:{camp:5000,food:6500,act:0,x:7000},
+  reykjanes:{camp:5500,food:7500,act:{sp:26000,bu:18000},x:4500}
+};
+
+const ALPINE_META={
+  key:'alpine',label:'🏔 Alpine Loop',
+  kicker:'Indie Campers · Field Guide',
+  h1Html:'The Great <em>Alpine</em> Loop',
+  sub:'VENEZIA → SWITZERLAND → AUSTRIA → DOLOMITES → VENEZIA · 1 – 17 AUG 2026',
+  intro:'Every leg mapped with its bucket-list <b>anchor</b> plus the worthwhile stops along the way — viewpoints, lake swims, towns, activities and hidden gems. Pricey stops show a <b>splurge vs budget</b> call. <b>Tap any card or map pin</b> for the full breakdown.',
+  mapCenter:[46.7,11.5],mapZoom:6,
+  startCard:{title:'Pick up the van — Venice',meta:'FRI 1 AUG · afternoon collection · stock groceries, fuel up'},
+  endCard:{title:'Return van AM → Rialto, Venice',meta:'MON 17 AUG · Venice 17–19 · train to Milan 19th · fly Iceland 20th'},
+  curSymbol:'€',hasSecondary:true,fuelPerH:13,xLabel:'Tolls &amp; vignettes',
+  presets:[
+    {key:'grand',label:'🏔 The Grand Loop',desc:'All three countries — Switzerland, Austria & the Dolomites. The full bucket-list run.',om:'16 nights · ~32h driving · most ambitious'},
+    {key:'easy',label:'🌿 Easy Pace',desc:'Skip Switzerland. Austria + Dolomites only — fewer, shorter drives, more lingering.',om:'10 nights · ~14h driving · most relaxed'},
+    {key:'swissdolo',label:'🇨🇭 Swiss & Dolomites',desc:'Switzerland + Dolomites with the Stelvio Pass, trimming deeper Austria.',om:'13 nights · ~26h driving · scenery max'}
+  ]
+};
+
+const ICELAND_META={
+  key:'iceland',label:'🌋 Iceland',
+  kicker:'Iceland Camper · Field Guide',
+  h1Html:'The Great <em>Ring</em> Road',
+  sub:'KEFLAVÍK → GOLDEN CIRCLE → SOUTH COAST → EAST FJORDS → MÝVATN → SNÆFELLSNES → KEFLAVÍK · 20 – 29 AUG 2026',
+  intro:"Tap any card to open the day — each one gives you the essential stops, a splurge-vs-budget call on the one big activity, and the practical van-life detail that actually matters. Prices are per couple in ISK; swap the toggle to see the South & West cut if you'd rather trade the East Fjords and Mývatn for a more relaxed pace.",
+  mapCenter:[64.9,-18.8],mapZoom:6,
+  startCard:{title:'Pick up the van — Keflavík',meta:'THU 20 AUG · 11:00 collection · Iðavellir 11 · stock up at Bónus, fuel up'},
+  endCard:{title:'Drop off the van — Keflavík',meta:'SAT 29 AUG · 09:30 return · refuel near KEF, leave 90 min buffer'},
+  curSymbol:'ISK ',hasSecondary:false,fuelPerH:0,xLabel:'Fuel',
+  presets:[
+    {key:'ring',label:'🌋 Full Ring Road',desc:'All 9 nights — the complete anti-clockwise loop.'},
+    {key:'south',label:'🌊 South & West',desc:'Skip the long east/north legs — Golden Circle, South Coast to Jökulsárlón, then Snæfellsnes.'}
+  ]
+};
+
+/* ===================== TRIP REGISTRY + ACTIVE BINDING ===================== */
+const TRIPS={
+  alpine:{DAYS:ALPINE_DAYS,PRESETS:ALPINE_PRESETS,BUD:ALPINE_BUD,META:ALPINE_META},
+  iceland:{DAYS:ICELAND_DAYS,PRESETS:ICELAND_PRESETS,BUD:ICELAND_BUD,META:ICELAND_META}
+};
+const ACTIVE=(localStorage.getItem('active_trip')==='iceland')?'iceland':'alpine';
+const T=TRIPS[ACTIVE];
+const DAYS=T.DAYS, PRESETS=T.PRESETS, BUD=T.BUD, META=T.META;
+// IDEAS is bound after its literals are declared further below.
+
 DAYS.forEach(d=>{d.bud=BUD[d.id]||{};});
 
 /* ---------- cards ---------- */
@@ -818,7 +1006,7 @@ function applyKeptUI(day){
 function setKept(day,kept){day.kept=kept;applyKeptUI(day);if(drawer.dataset.id===day.id)syncDrawerKeep(day);recalc();drawMap();saveTrip();}
 
 /* ---------- persistence ---------- */
-const TRIP_KEY='alpine_trip_v1';
+const TRIP_KEY=ACTIVE+'_trip_v1';
 function saveTrip(){try{localStorage.setItem(TRIP_KEY,JSON.stringify({
   kept:DAYS.filter(d=>d.kept).map(d=>d.id),
   preset:document.querySelector('.opt.active')?document.querySelector('.opt.active').dataset.preset:null,
@@ -835,6 +1023,7 @@ function restoreTrip(){
 }
 
 /* ---------- presets ---------- */
+function wireOptRow(){
 document.querySelectorAll('.opt').forEach(opt=>{
   opt.addEventListener('click',()=>{
     document.querySelectorAll('.opt').forEach(o=>o.classList.remove('active'));
@@ -845,6 +1034,8 @@ document.querySelectorAll('.opt').forEach(opt=>{
     recalc();drawMap();saveTrip();
   });
 });
+}
+wireOptRow();
 const swissToggle=document.getElementById('swissToggle');
 swissToggle.addEventListener('click',()=>{
   const on=swissToggle.classList.toggle('on');
@@ -867,10 +1058,16 @@ function recalc(){
   const adv=document.getElementById('advice');
   const swissKept=DAYS.filter(d=>d.swiss&&!d.optional&&d.kept).length;
   let msg='';
-  if(swissKept===0&&nights>0)msg=`Switzerland dropped — frees ~<b>6 nights</b> and cuts the brutal Aug 8 drive. Pour them into the Dolomites or a Slovenia detour.`;
-  else if(drive>30)msg=`<b>${Math.round(drive)}h</b> driving — a full, ambitious loop. The Zermatt→Innsbruck leg is the strain; drop Zermatt to ease it.`;
-  else if(nights<11)msg=`Relaxed — <b>${nights} nights</b>, only <b>${Math.round(drive)}h</b> driving. Lots of room to linger.`;
-  else msg=`Well-balanced — <b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving. A strong loop.`;
+  if(ACTIVE==='alpine'){
+    if(swissKept===0&&nights>0)msg=`Switzerland dropped — frees ~<b>6 nights</b> and cuts the brutal Aug 8 drive. Pour them into the Dolomites or a Slovenia detour.`;
+    else if(drive>30)msg=`<b>${Math.round(drive)}h</b> driving — a full, ambitious loop. The Zermatt→Innsbruck leg is the strain; drop Zermatt to ease it.`;
+    else if(nights<11)msg=`Relaxed — <b>${nights} nights</b>, only <b>${Math.round(drive)}h</b> driving. Lots of room to linger.`;
+    else msg=`Well-balanced — <b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving. A strong loop.`;
+  } else {
+    if(nights>=9)msg=`A full anti-clockwise Ring — <b>${nights} nights</b>, ~<b>${Math.round(drive)}h</b> driving. The long hauls are Egilsstaðir→Mývatn and Akureyri→Snæfellsnes; set off early on those mornings.`;
+    else if(nights<7)msg=`Trimmed to the south & west — <b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving. A relaxed pace with more time per stop.`;
+    else msg=`<b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving — a solid Ring Road run.`;
+  }
   adv.innerHTML=msg;
   renderBudget();
 }
@@ -885,7 +1082,7 @@ function dayCosts(d){
   if(b.act!=null)act=(typeof b.act==='object')?(splurgeMode?b.act.sp:b.act.bu):b.act;
   return {camp:b.camp||0,food:b.food||0,act,x:b.x||0,cur:dayCur(d)};
 }
-function eur(n){return '€'+Math.round(n).toLocaleString('en-US');}
+function eur(n){return META.curSymbol+Math.round(n).toLocaleString('en-US');}
 function renderBudget(){
   const kept=DAYS.filter(d=>d.kept);
   const e={camp:0,food:0,act:0,x:0},c={camp:0,food:0,act:0,x:0};
@@ -895,7 +1092,7 @@ function renderBudget(){
     const dc=dayCosts(d),t=dc.cur==='CHF'?c:e;
     t.camp+=dc.camp;t.food+=dc.food;t.act+=dc.act;t.x+=dc.x;
   });
-  const fuel=driveH*FUEL_PER_H;
+  const fuel=driveH*(META.fuelPerH!=null?META.fuelPerH:FUEL_PER_H);
   const chfTotal=c.camp+c.food+c.act+c.x;
   const eurTotal=e.camp+e.food+e.act+e.x;
   const cat={
@@ -909,9 +1106,11 @@ function renderBudget(){
   document.getElementById('bud-total').innerHTML=`${eur(total)} <small>${perPerson?'per person':'for two'}</small>`;
   document.getElementById('bud-chf').textContent=`🇨🇭 CHF ${Math.round(chfTotal/div).toLocaleString('en-US')}`;
   document.getElementById('bud-eur').textContent=`🇪🇺 ${eur((eurTotal+fuel)/div)}`;
+  document.getElementById('bud-chf').parentElement.style.display=(META.hasSecondary===false)?'none':'';
+  const fuelSeg=(META.fuelPerH===0)?'':`Fuel <b>${eur(cat.fuel/div)}</b> · `;
   document.getElementById('bud-break').innerHTML=
     `Campsites <b>${eur(cat.camp/div)}</b> · Activities <b>${eur(cat.act/div)}</b> · Food <b>${eur(cat.food/div)}</b><br>`+
-    `Fuel <b>${eur(cat.fuel/div)}</b> · Tolls &amp; vignettes <b>${eur(cat.x/div)}</b>`;
+    `${fuelSeg}${META.xLabel||'Tolls &amp; vignettes'} <b>${eur(cat.x/div)}</b>`;
 }
 function setBudModeUI(){
   document.getElementById('modeBudget').classList.toggle('on',!splurgeMode);
@@ -1181,7 +1380,7 @@ document.getElementById('panelHead').addEventListener('click',()=>{if(window.inn
 function i(title,cat,area,desc,wiki){return {id:title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),title,cat,area,desc,wiki:wiki||title};}
 const CATS={lake:'🏞 Lakes',scenic:'🛣 Scenic drives',hike:'🥾 Hikes',town:'🏘 Towns',castle:'🏰 Castles',adventure:'🪂 Adventure',spa:'🧖 Spa & thermal',falls:'💦 Waterfalls & gorges',park:'🌲 National parks',detour:'🌍 Detours',food:'🍷 Food & wine'};
 const CATCOLOR={lake:'#4d7c8a',scenic:'#c0552c',hike:'#2f4a3a',town:'#9c5a6a',castle:'#9a6b4e',adventure:'#b8860b',spa:'#4a8a86',falls:'#3f6f95',park:'#3d6b46',detour:'#6b5b95',food:'#7a4b3a'};
-const IDEAS=[
+const ALPINE_IDEAS=[
   // ── Lakes ──
   i('Lake Bohinj','lake','Slovenia · Triglav NP','Bled\'s bigger, wilder, emptier sister — glacial water ringed by peaks, far fewer crowds. Pair with Vintgar Gorge.','Lake Bohinj'),
   i('Königssee','lake','Bavaria · near Salzburg','Electric-green fjord lake reached by silent electric boats, an echoing trumpet stop, and the red-domed St Bartholomä chapel.','Königssee'),
@@ -1270,11 +1469,63 @@ const IDEAS=[
   i('Trento & Trentodoc','food','Trentino','An elegant Renaissance city and home of Italy\'s best metodo-classico sparkling wine — cellar tours and piazzas.','Trento')
 ];
 
-const BK_KEY='alpine_bucket_v1';
+const ICELAND_IDEAS=[
+  i('Landmannalaugar Highlands','hike','Southern Highlands',"Rainbow rhyolite mountains — ochre, pink, green — surrounding a natural hot-spring river you wade right into. Requires a high-clearance 4WD on F-roads; not reachable in your 2WD campervan, so either join a day-tour from Vík or save it for a future trip.",'Landmannalaugar'),
+  i('Þórsmörk Valley','hike','Southern Highlands',"A glacially carved valley between three glaciers — Eyjafjallajökull, Mýrdalsjökull and Tindfjallajökull — where birch forest clings to the ridges. Also F-road only for the final stretch; superjeep transfer from Seljalandsfoss is easy to book.",'Þórsmörk'),
+  i('Fimmvörðuháls Pass Trek','hike','South Iceland',"The legendary 25km one-way hike connecting Skógafoss to Þórsmörk, crossing the lava field born from the 2010 Eyjafjallajökull eruption. Take the bus back from Þórsmörk — one of the most varied day hikes in Europe.",'Fimmvörðuháls'),
+  i('Skaftafell Svartifoss Hike','hike','Vatnajökull NP · South',"A 5km loop in Skaftafell to the basalt-column waterfall that inspired the columns in Reykjavík's Hallgrímskirkja — combine it with a glacier walk on Skaftafellsjökull right next door.",'Svartifoss'),
+  i('Kerlingarfjöll Hot Springs','spa','Central Highlands',"Fumaroles, steaming vents and boiling streams in a technicolour geothermal field deep in the highlands. F-road access (F35 Kjölur) is possible in a high-clearance 2WD with care in summer — check with your van hire first.",'Kerlingarfjöll'),
+  i('Mývatn Nature Baths','spa','North Iceland · Mývatn',"The north's answer to the Blue Lagoon — milky-blue geothermal water on the shore of Mývatn at a fraction of the crowds and price. Locals say the silica here is even silkier; arrive after 8pm for the golden-hour steam.",'Mývatn Nature Baths'),
+  i('Secret Lagoon (Gamla Laugin)','spa','Golden Circle · Flúðir',"Iceland's oldest swimming pool (1891), heated by a nearby geyser, ringed by wildflowers and trickling hot streams. Far quieter than the Blue Lagoon at a fraction of the cost — perfect end to the Golden Circle day.",'Secret Lagoon'),
+  i('Reykjadalur Hot River','spa','South Iceland · Hveragerði',"A 3km trail climbs gently to a steaming river you can actually bathe in — wade upstream to find your ideal temperature. Completely free, no booking, just bring a towel and go at sunrise to have it to yourself.",'Reykjadalur'),
+  i('Jökulsárlón Glacier Lagoon','scenic','South Iceland · Vatnajökull',"Skyscraper-blue icebergs calve off Breiðamerkurjökull and drift slowly to the sea — a place that genuinely looks like another planet. Walk to Diamond Beach at the outlet to find crystal ice blocks scattered across black sand.",'Jökulsárlón'),
+  i('Westfjords & Látrabjarg Cliffs','detour','Westfjords',"Europe's westernmost point and the largest seabird cliff in Iceland — puffins and razorbills perch within arm's reach at the cliff edge. A major detour from the Ring Road (allow 2–3 extra days) but nothing else in Iceland looks like this.",'Látrabjarg'),
+  i("Dettifoss — Europe's Most Powerful Waterfall",'falls','North Iceland · Jökulsárgljúfur',"A wall of grey glacial water 45m high and 100m wide that physically shakes the ground underfoot — the raw power is genuinely shocking. The east-bank road (Route 864) gives the most dramatic close-up view.",'Dettifoss'),
+  i('Seljalandsfoss Walk-Behind','falls','South Iceland',"The one waterfall you walk entirely behind — a narrow, slippery path circles behind the curtain for a dripping, theatrical view back out. Go in the evening when the golden-hour light turns the mist amber.",'Seljalandsfoss'),
+  i('Vatnajökull National Park','park','Southeast Iceland',"Europe's largest national park by area, covering a glacier bigger than all of mainland Europe's glaciers combined — Skaftafell, Jökulsárlón and Askja all sit within its boundaries.",'Vatnajökull National Park'),
+  i('Snæfellsjökull National Park','park','Snæfellsnes Peninsula',"Jules Verne's gateway to the centre of the Earth — a glacier-capped volcano at the tip of the peninsula, surrounded by lava fields, sea stacks and the coastal trail from Arnarstapi to Hellnar.",'Snæfellsjökull National Park'),
+  i('Northern Lights — Late August Odds','adventure','All Iceland',"Late August is the first realistic window — nights are dark enough by mid-August (astronomical twilight returns around 20 Aug), and solar activity in 2026 is near solar maximum. Best chances away from town on clear nights: Jökulsárlón, Mývatn, Snæfellsnes. No guarantees, but genuinely possible.",'Aurora borealis'),
+  i('Húsavík Whale Watching','adventure','North Iceland · Húsavík',"Iceland's whale-watching capital — humpbacks and minkes feed close to shore all summer, and sightings run at about 95% in August. North Sailing runs oak-hulled schooners for a more atmospheric experience than the RIBs.",'Húsavík'),
+  i('Ice Cave Tour (Crystal Cave)','adventure','Southeast Iceland · Vatnajökull',"A natural ice cave inside Breiðamerkurjökull with walls of electric blue — only safely accessible from November through March as summer melt makes the ice unstable. Worth noting for a winter return, or book a summer 'lava tube' alternative through a local guide.",'Crystal Ice Cave'),
+  i('Puffin Spotting at Dyrhólaey','adventure','South Iceland · Dyrhólaey',"Atlantic puffins nest on the sea stacks and clifftops here through late August — the Dyrhólaey lighthouse headland lets you watch them land and launch from just metres away. They typically depart early September, so late August is your last reliable chance.",'Dyrhólaey'),
+  i('Reykjavik Food Hall — Hlemmur Mathöll','food','Reykjavík',"A converted 1930s bus terminal turned artisan food market — lamb soup, skyr cheesecake, fermented shark shots and craft beer under one roof. The best way to eat expensively in Reykjavík without feeling ripped off.",'Reykjavík'),
+  i('Icelandic Hot-Pot Etiquette','spa','All Iceland',"Every town has a geothermal pool (sundlaug) — locals use them as community living rooms. Shower naked before entering (non-negotiable and enforced), speak quietly in the hot-pots, and never take photos inside. Entry costs 500–1200 ISK; bring shampoo.",'Swimming in Iceland')
+];
+
+TRIPS.alpine.IDEAS=ALPINE_IDEAS;
+TRIPS.iceland.IDEAS=ICELAND_IDEAS;
+const IDEAS=T.IDEAS;
+
+const BK_KEY=ACTIVE+'_bucket_v1';
 let bucket=loadBucket();
 function loadBucket(){try{return JSON.parse(localStorage.getItem(BK_KEY))||[];}catch(e){return [];}}
 function saveBucket(){try{localStorage.setItem(BK_KEY,JSON.stringify(bucket));}catch(e){}}
 function inBucket(id){return bucket.some(b=>b.id===id);}
+// When an item is saved, also send a copy to Chongyu (logs to Google Sheet + Telegram ping).
+// Paste the deployed Google Apps Script /exec URL below to enable. Empty = off.
+// Fire-and-forget: never blocks or breaks the on-device save.
+// ---- shared sync ----
+// Paste the deployed Google Apps Script /exec URL below to turn ON shared two-person sync
+// (the list lives in your Google Sheet; both phones see the same thing + Telegram pings).
+// Leave empty = offline-only, on-device list with no sharing. Nothing breaks either way.
+const SAVE_URL='';
+// who's planning — used for "added by" + pinging the OTHER person. One-time pick, stored on device.
+const WHO_KEY='alpine_who';
+const getWho=()=>localStorage.getItem(WHO_KEY)||'';
+const setWho=w=>localStorage.setItem(WHO_KEY,w);
+// pull the shared list from the sheet and replace the local copy
+function syncPull(){
+  if(!SAVE_URL)return Promise.resolve();
+  return fetch(SAVE_URL+'?t='+Date.now()).then(r=>r.json()).then(d=>{
+    if(d&&Array.isArray(d.items)){bucket=d.items;saveBucket();renderBucket();renderIdeas();}
+  }).catch(()=>{});
+}
+// push one change (add / remove) to the shared sheet; fire-and-forget, never blocks the local save
+function syncPush(action,item){
+  if(!SAVE_URL)return;
+  try{fetch(SAVE_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action,who:getWho(),item})});}catch(e){}
+}
 
 let ideaFilter='all',ideaQuery='';
 const ideaCardsEl=document.getElementById('ideaCards');
@@ -1339,8 +1590,8 @@ function renderIdeas(){
 }
 function toggleIdea(id){
   const idea=IDEAS.find(x=>x.id===id);if(!idea)return;
-  if(inBucket(id))bucket=bucket.filter(b=>b.id!==id);
-  else bucket.push({id:idea.id,title:idea.title,note:idea.desc,area:idea.area,wiki:idea.wiki,custom:false});
+  if(inBucket(id)){bucket=bucket.filter(b=>b.id!==id);syncPush('remove',{id});}
+  else {const it={id:idea.id,title:idea.title,note:idea.desc,area:idea.area,wiki:idea.wiki,custom:false,who:getWho()};bucket.push(it);syncPush('add',it);}
   saveBucket();renderIdeas();renderBucket();
 }
 
@@ -1350,25 +1601,27 @@ function renderBucket(){
   const ph=document.getElementById('bk-panel-h');
   if(ph)ph.textContent=bucket.length?`⭐ Your Bucket List · ${bucket.length} saved`:'⭐ Your Bucket List';
   if(!bucket.length){bkListEl.innerHTML='<div class="bk-empty">Nothing yet — save an idea on the left, or add your own above.</div>';return;}
-  bkListEl.innerHTML=bucket.map((b,idx)=>`
+  bkListEl.innerHTML=bucket.map(b=>`
     <li>
       ${b.wiki?`<div class="bk-thumb" data-wiki="${b.wiki}"></div>`:''}
       <div class="bk-txt">
         <div class="bk-t">${b.title}</div>
         ${b.note?`<div class="bk-n">${b.note}</div>`:''}
         ${b.area?`<div class="bk-a">📍 ${b.area}</div>`:''}
+        ${b.who?`<div class="bk-byline">✎ added by ${b.who}</div>`:''}
       </div>
-      <button class="bk-del" data-del="${idx}" title="Remove">✕</button>
+      <button class="bk-del" data-del="${b.id}" title="Remove">✕</button>
     </li>`).join('');
   bkListEl.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{
-    bucket.splice(+b.dataset.del,1);saveBucket();renderBucket();renderIdeas();
+    const id=b.dataset.del;bucket=bucket.filter(x=>x.id!==id);saveBucket();renderBucket();renderIdeas();syncPush('remove',{id});
   }));
   bkListEl.querySelectorAll('.bk-thumb[data-wiki]').forEach(t=>fetchMedia(t.dataset.wiki).then(m=>{if(m.thumb)t.style.backgroundImage=`url("${m.thumb}")`;}));
 }
 function addCustom(){
   const t=document.getElementById('bkTitle'),n=document.getElementById('bkNote');
   const title=t.value.trim();if(!title)return;
-  bucket.push({id:'custom-'+Date.now(),title,note:n.value.trim(),area:'',custom:true});
+  const it={id:'custom-'+Date.now(),title,note:n.value.trim(),area:'',custom:true,who:getWho()};
+  bucket.push(it);syncPush('add',it);
   t.value='';n.value='';saveBucket();renderBucket();
 }
 document.getElementById('bkAdd').addEventListener('click',addCustom);
@@ -1388,12 +1641,55 @@ document.querySelectorAll('.vtab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelector('.controls').style.display=tripChrome?'':'none';
   document.getElementById('summary').style.display=tripChrome?'':'none';
   window.scrollTo({top:0,behavior:'smooth'});
-  if(view==='ideas')renderIdeas();                     // re-attach observer while visible
+  if(view==='ideas'){renderIdeas();syncPull();}         // re-attach observer + refresh shared list
   if(view==='camp')renderCampTab();                    // rebuilds from current kept set
   if(tripChrome&&map)setTimeout(()=>map.invalidateSize(),60);
 }));
 
 renderFilters();renderIdeas();renderBucket();
+// shared-list setup: show the "planning as" picker only when sync is on, then pull the shared list
+if(SAVE_URL){
+  const whoBar=document.getElementById('bk-who'),whoSel=document.getElementById('whoSel');
+  whoBar.hidden=false;whoSel.value=getWho();
+  whoSel.addEventListener('change',()=>setWho(whoSel.value));
+  syncPull();
+  window.addEventListener('focus',syncPull);            // refresh when you come back to the tab
+}
+/* ---------- per-trip META → DOM ---------- */
+function applyMeta(){
+  document.querySelector('header .kicker').textContent=META.kicker;
+  document.querySelector('header h1').innerHTML=META.h1Html;
+  document.querySelector('header .sub').textContent=META.sub;
+  document.querySelector('header .intro').innerHTML=META.intro;
+  const optRow=document.getElementById('optRow');
+  optRow.innerHTML=META.presets.map((p,i)=>
+    `<button class="opt${i===0?' active':''}" data-preset="${p.key}"><div class="ot">${p.label}</div><div class="od">${p.desc}</div>${p.om?`<div class="om">${p.om}</div>`:''}</button>`).join('');
+  wireOptRow();
+  const bookends=document.querySelectorAll('#timeline .bookend');
+  if(bookends[0]){bookends[0].querySelector('h3').textContent=META.startCard.title;bookends[0].querySelector('.meta').textContent=META.startCard.meta;}
+  if(bookends[1]){bookends[1].querySelector('h3').textContent=META.endCard.title;bookends[1].querySelector('.meta').textContent=META.endCard.meta;}
+  if(map)map.setView(META.mapCenter,META.mapZoom);
+  if(ACTIVE!=='alpine')swissToggle.style.display='none';
+}
+
+/* ---------- trip switcher (reload-based) ---------- */
+function mountTripSwitcher(){
+  const bar=document.createElement('div');
+  bar.id='tripSwitch';
+  bar.style.cssText='display:flex;gap:8px;justify-content:center;align-items:center;padding:9px 14px;background:var(--paper-2);border-bottom:1px solid var(--line)';
+  [['alpine','🏔 Alpine Loop'],['iceland','🌋 Iceland']].forEach(([k,lbl])=>{
+    const b=document.createElement('button');
+    b.textContent=lbl;
+    const on=k===ACTIVE;
+    b.style.cssText="font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:11.5px;padding:7px 18px;border-radius:999px;cursor:pointer;transition:.15s;border:1px solid "+(on?'var(--terra)':'var(--line)')+';background:'+(on?'var(--terra)':'transparent')+';color:'+(on?'#fff':'var(--ink-soft)');
+    if(!on)b.addEventListener('click',()=>{localStorage.setItem('active_trip',k);location.reload();});
+    bar.appendChild(b);
+  });
+  document.body.insertBefore(bar,document.body.firstChild);
+}
+
+mountTripSwitcher();
+applyMeta();
 restoreTrip();
 recalc();drawMap();
 </script>
