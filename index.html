@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Great Alpine Loop · Venezia → Alps → Venezia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..700&family=Archivo:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root{
+    --paper:#f1e9d8; --paper-2:#ece2cd; --ink:#23302a; --ink-soft:#4a5a50;
+    --pine:#2f4a3a; --terra:#c0552c; --glacier:#4d7c8a; --gold:#b8860b; --rose:#9c5a6a;
+    --line:rgba(35,48,42,.16); --card:#fbf6ea; --shadow:0 18px 40px -22px rgba(35,48,42,.55);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Archivo',sans-serif;color:var(--ink);background-color:var(--paper);
+    background-image:
+      radial-gradient(circle at 15% 12%, rgba(77,124,138,.10), transparent 40%),
+      radial-gradient(circle at 85% 70%, rgba(192,85,44,.09), transparent 45%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+  .grid{display:grid;grid-template-columns:1fr 330px;gap:46px;align-items:start}
+  @media(max-width:940px){.grid{grid-template-columns:1fr;gap:0}}
+
+  header{position:relative;padding:60px 0 24px}
+  .kicker{font-family:'DM Mono',monospace;letter-spacing:.32em;text-transform:uppercase;font-size:12px;color:var(--terra);display:flex;align-items:center;gap:14px}
+  .kicker::before,.kicker::after{content:"";height:1px;flex:1;max-width:60px;background:var(--terra);opacity:.5}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(40px,7vw,82px);line-height:.95;letter-spacing:-.02em;margin:16px 0 10px}
+  h1 em{font-style:italic;color:var(--terra)}
+  .sub{font-family:'DM Mono',monospace;font-size:14px;color:var(--ink-soft);letter-spacing:.04em}
+  .intro{max-width:660px;margin-top:18px;font-size:16px;color:var(--ink-soft)}
+  .legend{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft)}
+  .legend span{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:4px 10px}
+
+  .options{margin:26px 0 6px}
+  .opt-h{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px}
+  .opt-row{display:flex;gap:12px;flex-wrap:wrap}
+  .opt{flex:1;min-width:200px;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:15px 17px;cursor:pointer;transition:.2s;position:relative}
+  .opt:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .opt.active{border-color:var(--pine);box-shadow:0 0 0 2px rgba(47,74,58,.18)}
+  .opt .ot{font-family:'Fraunces',serif;font-size:19px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .opt .od{font-size:13px;color:var(--ink-soft);margin-top:4px}
+  .opt .om{font-family:'DM Mono',monospace;font-size:11px;color:var(--terra);margin-top:9px;letter-spacing:.03em}
+  .opt.active::after{content:"✓ active";position:absolute;top:13px;right:14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--pine);letter-spacing:.08em}
+
+  #map{height:440px;width:100%;border-radius:14px;border:1px solid var(--line);box-shadow:var(--shadow);margin:22px 0 6px;z-index:1}
+  .leaflet-container{background:#dfe6e0;font-family:'Archivo',sans-serif}
+  .pin{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.35);font-family:'DM Mono',monospace;font-weight:600;font-size:11px;color:#fff;cursor:pointer}
+  .pin span{transform:rotate(45deg)}
+
+  .controls{position:sticky;top:0;z-index:40;background:rgba(241,233,216,.9);backdrop-filter:blur(12px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:11px 0;margin:18px 0 8px}
+  .controls .wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .ctl-stat{font-family:'DM Mono',monospace;font-size:13px;color:var(--ink-soft);display:flex;align-items:baseline;gap:7px}
+  .ctl-stat b{font-family:'Fraunces',serif;font-size:23px;color:var(--ink);font-weight:600}
+  .ctl-spacer{flex:1}
+  .toggle{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:600;user-select:none}
+  .switch{width:42px;height:23px;border-radius:20px;background:var(--ink-soft);position:relative;transition:.25s}
+  .switch::after{content:"";position:absolute;top:2.5px;left:2.5px;width:18px;height:18px;border-radius:50%;background:var(--paper);transition:.25s}
+  .toggle.on .switch{background:var(--pine)}
+  .toggle.on .switch::after{transform:translateX(19px)}
+
+  .timeline{position:relative;padding:24px 0 50px}
+  .timeline::before{content:"";position:absolute;left:26px;top:0;bottom:0;width:2px;background:var(--line)}
+  @media(max-width:560px){.timeline::before{left:18px}}
+  .day{position:relative;padding-left:70px;margin-bottom:24px;transition:opacity .35s,filter .35s}
+  @media(max-width:560px){.day{padding-left:50px}}
+  .day.dropped{opacity:.4;filter:grayscale(.6)}
+  .day.optional .card{border-style:dashed}
+  .node{position:absolute;left:13px;top:8px;width:28px;height:28px;border-radius:50%;background:var(--card);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;z-index:2}
+  @media(max-width:560px){.node{left:5px}}
+  .day.kept .node{background:var(--pine);color:#fff;border-color:var(--pine)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+  .card:hover{transform:translateY(-2px)}
+  .card-top{display:grid;grid-template-columns:220px 1fr}
+  @media(max-width:680px){.card-top{grid-template-columns:1fr}}
+  .photo{position:relative;min-height:200px;background:linear-gradient(135deg,#c9bfa6,#9caa9b);overflow:hidden}
+  .photo img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:0;transition:opacity .6s}
+  .photo img.loaded{opacity:1}
+  .ph-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-style:italic;font-size:19px;color:rgba(255,255,255,.9);text-align:center;padding:16px;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+  .region-chip{position:absolute;top:11px;left:11px;z-index:2;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;padding:5px 9px;border-radius:3px;color:#fff}
+  .expand-hint{position:absolute;bottom:10px;right:11px;z-index:2;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.05em;color:#fff;background:rgba(35,48,42,.55);padding:4px 8px;border-radius:20px;backdrop-filter:blur(2px)}
+  .card-body{padding:18px 20px 16px;display:flex;flex-direction:column}
+  .meta{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-soft);display:flex;gap:13px;flex-wrap:wrap}
+  .meta .drive{color:var(--terra)}
+  .card h3{font-family:'Fraunces',serif;font-weight:600;font-size:25px;line-height:1.05;margin:6px 0 4px}
+  .wikiline{font-style:italic;color:var(--ink-soft);font-size:13px;margin-bottom:8px;min-height:1px}
+  .note{font-size:14.5px;margin-bottom:10px}
+  .stopchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px}
+  .stopchip{font-size:11px;background:rgba(77,124,138,.1);border:1px solid rgba(77,124,138,.25);color:var(--glacier);padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:4px}
+  .sleep{font-family:'DM Mono',monospace;font-size:12px;color:var(--pine);display:flex;align-items:center;gap:7px;margin-top:auto}
+  .sleep::before{content:"▲";font-size:9px}
+  .badges{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 12px}
+  .badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:3px;background:rgba(184,134,11,.14);color:#8a6608;border:1px solid rgba(184,134,11,.35)}
+  .badge.warn{background:rgba(192,85,44,.13);color:var(--terra);border-color:rgba(192,85,44,.4)}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:11px 20px;background:rgba(35,48,42,.025)}
+  .keep-label{font-size:12.5px;font-weight:600}
+  .keepbtn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;border:1.5px solid var(--pine);color:var(--pine);background:transparent;padding:7px 14px;border-radius:30px;cursor:pointer;transition:.2s}
+  .keepbtn.kept{background:var(--pine);color:#fff}
+  .keepbtn.dropped{border-color:var(--ink-soft);color:var(--ink-soft)}
+
+  .bookend{position:relative;padding-left:70px;margin-bottom:24px}
+  @media(max-width:560px){.bookend{padding-left:50px}}
+  .bookend .node{background:var(--terra);border-color:var(--terra);color:#fff}
+  .bookend .card{padding:16px 20px;display:flex;align-items:center;gap:15px;flex-wrap:wrap;cursor:default}
+  .bookend .card:hover{transform:none}
+  .bookend .ico{font-size:24px}
+  .bookend h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600}
+
+  .summary{position:sticky;top:74px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .panel-h{background:var(--pine);color:var(--paper);padding:15px 19px;font-family:'Fraunces',serif;font-size:19px;font-weight:600;display:flex;align-items:center;gap:9px}
+  .panel-b{padding:17px 19px}
+  .big-stats{display:flex;text-align:center;margin-bottom:14px}
+  .big-stats div{flex:1;border-right:1px solid var(--line)}
+  .big-stats div:last-child{border:none}
+  .big-stats .n{font-family:'Fraunces',serif;font-size:28px;font-weight:600;line-height:1;color:var(--terra)}
+  .big-stats .l{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:5px}
+  .picks-h{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin:6px 0 8px;border-top:1px solid var(--line);padding-top:11px}
+  #picks{list-style:none;font-size:13px;display:flex;flex-direction:column;gap:2px}
+  #picks li{display:flex;justify-content:space-between;gap:10px;padding:2px 0;cursor:pointer}
+  #picks li:hover{color:var(--terra)}
+  #picks li span:last-child{font-family:'DM Mono',monospace;color:var(--ink-soft);font-size:11px;white-space:nowrap}
+  #picks li.dz{opacity:.38;text-decoration:line-through}
+  .advice{margin-top:13px;font-size:12.5px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:11px}
+  .advice b{color:var(--terra)}
+
+  /* budget box */
+  .budget-box{border-top:1px solid var(--line);margin-top:13px;padding-top:12px}
+  .bud-total{font-family:'Fraunces',serif;font-size:31px;font-weight:600;color:var(--terra);line-height:1}
+  .bud-total small{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft);font-weight:400;letter-spacing:.03em}
+  .bud-split{display:flex;gap:7px;margin-top:8px;font-family:'DM Mono',monospace;font-size:11px}
+  .bud-split span{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:3px 9px;color:var(--ink-soft)}
+  .bud-split .chf{color:var(--glacier);border-color:rgba(77,124,138,.4)}
+  .bud-toggles{display:flex;gap:6px;margin-top:9px}
+  .bud-toggles button{flex:1;font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;background:var(--paper);border:1.5px solid var(--line);color:var(--ink-soft);padding:7px 6px;border-radius:8px;cursor:pointer;transition:.18s}
+  .bud-toggles button.on{background:var(--pine);color:#fff;border-color:var(--pine)}
+  .bud-break{margin-top:10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft);line-height:1.75}
+  .bud-break b{color:var(--ink);font-weight:500}
+  .bud-note{margin-top:8px;font-size:10.5px;color:var(--ink-soft);font-style:italic;line-height:1.45}
+
+  /* weather */
+  .dr-weather{display:flex;gap:8px}
+  .wx{flex:1;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 7px;text-align:center}
+  .wx .wd{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+  .wx .we{font-size:25px;margin:3px 0;line-height:1}
+  .wx .wt{font-family:'Fraunces',serif;font-size:17px;font-weight:600}
+  .wx .wt small{font-size:11px;color:var(--ink-soft);font-weight:400}
+  .wx .wp{font-family:'DM Mono',monospace;font-size:10px;color:var(--glacier);margin-top:2px}
+  .wx-links{display:flex;gap:11px;margin-top:10px}
+  .wx-links a{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--line)}
+  .wx-links a:hover{color:var(--terra)}
+  @media(max-width:940px){
+    .summary{position:fixed;bottom:0;left:0;right:0;top:auto;z-index:50}
+    .summary .panel{border-radius:14px 14px 0 0}
+    .summary .panel-h{cursor:pointer}
+    .summary.collapsed .panel-b{display:none}
+    .picks-h,#picks{display:none}
+  }
+
+  .overlay{position:fixed;inset:0;background:rgba(20,28,23,.55);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:.3s;z-index:60}
+  .overlay.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(580px,100%);background:var(--paper);box-shadow:-20px 0 60px -20px rgba(0,0,0,.5);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.1,1);z-index:61;overflow-y:auto}
+  .drawer.open{transform:none}
+  .dr-close{position:fixed;top:14px;right:16px;z-index:62;width:38px;height:38px;border-radius:50%;border:none;background:var(--card);box-shadow:0 4px 12px rgba(0,0,0,.25);font-size:18px;cursor:pointer;color:var(--ink)}
+  .dr-hero{height:280px;position:relative;background:linear-gradient(135deg,#c9bfa6,#9caa9b)}
+  .dr-hero img{width:100%;height:100%;object-fit:cover}
+  .dr-hero .grad{position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(20,28,23,.82))}
+  .dr-hero .htitle{position:absolute;bottom:18px;left:24px;right:24px;color:#fff}
+  .dr-hero .htitle .rg{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
+  .dr-hero .htitle h2{font-family:'Fraunces',serif;font-size:32px;font-weight:600;line-height:1;margin-top:5px;text-shadow:0 2px 10px rgba(0,0,0,.4)}
+  .dr-body{padding:22px 24px 70px}
+  .dr-meta{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+  .dr-meta span{font-family:'DM Mono',monospace;font-size:11.5px;padding:6px 11px;background:var(--card);border:1px solid var(--line);border-radius:20px}
+  .dr-sec{margin-bottom:20px}
+  .dr-sec h4{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .dr-sec h4::after{content:"";flex:1;height:1px;background:var(--line)}
+  .dr-sec p{font-size:15px;color:var(--ink)}
+  .dr-sec.simple ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .dr-sec.simple li{font-size:14.5px;padding-left:22px;position:relative}
+  .dr-sec.simple li::before{content:"◆";position:absolute;left:0;color:var(--glacier);font-size:11px;top:3px}
+  .dr-sec.tips li::before{content:"✦";color:var(--gold)}
+
+  /* stop list */
+  .stop{border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin-bottom:10px;background:var(--card)}
+  .stop-h{display:flex;align-items:center;gap:9px;font-family:'Fraunces',serif;font-size:17px;font-weight:600}
+  .stop-tag{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:20px;background:rgba(77,124,138,.12);color:var(--glacier);white-space:nowrap}
+  .stop-tag.must{background:rgba(192,85,44,.14);color:var(--terra)}
+  .stop-d{font-size:13.5px;color:var(--ink-soft);margin-top:5px}
+  .stop-opt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+  @media(max-width:480px){.stop-opt{grid-template-columns:1fr}}
+  .stop-opt div{font-size:12px;padding:8px 10px;border-radius:8px;line-height:1.4}
+  .stop-opt .sp{background:rgba(184,134,11,.1);border:1px solid rgba(184,134,11,.3)}
+  .stop-opt .bu{background:rgba(47,74,58,.07);border:1px solid var(--line)}
+  .stop-opt b{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:2px}
+  .stop-opt .sp b{color:var(--gold)}.stop-opt .bu b{color:var(--pine)}
+  .stop-cost{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--ink-soft);margin-top:7px}
+
+  .gallery{display:flex;gap:9px;overflow-x:auto;padding-bottom:8px}
+  .gallery img{height:115px;border-radius:8px;flex:0 0 auto;object-fit:cover;cursor:zoom-in;border:1px solid var(--line);background:var(--paper-2)}
+  .cost{font-family:'DM Mono',monospace;font-size:14px;background:rgba(47,74,58,.07);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+  .dr-actions{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
+  .dr-actions button,.dr-actions a{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.04em;text-transform:uppercase;padding:11px 18px;border-radius:30px;cursor:pointer;text-decoration:none;text-align:center;border:1.5px solid var(--pine);transition:.2s}
+  .dr-keep{background:var(--pine);color:#fff;border:none}
+  .dr-keep.dropped{background:transparent;color:var(--pine)}
+  .dr-link{background:transparent;color:var(--pine)}
+
+  footer{text-align:center;padding:34px 24px 120px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-soft);letter-spacing:.04em;line-height:1.7}
+  @media(max-width:940px){footer{padding-bottom:190px}}
+
+  /* ---------- view tabs ---------- */
+  .viewtabs{display:flex;gap:8px;margin:14px 0 2px}
+  .vtab{flex:0 0 auto;font-family:'DM Mono',monospace;font-size:12.5px;letter-spacing:.04em;background:var(--card);border:1.5px solid var(--line);color:var(--ink-soft);padding:10px 18px;border-radius:30px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:7px}
+  .vtab:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+  .vtab.active{background:var(--pine);color:var(--paper);border-color:var(--pine)}
+  .vtab .vcount{font-size:10.5px;background:var(--terra);color:#fff;border-radius:20px;padding:1px 7px;min-width:18px;text-align:center}
+  .vtab.active .vcount{background:rgba(255,255,255,.22)}
+  [hidden]{display:none!important}
+
+  /* ---------- ideas view ---------- */
+  .ideas-head{margin:22px 0 6px}
+  .ideas-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,4.5vw,44px);line-height:1;letter-spacing:-.01em}
+  .ideas-head h2 em{font-style:italic;color:var(--terra)}
+  .ideas-head p{max-width:640px;margin-top:10px;font-size:15px;color:var(--ink-soft)}
+  .ideas-grid{display:grid;grid-template-columns:1fr 340px;gap:40px;align-items:start;margin:22px 0 60px}
+  @media(max-width:940px){.ideas-grid{grid-template-columns:1fr;gap:26px}}
+
+  .idea-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .idea-search{flex:1;min-width:200px;font-family:'Archivo',sans-serif;font-size:14px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:30px;padding:11px 18px;outline:none;transition:.2s}
+  .idea-search:focus{border-color:var(--pine);box-shadow:0 0 0 2px rgba(47,74,58,.14)}
+  .idea-filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+  .fchip{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.03em;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);padding:6px 12px;border-radius:20px;cursor:pointer;transition:.18s}
+  .fchip:hover{border-color:var(--pine);color:var(--pine)}
+  .fchip.active{background:var(--glacier);color:#fff;border-color:var(--glacier)}
+
+  .idea-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:680px){.idea-cards{grid-template-columns:1fr}}
+  .idea{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 16px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .2s}
+  .idea:hover{transform:translateY(-2px)}
+  .idea .icat{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--glacier)}
+  .idea h3{font-family:'Fraunces',serif;font-weight:600;font-size:20px;line-height:1.08;margin:5px 0 3px}
+  .idea .iarea{font-family:'DM Mono',monospace;font-size:11px;color:var(--terra);margin-bottom:7px}
+  .idea .idesc{font-size:13.5px;color:var(--ink-soft);margin-bottom:12px}
+  .idea-foot{display:flex;gap:8px;margin-top:auto;align-items:center}
+  .addbtn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;border:1.5px solid var(--pine);color:var(--pine);background:transparent;padding:7px 13px;border-radius:30px;cursor:pointer;transition:.2s;white-space:nowrap}
+  .addbtn:hover{background:rgba(47,74,58,.07)}
+  .addbtn.saved{background:var(--pine);color:#fff}
+  .idea .ilink{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--line)}
+  .idea .ilink:hover{color:var(--terra)}
+  .ideas-empty{grid-column:1/-1;text-align:center;padding:40px 20px;font-size:14px;color:var(--ink-soft);font-style:italic}
+
+  /* ---------- bucket list panel ---------- */
+  .bucket{position:sticky;top:74px}
+  .bucket .panel-h{background:var(--terra)}
+  .bk-add{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+  .bk-add input{font-family:'Archivo',sans-serif;font-size:14px;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:10px 13px;outline:none}
+  .bk-add input:focus{border-color:var(--terra)}
+  .bk-add button{font-family:'DM Mono',monospace;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;background:var(--terra);color:#fff;border:none;padding:11px;border-radius:10px;cursor:pointer;transition:.2s}
+  .bk-add button:hover{filter:brightness(1.05)}
+  #bk-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+  #bk-list li{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;align-items:flex-start;gap:10px}
+  #bk-list .bk-txt{flex:1;min-width:0}
+  #bk-list .bk-t{font-family:'Fraunces',serif;font-size:15.5px;font-weight:600;line-height:1.15}
+  #bk-list .bk-n{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  #bk-list .bk-a{font-family:'DM Mono',monospace;font-size:10px;color:var(--terra);margin-top:3px;letter-spacing:.04em}
+  #bk-list .bk-del{flex:0 0 auto;border:none;background:transparent;color:var(--ink-soft);font-size:16px;cursor:pointer;line-height:1;padding:2px 4px;border-radius:6px;transition:.15s}
+  #bk-list .bk-del:hover{color:var(--terra);background:rgba(192,85,44,.1)}
+  .bk-empty{font-size:13px;color:var(--ink-soft);font-style:italic;text-align:center;padding:18px 8px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">Indie Campers · Field Guide</div>
+    <h1>The Great <em>Alpine</em> Loop</h1>
+    <p class="sub">VENEZIA → SWITZERLAND → AUSTRIA → DOLOMITES → VENEZIA · 1 – 17 AUG 2026</p>
+    <p class="intro">Every leg mapped with its bucket-list <b>anchor</b> plus the worthwhile stops along the way — viewpoints, lake swims, towns, activities and hidden gems. Pricey stops show a <b>splurge vs budget</b> call. <b>Tap any card or map pin</b> for the full breakdown.</p>
+    <div class="legend">
+      <span>🔭 Viewpoint</span><span>🥾 Hike</span><span>🏊 Swim</span><span>🪂 Activity</span><span>🏘 Town</span><span>🍽 Food</span><span>💎 Hidden gem</span><span>🌙 Van pitch</span><span style="color:var(--terra)">● must-do (locked)</span>
+    </div>
+
+    <div class="options">
+      <div class="opt-h">① Choose a starting route</div>
+      <div class="opt-row" id="optRow">
+        <button class="opt active" data-preset="grand">
+          <div class="ot">🏔 The Grand Loop</div>
+          <div class="od">All three countries — Switzerland, Austria & the Dolomites. The full bucket-list run.</div>
+          <div class="om">16 nights · ~32h driving · most ambitious</div>
+        </button>
+        <button class="opt" data-preset="easy">
+          <div class="ot">🌿 Easy Pace</div>
+          <div class="od">Skip Switzerland. Austria + Dolomites only — fewer, shorter drives, more lingering.</div>
+          <div class="om">10 nights · ~14h driving · most relaxed</div>
+        </button>
+        <button class="opt" data-preset="swissdolo">
+          <div class="ot">🇨🇭 Swiss & Dolomites</div>
+          <div class="od">Switzerland + Dolomites with the Stelvio Pass, trimming deeper Austria.</div>
+          <div class="om">13 nights · ~26h driving · scenery max</div>
+        </button>
+      </div>
+    </div>
+
+    <div id="map"></div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="wrap">
+    <div class="ctl-stat"><b id="c-nights">16</b> nights</div>
+    <div class="ctl-stat"><b id="c-stops">16</b> stops</div>
+    <div class="ctl-stat"><b id="c-drive">~32h</b> driving</div>
+    <div class="ctl-stat"><b id="c-budget">€0</b> est. · 2 pax</div>
+    <div class="ctl-spacer"></div>
+    <div class="toggle" id="attrToggle"><div class="switch"></div><span>Show all attractions on map</span></div>
+    <div class="toggle on" id="swissToggle"><div class="switch"></div><span>Include Switzerland</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="viewtabs">
+    <button class="vtab active" data-view="trip">🗺 Itinerary</button>
+    <button class="vtab" data-view="ideas">✨ Ideas &amp; Bucket List <span class="vcount" id="bk-count">0</span></button>
+  </div>
+</div>
+
+<div class="wrap" id="view-trip">
+  <div class="grid">
+    <main>
+      <div class="timeline" id="timeline">
+        <div class="bookend">
+          <div class="node">▶</div>
+          <div class="card"><div class="ico">🔑</div><div>
+            <h3>Pick up the van — Venice</h3>
+            <div class="meta">FRI 1 AUG · afternoon collection · stock groceries, fuel up</div>
+          </div></div>
+        </div>
+        <div id="cards"></div>
+        <div class="bookend">
+          <div class="node">■</div>
+          <div class="card"><div class="ico">🏁</div><div>
+            <h3>Return van AM → Rialto, Venice</h3>
+            <div class="meta">MON 17 AUG · Venice 17–19 · train to Milan 19th · fly Iceland 20th</div>
+          </div></div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="summary" id="summary">
+      <div class="panel">
+        <div class="panel-h" id="panelHead">🧭 Your Trip</div>
+        <div class="panel-b">
+          <div class="big-stats">
+            <div><div class="n" id="s-nights">16</div><div class="l">nights</div></div>
+            <div><div class="n" id="s-stops">16</div><div class="l">stops</div></div>
+            <div><div class="n" id="s-drive">32h</div><div class="l">drive</div></div>
+          </div>
+          <div class="picks-h">Itinerary · tap to open</div>
+          <ul id="picks"></ul>
+          <div class="advice" id="advice"></div>
+          <div class="budget-box">
+            <div class="picks-h" style="border:none;padding-top:0;margin-bottom:6px">Estimated trip cost</div>
+            <div class="bud-total" id="bud-total">€0 <small>for two</small></div>
+            <div class="bud-split"><span class="chf" id="bud-chf">🇨🇭 CHF 0</span><span id="bud-eur">🇪🇺 €0</span></div>
+            <div class="bud-toggles">
+              <button id="modeBudget" class="on">Budget picks</button>
+              <button id="modeSplurge">Splurge</button>
+            </div>
+            <div class="bud-toggles">
+              <button id="pcCouple" class="on">Per couple</button>
+              <button id="pcPerson">Per person</button>
+            </div>
+            <div class="bud-break" id="bud-break"></div>
+            <div class="bud-note">Rough on-the-road spend — campsites, activities, food, fuel, tolls &amp; vignettes. Excludes van rental &amp; flights. CHF shown separately is your actual Swiss cash. Confirm before booking.</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<section class="wrap" id="view-ideas" hidden>
+  <div class="ideas-head">
+    <h2>Travel <em>ideas</em> &amp; your bucket list</h2>
+    <p>Browse alternatives and detours beyond the core loop — extra lakes, scenic passes, hidden valleys and nearby countries. Save any to your bucket list, or jot your own. It all persists on this device.</p>
+  </div>
+  <div class="ideas-grid">
+    <div>
+      <div class="idea-tools">
+        <input type="search" class="idea-search" id="ideaSearch" placeholder="Search ideas — e.g. lake, Slovenia, glacier, wine…" />
+      </div>
+      <div class="idea-filters" id="ideaFilters"></div>
+      <div class="idea-cards" id="ideaCards"></div>
+    </div>
+    <aside class="bucket">
+      <div class="panel">
+        <div class="panel-h">⭐ Your Bucket List</div>
+        <div class="panel-b">
+          <div class="bk-add">
+            <input type="text" id="bkTitle" placeholder="Add your own idea…" />
+            <input type="text" id="bkNote" placeholder="Note (optional) — why, where, when" />
+            <button id="bkAdd">+ Add to bucket list</button>
+          </div>
+          <ul id="bk-list"></ul>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<footer>Built for Yuanxin &amp; Chongyu · photos &amp; text live from Wikipedia · drive times, costs &amp; sub-stop pin positions are estimates to confirm</footer>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <button class="dr-close" id="drClose">✕</button>
+  <div class="dr-hero" id="drHero"></div>
+  <div class="dr-body" id="drBody"></div>
+</aside>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const REGION={italy:{name:'Italy',color:'#c0552c'},swiss:{name:'Switzerland',color:'#4d7c8a'},austria:{name:'Austria',color:'#2f4a3a'},dolomites:{name:'Dolomites',color:'#9c5a6a'}};
+const TAG={view:'🔭',hike:'🥾',swim:'🏊',act:'🪂',town:'🏘',food:'🍽',gem:'💎',van:'🌙'};
+
+// s(name, tag, [lat,lng], desc, {cost, sp, bu, must, wiki})
+function s(n,t,ll,d,o={}){return Object.assign({n,t,ll,d},o);}
+
+const DAYS=[
+ {id:'garda',date:'SAT 1 AUG',drive:2,region:'italy',ll:[45.55,10.62],wiki:'Lake Garda',short:'Lake Garda',
+  note:"Ease into van life on Italy's biggest lake — a warm first night before the mountains begin.",
+  sleep:'Peschiera / Sirmione',badges:[],
+  why:["Sirmione's thermal peninsula and Scaliger water-castle","Easy turquoise swims to shake off the flight","A soft, lively landing into van life"],
+  tips:["Big cheap supermarket shop here — Swiss prices later will sting","Camping Butterfly / San Benedetto have lake-edge pitches; book ahead"],
+  cost:"Campsite €35–55 · most stops free",
+  stops:[
+    s('Sirmione & Grotte di Catullo','town',[45.498,10.606],'Storybook lakefront town on a thin peninsula, with sprawling Roman villa ruins at the tip.',{cost:'Ruins €8pp'}),
+    s('Jamaica Beach swim','swim',[45.503,10.604],'Flat-rock shallows off Sirmione with impossibly clear turquoise water — the iconic Garda swim.',{must:true,cost:'Free'}),
+    s('Borghetto sul Mincio','gem',[45.396,10.733],'Fairytale medieval watermill hamlet on the river — a quiet detour most tourists miss.',{cost:'Free'}),
+    s('Bardolino lakeside dinner','food',[45.553,10.717],'Your Italy food night — lakefront trattoria, fresh lake fish and a glass of local Bardolino red.',{must:true,cost:'~€30pp'})
+  ]},
+
+ {id:'lucerne',date:'SUN 2 AUG',drive:4,region:'swiss',swiss:true,ll:[47.05,8.31],wiki:'Lucerne',short:'Lucerne & Pilatus',
+  note:"Transit over the Gotthard into Switzerland, then two wishlist thrills by the lake.",
+  sleep:'Lucerne',badges:[{t:'Buy Swiss vignette at border',w:true}],
+  why:["Fräkigaudi toboggan — Switzerland's longest summer run","Stoos ridge — cliff walk off the world's steepest funicular","Painted old town and the wooden Chapel Bridge"],
+  tips:["Swiss vignette (CHF 40) mandatory — buy at the border","Cook in the van; Switzerland is eye-wateringly pricey"],
+  cost:"Vignette CHF 40 · activities below",
+  stops:[
+    s('Fräkigaudi toboggan (Pilatus)','act',[46.978,8.262],'1,350m summer toboggan run down Fräkmüntegg — your wishlist thrill. Ride the cable car up.',{must:true,cost:'~CHF 9/run',sp:'Pilatus golden round-trip (cogwheel+boat) ~CHF 90pp',bu:'Just the toboggan + cable car ~CHF 37pp'}),
+    s('Stoos Ridge Trail','hike',[46.978,8.660],'Easy 2h cliff-edge ridge walk between Klingenstock and Fronalpstock, reached by the steepest funicular on earth.',{cost:'Funicular ~CHF 39pp'}),
+    s('Chapel Bridge & Lion Monument','town',[47.052,8.308],'14th-c covered bridge and the mournful carved lion — a free evening old-town wander.',{cost:'Free'}),
+    s('Lake Lucerne swim (Lido)','swim',[47.044,8.330],'Cool off in the lake at the city Lido or a free shoreline spot.',{must:true,cost:'Lido ~CHF 7 / free spots'})
+  ]},
+
+ {id:'jungfrau1',date:'MON 3 AUG',drive:1,region:'swiss',swiss:true,ll:[46.593,7.909],wiki:'Lauterbrunnen',short:'Lauterbrunnen Valley',
+  note:"Into the Jungfrau valley — 72 waterfalls off sheer walls. Your base for three nights, and your paragliding day.",
+  sleep:'Lauterbrunnen',badges:[{t:'Book campsite NOW — peak Aug',w:true}],
+  why:["The most jaw-dropping valley floor in the Alps","Tandem paragliding over the valley — your locked must-do","Cliff villages of Mürren & Wengen above"],
+  tips:["Camping Jungfrau books months ahead for August — reserve now","Park and use cable cars/trains; valley driving is limited"],
+  cost:"Campsite CHF 45–60 · activities below",
+  stops:[
+    s('Paragliding over Lauterbrunnen','act',[46.598,7.908],'Tandem flight floating past waterfalls and cliffs — the signature Swiss adrenaline hit and your locked must-do.',{must:true,cost:'~CHF 180pp'}),
+    s('Staubbach Falls','view',[46.591,7.906],'300m freefall waterfall drifting in the wind right above the village — a short free walk behind it.',{cost:'Free'}),
+    s('Trümmelbach Falls','gem',[46.583,7.899],'Ten glacier waterfalls thundering *inside* the mountain, reached by a tunnel lift. Eerie and unforgettable.',{cost:'CHF 14pp'}),
+    s('Mürren cliff village','town',[46.559,7.892],'Car-free timber village on a ledge with full Eiger-Mönch-Jungfrau views; great fondue dinner here.',{must:true,cost:'Cable car ~CHF 12 · fondue ~CHF 28pp'})
+  ]},
+
+ {id:'jungfraujoch',date:'TUE 4 AUG',drive:0,region:'swiss',swiss:true,ll:[46.547,7.980],wiki:'Jungfraujoch',short:'Jungfraujoch',
+  note:"The big one — 'Top of Europe'. Or swap the steep ticket for a cheaper, hike-rich alternative.",
+  sleep:'Lauterbrunnen',badges:[{t:'Splurge stop — pick a clear day',w:false}],
+  why:["Europe's highest railway station at 3,454m","Ice Palace inside the glacier + Sphinx deck","The vast Aletsch glacier below you"],
+  tips:["First train = clear morning views before cloud builds","Only worth it on a bluebird day — check the webcams"],
+  cost:"See splurge vs budget below",
+  stops:[
+    s('Jungfraujoch railway','view',[46.547,7.980],'Cogwheel through the Eiger to the 3,454m saddle, ice palace and glacier panorama.',{cost:'~CHF 230pp return',sp:'Full Jungfraujoch — once-in-a-lifetime, ~CHF 230pp',bu:'Stop at Kleine Scheidegg (Eiger face) or ride Männlichen ~CHF 60pp'}),
+    s('First → Bachalpsee hike','hike',[46.659,8.057],'Budget alternative: cable car to First, then easy 1h walk to the mirror-still Bachalpsee. Half the price, arguably better.',{cost:'First ~CHF 75pp'}),
+    s('Lake Brienz swim (Iseltwald)','swim',[46.706,7.974],'Detour to the electric-turquoise lake — swim at Iseltwald or Bönigen on the way back.',{must:true,cost:'Free'})
+  ]},
+
+ {id:'first',date:'WED 5 AUG',drive:0,region:'swiss',swiss:true,ll:[46.659,8.057],wiki:'Grindelwald',short:'Grindelwald First & Schilthorn',
+  note:"A big-views play day: cliff walks, scooters, ziplines and a revolving Bond summit.",
+  sleep:'Lauterbrunnen',badges:[],
+  why:["First Cliff Walk cantilevered over the void","The Trottibike scooter descent (your wishlist)","Schilthorn's Bond-film revolving restaurant"],
+  tips:["Do First OR Schilthorn — both in a day is rushed","Trottibikes are first-come at the Bort mid-station"],
+  cost:"First pass ~CHF 75pp · activities below",
+  stops:[
+    s('First Cliff Walk & Flyer','act',[46.659,8.057],'Glass-floored cliff walkway, then zip back toward Grindelwald on the First Flyer.',{cost:'Flyer ~CHF 31'}),
+    s('Trottibike scooter descent','act',[46.645,8.054],'Kick-scooter the winding mountain road down from Bort — your wishlist, pure fun.',{must:true,cost:'~CHF 19'}),
+    s('Schilthorn / Piz Gloria','view',[46.558,7.835],'Revolving 360° summit restaurant from On Her Majesty\'s Secret Service.',{cost:'see options',sp:'Full Schilthorn cable car ~CHF 108pp',bu:'Ride only to Birg mid-station for the thrill walk ~CHF 70pp'}),
+    s('Lake Thun swim (Spiez)','swim',[46.686,7.680],'Vineyard-backed bay at Spiez — a gentler, warmer swim than the glacier lakes.',{must:true,cost:'Free'})
+  ]},
+
+ {id:'zermatt',date:'THU 6 AUG',drive:2.5,region:'swiss',swiss:true,ll:[46.020,7.749],wiki:'Zermatt',short:'Zermatt',
+  note:"Car-free village beneath the Matterhorn — park at Täsch and shuttle up.",
+  sleep:'Täsch / Randa',badges:[{t:'Car-free — park at Täsch',w:false}],
+  why:["First look at the Matterhorn over the rooftops","Charming car-free Walliser village","Gateway to Gornergrat and the glaciers"],
+  tips:["Vans park at the Matterhorn Terminal in Täsch (~CHF 16/day)","Camping Alphubel in Täsch is the practical base"],
+  cost:"Täsch parking ~CHF 16/day · shuttle ~CHF 8pp",
+  stops:[
+    s('Kirchbrücke Matterhorn view','view',[46.020,7.748],'The classic shot — Matterhorn framed down the river from the church bridge, best at sunrise.',{cost:'Free'}),
+    s('Sunnegga & Leisee','swim',[46.027,7.766],'Funicular to a little lake that mirrors the Matterhorn — and you can actually swim in it.',{must:true,cost:'Funicular ~CHF 27pp'}),
+    s('Gorner Gorge','gem',[46.013,7.745],'Boardwalks through a deep marbled gorge just outside town — a cool, quiet hour.',{cost:'~CHF 6pp'}),
+    s('Charr / raclette night','food',[46.020,7.747],'Your Swiss cheese moment — bubbling raclette or fondue in the village.',{cost:'~CHF 35pp'})
+  ]},
+
+ {id:'matterhorn',date:'FRI 7 AUG',drive:0,region:'swiss',swiss:true,ll:[45.976,7.658],wiki:'Matterhorn',short:'Gornergrat & Matterhorn',
+  note:"The Gornergrat railway and the most famous peak in the Alps — Switzerland's finale.",
+  sleep:'Täsch',badges:[],
+  why:["Cog railway to a 3,089m, 29-peak panorama","The Riffelsee Matterhorn reflection","Easy downhill alpine hike back"],
+  tips:["Morning light is best on the Matterhorn's east face","Ride up, hike down a stage to save francs and see more"],
+  cost:"See splurge vs budget below",
+  stops:[
+    s('Gornergrat railway','view',[45.983,7.786],'Switzerland\'s highest open-air cog railway to a glacier-ringed summit terrace.',{cost:'~CHF 132pp',sp:'Full Gornergrat return ~CHF 132pp',bu:'One-way up, hike down via Riffelberg ~CHF 66pp'}),
+    s('Riffelsee reflection','hike',[45.991,7.770],'Short walk from Rotenboden to the tarn that mirrors the Matterhorn perfectly — the postcard.',{must:false,cost:'Free once up'}),
+    s('Glacier Paradise (optional)','view',[45.938,7.730],'Europe\'s highest cable-car station at 3,883m with an ice palace — for serious splurgers.',{cost:'~CHF 120pp'})
+  ]},
+
+ {id:'innsbruck1',date:'SAT 8 AUG',drive:4.5,region:'austria',ll:[47.269,11.394],wiki:'Innsbruck',short:'Drive east → Innsbruck',
+  note:"The long haul east. Break it with turquoise lakes and a tiny country, arrive Innsbruck by evening.",
+  sleep:'Innsbruck',badges:[{t:'Longest drive of the trip',w:true}],
+  why:["Links the Swiss and Austrian Alps","Stunning Fernpass lakes to break the drive","Optional Liechtenstein country-tick"],
+  tips:["Start early to beat A12 holiday traffic","Austria needs its own vignette — sort it before the border"],
+  cost:"Austria vignette ~€12 · fuel is the main cost",
+  stops:[
+    s('Liechtenstein (Vaduz)','town',[47.141,9.521],'Tick off a whole country in an afternoon — castle above the vineyards, passport stamp at the tourist office.',{cost:'Free · stamp €3'}),
+    s('Blindsee / Fernsteinsee','swim',[47.366,10.882],'Jewel-turquoise lakes right by the Fernpass road — the perfect mid-drive swim and picnic.',{must:true,cost:'Free / small parking fee'}),
+    s('St Anton am Arlberg','town',[47.130,10.262],'Famous ski town for a coffee-and-strudel leg stretch over the Arlberg pass.',{cost:'Free'})
+  ]},
+
+ {id:'innsbruck2',date:'SUN 9 AUG',drive:0,region:'austria',ll:[47.269,11.394],wiki:'Innsbruck',short:'Innsbruck',
+  note:"Imperial old town wrapped in mountains, with a cable car straight to 2,000m.",
+  sleep:'Innsbruck',badges:[],
+  why:["Golden Roof and pastel old town","Nordkette — city centre to alpine ridge in 20 min","Architectural funicular by Zaha Hadid"],
+  tips:["Nordkette funicular leaves from the centre — no car needed","Climb the City Tower for the rooftop-and-peaks view"],
+  cost:"Nordkette ~€44pp · old town free",
+  stops:[
+    s('Nordkettenbahn','view',[47.308,11.385],'Zaha Hadid funicular + cable cars from downtown to a 2,256m ridge over the city.',{cost:'see options',sp:'All the way to Hafelekar ridge ~€44pp',bu:'Just to Hungerburg terrace for the view ~€10pp'}),
+    s('Golden Roof & Old Town','town',[47.269,11.393],'Gilded oriel, medieval lanes, Hofkirche — a free wander through Habsburg history.',{cost:'Free'}),
+    s('Bergisel Ski Jump','view',[47.249,11.400],'Glide up the futuristic Olympic jump tower for a panorama and a coffee at the top.',{cost:'~€11pp'}),
+    s('Tyrolean dinner','food',[47.269,11.393],'Austria food-night option — Stiftskeller beer garden, schnitzel and a Tyrolean beer.',{must:true,cost:'~€25pp'})
+  ]},
+
+ {id:'salzburg',date:'MON 10 AUG',drive:2,region:'austria',ll:[47.801,13.045],wiki:'Salzburg',short:'Salzburg',
+  note:"Mozart's baroque city — clifftop fortress, domes, beer gardens and Sound of Music.",
+  sleep:'Salzburg',badges:[],
+  why:["Hohensalzburg, a vast intact medieval fortress","UNESCO baroque old town and Mozart's house","Monastery beer hall — your Austria food night"],
+  tips:["Park & ride on the edge; the centre is tight for vans","Funicular up the fortress beats the summer climb"],
+  cost:"Fortress + funicular ~€16pp · campsite €30–40",
+  stops:[
+    s('Hohensalzburg Fortress','view',[47.795,13.047],'Clifftop castle over the city — ramparts, princely rooms and rooftop panoramas.',{cost:'~€16pp w/ funicular'}),
+    s('Old Town & Getreidegasse','town',[47.800,13.043],'Wrought-iron signs, Mozart\'s birthplace, Domquartier squares — free to roam.',{cost:'Free'}),
+    s('Augustiner Bräustübl','food',[47.806,13.030],'Cavernous monastery beer garden where you pour your own stein under chestnut trees — your locked Austria food night.',{must:true,cost:'~€20pp'}),
+    s('Hellbrunn trick fountains','gem',[47.762,13.061],'Playful 400-year-old water-joke gardens — silly, soaking, great on a hot day.',{cost:'~€13pp'})
+  ]},
+
+ {id:'hallstatt',date:'TUE 11 AUG',drive:1.5,region:'austria',ll:[47.561,13.649],wiki:'Hallstatt',short:'Hallstatt & Salzkammergut',
+  note:"The lake-village postcard come to life — go early, before the day-trippers.",
+  sleep:'Obertraun / Bad Goisern',badges:[{t:'Vans restricted — park & walk in',w:false}],
+  why:["The world's most photographed alpine village","Oldest salt mine on earth + Skywalk","A ring of swimmable Salzkammergut lakes"],
+  tips:["Day-tour buses hit ~10am — arrive at opening or stay till evening","Park at P1/P2 or stay in Obertraun across the lake"],
+  cost:"See splurge vs budget below",
+  stops:[
+    s('Hallstatt village & Classic view','town',[47.561,13.649],'Wander the lanes and hit the famous Classic Hallstatt viewpoint — completely free.',{cost:'Free'}),
+    s('Salzwelten salt mine + Skywalk','view',[47.554,13.643],'Funicular up to the oldest salt mine and the "Welterbeblick" platform jutting over the lake.',{cost:'see options',sp:'Salt mine + Skywalk combo ~€40pp',bu:'Just the Skywalk viewpoint via funicular ~€20pp'}),
+    s('Gosausee','swim',[47.534,13.490],'Mirror lake reflecting the Dachstein glacier — a stunning, quiet free swim nearby.',{must:true,cost:'Free'}),
+    s('Five Fingers viewpoint','view',[47.527,13.692],'Hand-shaped platform over a sheer drop on Krippenstein — vertigo and glory.',{cost:'Cable car ~€40pp'})
+  ]},
+
+ {id:'grossglockner',date:'WED 12 AUG',drive:2,region:'austria',ll:[47.074,12.829],wiki:'Grossglockner High Alpine Road',short:'Grossglockner Road',
+  note:"Austria's greatest drive — 36 hairpins to 2,500m, ending on Lake Zell.",
+  sleep:'Zell am See',badges:[{t:'Toll road ~€40',w:false}],
+  why:["36 hairpins to 2,504m at Hochtor","Glacier and highest-peak views at Franz-Josefs-Höhe","Marmots, ibex and alpine meadows"],
+  tips:["Toll (~€39) includes same-day re-entry — go early","Low gear on the descents; it's steep but well-built"],
+  cost:"Toll ~€39/vehicle · Zell campsite €35",
+  stops:[
+    s('Franz-Josefs-Höhe','view',[47.075,12.751],'The road\'s climax — staring straight at the Pasterze glacier and the Grossglockner summit.',{cost:'Incl. in toll'}),
+    s('Edelweissspitze','view',[47.125,12.831],'Short cobbled spur to the road\'s highest point — a 360° sea of peaks.',{cost:'Incl. in toll'}),
+    s('Krimml Waterfalls','gem',[47.207,12.174],'Optional detour to Europe\'s tallest waterfall — a misty forest trail beside 380m of falls.',{cost:'~€8pp'}),
+    s('Zell am See lakefront','swim',[47.323,12.794],'End the day with a swim and a lakeside dinner on the Zeller See.',{must:true,cost:'Free swim'})
+  ]},
+
+ {id:'toblach',date:'THU 13 AUG',drive:3,region:'dolomites',ll:[46.730,12.221],wiki:'Toblach',short:'Into the Dolomites',
+  note:"Drop south into South Tyrol — Italy with a German accent and dolomite spires.",
+  sleep:'Toblach / Niederdorf',badges:[],
+  why:["The handover from Austria into South Tyrol","Easy first dolomite lakes and valleys","Speck, dumplings and a great campsite base"],
+  tips:["Restock in Bruneck/Toblach; valley shops are tiny","Camping Olympia Toblach is top-rated and well-serviced"],
+  cost:"Campsite €38–48 · stops below",
+  stops:[
+    s('Lienz','town',[46.829,12.769],'Sunny Tyrolean market town on the way down — arcaded streets and a castle.',{cost:'Free'}),
+    s('Lago di Dobbiaco','swim',[46.715,12.226],'Calm reed-fringed lake with an easy loop and a swim spot below the peaks.',{must:true,cost:'Free'}),
+    s('San Candido / Innichen','gem',[46.733,12.279],'Pretty pastel village with a Romanesque collegiate church — gelato stop.',{cost:'Free'}),
+    s('First Südtirol dinner','food',[46.730,12.221],'Speck, canederli dumplings and a Lagrein red — your South Tyrol food night begins.',{must:true,cost:'~€28pp'})
+  ]},
+
+ {id:'braies',date:'FRI 14 AUG',drive:0,region:'dolomites',ll:[46.694,12.085],wiki:'Pragser Wildsee',short:'Pragser Wildsee + Tre Cime',
+  note:"The emerald lake of every postcard, then the most iconic hike in the Dolomites.",
+  sleep:'Cortina / Misurina',badges:[{t:'Braies vehicle ban 9:30–16:00 · arrive before 9am',w:true}],
+  why:["Lago di Braies — turquoise water and wooden rowboats","Tre Cime di Lavaredo — the three towers loop","Misurina lake for the golden-hour reflection"],
+  tips:["Braies road is closed to cars ~9:30–16:00 in summer — be there before 9am","Tre Cime toll road to Rifugio Auronzo saves a long climb"],
+  cost:"Braies early-free · Tre Cime road ~€30",
+  stops:[
+    s('Lago di Braies','view',[46.694,12.085],'Row a wooden boat across glassy turquoise water beneath sheer cliffs. Dawn is magic and crowd-free.',{must:false,cost:'Boat €30/30min · parking ~€7/hr'}),
+    s('Tre Cime di Lavaredo loop','hike',[46.618,12.301],'The Dolomites\' signature ~4h circuit around the three towers, past rifugios and WWI tunnels. Moderate, mostly level.',{cost:'Toll road ~€30/car'}),
+    s('Lago di Misurina','swim',[46.581,12.255],'Lakeside resort that turns gold at sunset; gentle stroll and a paddle.',{must:true,cost:'Free'}),
+    s('Lago d\'Antorno','gem',[46.610,12.273],'Tiny mirror lake on the Tre Cime road — the reflection shot everyone misses.',{cost:'Free'})
+  ]},
+
+ {id:'seceda',date:'SAT 15 AUG',drive:0,region:'dolomites',ll:[46.566,11.674],wiki:'Seceda',short:'Val Gardena & Seceda',
+  note:"Seceda's tilted knife-edge ridge, alpine meadows, and the great Dolomite passes.",
+  sleep:'Val Gardena / Bolzano',badges:[],
+  why:["Seceda's surreal tilted ridgeline","Alpe di Siusi — Europe's largest alpine meadow","Driving the Sella & Pordoi passes"],
+  tips:["Ortisei–Seceda cable car for fast morning light","Loop a couple of Sella Ronda passes if you've energy"],
+  cost:"Seceda cable car ~€45pp · campsite €40",
+  stops:[
+    s('Seceda ridge','view',[46.604,11.731],'Cable car to the otherworldly tilted ridge above Ortisei — one of the great Dolomite views.',{cost:'see options',sp:'Ortisei–Seceda cable car ~€45pp return',bu:'Drive to Alpe di Siusi base + meadow walk ~€18 bus'}),
+    s('Alpe di Siusi','hike',[46.541,11.610],'Rolling green high plateau under the Sassolungo spires — easy meadow trails, best at sunrise.',{must:false,cost:'Cable car/bus ~€18'}),
+    s('Ortisei','town',[46.576,11.672],'Woodcarving capital of Val Gardena — pretty pedestrian centre and gelato.',{cost:'Free'}),
+    s('Lago di Carezza','gem',[46.410,11.577],'The "rainbow lake" reflecting the Latemar — a quick stunner on the way toward Bolzano.',{cost:'Parking ~€6'}),
+    s('South Tyrol wine dinner','food',[46.566,11.674],'Your big food/wine night — a Gardena hut or a Bolzano-area winery: Gewürztraminer and Schlutzkrapfen.',{must:true,cost:'~€35pp'})
+  ]},
+
+ {id:'return',date:'SUN 16 AUG',drive:3,region:'italy',ll:[45.493,12.243],wiki:'Venice',short:'Back to Venice',
+  note:"A slow mountain morning, then an easy roll back to the lagoon for the hand-back.",
+  sleep:'Mestre',badges:[],
+  why:["Final dolomite views before the plains","A sparkling-wine detour through the Prosecco hills","Calm overnight near the depot"],
+  tips:["Refuel and empty the van's tanks before drop-off","Camping Jolly/Venezia in Mestre is close to depot + Venice bus"],
+  cost:"Mestre campsite €35 · fuel top-up",
+  stops:[
+    s('Prosecco Hills (Valdobbiadene)','gem',[45.897,12.012],'UNESCO vineyard ridges — a last Italian lunch with a glass of proper Prosecco straight from the source.',{must:true,cost:'Tasting ~€15pp'}),
+    s('Treviso','town',[45.666,12.243],'Canals, frescoed porticoes and tiramisù\'s birthplace — a relaxed final town stop.',{cost:'Free'}),
+    s('Mestre van prep','van',[45.493,12.243],'Settle near the depot, empty tanks, repack — ready for the easy morning hand-back.',{cost:'Campsite €35'})
+  ]},
+
+ /* ---------- optional add-ons ---------- */
+ {id:'liecht',date:'OPT · Aug 8',drive:0.5,region:'swiss',optional:true,ll:[47.141,9.521],wiki:'Vaduz',short:'Liechtenstein (Vaduz)',
+  note:"A tiny-country leg-stretch on the long Zermatt→Innsbruck drive.",
+  sleep:'(en route)',badges:[{t:'Add-on · breaks up Aug 8',w:false}],
+  why:["Tick off a whole country in an afternoon","Vaduz castle above the vineyards","Passport souvenir stamp"],
+  tips:["Worth ~1–2h; it's a stop, not a stay","Right on the Switzerland→Austria route"],
+  cost:"Free–€10 · passport stamp €3",
+  stops:[
+    s('Vaduz Castle viewpoint','view',[47.139,9.524],'Walk up to the princely castle gates for a vineyard-and-valley view.',{cost:'Free'}),
+    s('Passport stamp','gem',[47.141,9.521],'Get the novelty Liechtenstein stamp at the tourist office.',{cost:'€3'})
+  ]},
+
+ {id:'stelvio',date:'OPT · Dolomites link',drive:1,region:'dolomites',optional:true,ll:[46.528,10.454],wiki:'Stelvio Pass',short:'Stelvio Pass',
+  note:"The most spectacular driving pass in the Alps — 48 hairpins of pure theatre.",
+  sleep:'(en route)',badges:[{t:'Add-on · big van? check gradient',w:false}],
+  why:["48 stacked hairpins to 2,757m","Glacier and ridgeline views from the top","A rite of passage between Switzerland and the Dolomites"],
+  tips:["Big vans manage it but go early — it's slow and busy","Can close for weather even in summer; check first"],
+  cost:"Free · summit café",
+  stops:[
+    s('Stelvio summit','view',[46.529,10.454],'Stand at the top of the hairpin wall with a bratwurst and a coffee.',{cost:'Free'}),
+    s('Tibet hairpin viewpoint','view',[46.539,10.451],'The famous bend looking back down all 48 switchbacks.',{cost:'Free'})
+  ]},
+
+ {id:'bolzano',date:'OPT · Dolomites',drive:0.5,region:'dolomites',optional:true,ll:[46.498,11.354],wiki:'Bolzano',short:'Bolzano & Ötzi',
+  note:"South Tyrol's capital — a relaxed city rest-day with the world's oldest iceman.",
+  sleep:'Bolzano',badges:[],
+  why:["Ötzi the 5,300-year-old iceman","Porticoed streets, Italian-Tyrolean blend","Best apple strudel and a gentle day"],
+  tips:["Great rest day between hikes","Ritten cable car + narrow-gauge train for a half-day"],
+  cost:"Ötzi museum ~€14pp · agriturismo €35",
+  stops:[
+    s('South Tyrol Museum (Ötzi)','gem',[46.498,11.353],'Meet the astonishingly preserved Copper-Age iceman and his gear.',{cost:'~€14pp'}),
+    s('Ritten cable car','view',[46.517,11.355],'Glide above the city to earth-pyramid hoodoos and meadow walks.',{cost:'~€8pp'})
+  ]},
+
+ {id:'bled',date:'OPT · Slovenia detour',drive:2.5,region:'austria',optional:true,ll:[46.364,14.094],wiki:'Lake Bled',short:'Lake Bled (Slovenia)',
+  note:"A fairytale island church and clifftop castle — an easy detour east of Austria.",
+  sleep:'Bled',badges:[{t:'Add-on · adds a country',w:false}],
+  why:["Island church in a glacial lake","Clifftop Bled Castle","Cheaper than the Alps — and gorgeous"],
+  tips:["Row a traditional pletna boat to the island","Pairs if you swing south from Salzburg/Grossglockner"],
+  cost:"Pletna ~€18pp · castle ~€15pp · campsite €30",
+  stops:[
+    s('Bled Island','swim',[46.362,14.088],'Row out to the island church, ring the wishing bell, swim off the boat.',{must:true,cost:'Pletna ~€18pp'}),
+    s('Bled Castle','view',[46.369,14.101],'Clifftop medieval castle over the red rooftops and turquoise water.',{cost:'~€15pp'}),
+    s('Vintgar Gorge','gem',[46.393,14.078],'Boardwalk through an emerald river gorge a short drive away.',{cost:'~€10pp'})
+  ]}
+];
+
+const PRESETS={
+  grand:['garda','lucerne','jungfrau1','jungfraujoch','first','zermatt','matterhorn','innsbruck1','innsbruck2','salzburg','hallstatt','grossglockner','toblach','braies','seceda','return'],
+  easy:['garda','innsbruck1','innsbruck2','salzburg','hallstatt','grossglockner','toblach','braies','seceda','return','bolzano'],
+  swissdolo:['garda','lucerne','jungfrau1','jungfraujoch','first','zermatt','matterhorn','innsbruck1','stelvio','toblach','braies','seceda','return']
+};
+
+/* rough per-couple spend per day, in the day's native currency (Swiss legs = CHF).
+   act can be a flat number, or {sp,bu} for splurge vs budget. x = tolls/vignettes/misc. */
+const BUD={
+  garda:{camp:45,food:60,act:16},
+  lucerne:{camp:50,food:25,act:{sp:180,bu:74},x:40},
+  jungfrau1:{camp:55,food:56,act:360,x:28},
+  jungfraujoch:{camp:55,food:20,act:{sp:460,bu:120}},
+  first:{camp:55,food:30,act:{sp:300,bu:188}},
+  zermatt:{camp:50,food:70,act:66,x:32},
+  matterhorn:{camp:50,food:20,act:{sp:264,bu:132}},
+  innsbruck1:{camp:40,food:40,act:6,x:12},
+  innsbruck2:{camp:40,food:50,act:{sp:110,bu:42}},
+  salzburg:{camp:35,food:40,act:58},
+  hallstatt:{camp:40,food:30,act:{sp:160,bu:80}},
+  grossglockner:{camp:35,food:50,act:16,x:39},
+  toblach:{camp:43,food:56},
+  braies:{camp:40,food:40,act:60},
+  seceda:{camp:40,food:70,act:{sp:96,bu:42}},
+  return:{camp:35,food:40,act:30},
+  liecht:{x:6},
+  stelvio:{},
+  bolzano:{camp:35,food:30,act:44},
+  bled:{camp:30,food:40,act:86}
+};
+DAYS.forEach(d=>{d.bud=BUD[d.id]||{};});
+
+/* ---------- cards ---------- */
+const cardsEl=document.getElementById('cards');
+DAYS.forEach((day,i)=>{
+  day.kept=!day.optional;
+  const r=REGION[day.region];
+  const chips=(day.stops||[]).slice(0,4).map(st=>`<span class="stopchip">${TAG[st.t]||'•'} ${st.n}</span>`).join('');
+  const el=document.createElement('div');
+  el.className='day '+(day.kept?'kept':'dropped')+(day.optional?' optional':'');
+  el.id='day-'+day.id;
+  el.innerHTML=`
+    <div class="node">${day.optional?'+':(i+1)}</div>
+    <div class="card" data-open="${day.id}">
+      <div class="card-top">
+        <div class="photo" data-wiki="${day.wiki}" data-id="${day.id}">
+          <span class="region-chip" style="background:${r.color}">${r.name}</span>
+          <div class="ph-label">${day.short}</div>
+          <span class="expand-hint">click to explore ↗</span>
+        </div>
+        <div class="card-body">
+          <div class="meta"><span>${day.date}</span><span class="drive">${day.drive>0?'🚐 '+day.drive+'h':'⛺ no transit'}</span></div>
+          <h3>${day.short}</h3>
+          <div class="wikiline" id="wiki-${day.id}"></div>
+          <div class="note">${day.note}</div>
+          <div class="stopchips">${chips}</div>
+          <div class="badges">${day.badges.map(b=>`<span class="badge ${b.w?'warn':''}">${b.t}</span>`).join('')}</div>
+          <div class="sleep">Sleep · ${day.sleep}</div>
+        </div>
+      </div>
+      <div class="card-foot">
+        <span class="keep-label">${day.optional?'Optional add-on':'Day · '+r.name}</span>
+        <button class="keepbtn ${day.kept?'kept':'dropped'}" data-id="${day.id}">${day.kept?'✓ Keeping':'+ Add to trip'}</button>
+      </div>
+    </div>`;
+  cardsEl.appendChild(el);
+});
+document.querySelectorAll('.card[data-open]').forEach(c=>{
+  c.addEventListener('click',e=>{if(e.target.closest('.keepbtn'))return;openDetail(c.dataset.open);});
+});
+document.querySelectorAll('.keepbtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{const d=DAYS.find(x=>x.id===btn.dataset.id);setKept(d,!d.kept);});
+});
+
+/* ---------- keep / skip ---------- */
+function applyKeptUI(day){
+  const el=document.getElementById('day-'+day.id),btn=el.querySelector('.keepbtn');
+  el.classList.toggle('kept',day.kept);el.classList.toggle('dropped',!day.kept);
+  btn.classList.toggle('kept',day.kept);btn.classList.toggle('dropped',!day.kept);
+  btn.textContent=day.kept?'✓ Keeping':(day.optional?'+ Add to trip':'+ Add back');
+}
+function setKept(day,kept){day.kept=kept;applyKeptUI(day);if(drawer.dataset.id===day.id)syncDrawerKeep(day);recalc();drawMap();saveTrip();}
+
+/* ---------- persistence ---------- */
+const TRIP_KEY='alpine_trip_v1';
+function saveTrip(){try{localStorage.setItem(TRIP_KEY,JSON.stringify({
+  kept:DAYS.filter(d=>d.kept).map(d=>d.id),
+  preset:document.querySelector('.opt.active')?document.querySelector('.opt.active').dataset.preset:null,
+  showAttr,splurge:splurgeMode,perPerson
+}));}catch(e){}}
+function restoreTrip(){
+  let s;try{s=JSON.parse(localStorage.getItem(TRIP_KEY));}catch(e){}
+  if(!s)return;
+  if(Array.isArray(s.kept)){const ks=new Set(s.kept);DAYS.forEach(d=>{d.kept=ks.has(d.id);applyKeptUI(d);});}
+  document.querySelectorAll('.opt').forEach(o=>o.classList.toggle('active',o.dataset.preset===s.preset));
+  swissToggle.classList.toggle('on',DAYS.some(d=>d.swiss&&d.kept));
+  if(s.showAttr){showAttr=true;document.getElementById('attrToggle').classList.add('on');}
+  splurgeMode=!!s.splurge;perPerson=!!s.perPerson;setBudModeUI();
+}
+
+/* ---------- presets ---------- */
+document.querySelectorAll('.opt').forEach(opt=>{
+  opt.addEventListener('click',()=>{
+    document.querySelectorAll('.opt').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active');
+    const set=PRESETS[opt.dataset.preset];
+    DAYS.forEach(d=>{d.kept=set.includes(d.id);applyKeptUI(d);});
+    swissToggle.classList.toggle('on',DAYS.some(d=>d.swiss&&d.kept));
+    recalc();drawMap();saveTrip();
+  });
+});
+const swissToggle=document.getElementById('swissToggle');
+swissToggle.addEventListener('click',()=>{
+  const on=swissToggle.classList.toggle('on');
+  DAYS.filter(d=>d.swiss&&!d.optional).forEach(d=>{d.kept=on;applyKeptUI(d);});
+  recalc();drawMap();saveTrip();
+});
+
+/* ---------- summary ---------- */
+function recalc(){
+  const kept=DAYS.filter(d=>d.kept);
+  const nights=kept.length,drive=kept.reduce((s,d)=>s+d.drive,0);
+  ['c-nights','s-nights'].forEach(id=>document.getElementById(id).textContent=nights);
+  ['c-stops','s-stops'].forEach(id=>document.getElementById(id).textContent=nights);
+  document.getElementById('c-drive').textContent='~'+Math.round(drive)+'h';
+  document.getElementById('s-drive').textContent=Math.round(drive)+'h';
+  const picks=document.getElementById('picks');
+  picks.innerHTML=DAYS.filter(d=>!d.optional||d.kept).map(d=>
+    `<li class="${d.kept?'':'dz'}" data-jump="${d.id}"><span>${d.short}</span><span>${d.sleep.split('/')[0].trim()}</span></li>`).join('');
+  picks.querySelectorAll('li').forEach(li=>li.addEventListener('click',()=>openDetail(li.dataset.jump)));
+  const adv=document.getElementById('advice');
+  const swissKept=DAYS.filter(d=>d.swiss&&!d.optional&&d.kept).length;
+  let msg='';
+  if(swissKept===0&&nights>0)msg=`Switzerland dropped — frees ~<b>6 nights</b> and cuts the brutal Aug 8 drive. Pour them into the Dolomites or a Slovenia detour.`;
+  else if(drive>30)msg=`<b>${Math.round(drive)}h</b> driving — a full, ambitious loop. The Zermatt→Innsbruck leg is the strain; drop Zermatt to ease it.`;
+  else if(nights<11)msg=`Relaxed — <b>${nights} nights</b>, only <b>${Math.round(drive)}h</b> driving. Lots of room to linger.`;
+  else msg=`Well-balanced — <b>${nights} nights</b>, <b>${Math.round(drive)}h</b> driving. A strong loop.`;
+  adv.innerHTML=msg;
+  renderBudget();
+}
+
+/* ---------- budget ---------- */
+const CHF2EUR=1.05, FUEL_PER_H=13;   // ~60km/h · 12L/100km · €1.85/L diesel
+let splurgeMode=false, perPerson=false;
+function dayCur(d){return d.region==='swiss'?'CHF':'EUR';}
+function dayCosts(d){
+  const b=d.bud||{};
+  let act=0;
+  if(b.act!=null)act=(typeof b.act==='object')?(splurgeMode?b.act.sp:b.act.bu):b.act;
+  return {camp:b.camp||0,food:b.food||0,act,x:b.x||0,cur:dayCur(d)};
+}
+function eur(n){return '€'+Math.round(n).toLocaleString('en-US');}
+function renderBudget(){
+  const kept=DAYS.filter(d=>d.kept);
+  const e={camp:0,food:0,act:0,x:0},c={camp:0,food:0,act:0,x:0};
+  let driveH=0;
+  kept.forEach(d=>{
+    driveH+=d.drive;
+    const dc=dayCosts(d),t=dc.cur==='CHF'?c:e;
+    t.camp+=dc.camp;t.food+=dc.food;t.act+=dc.act;t.x+=dc.x;
+  });
+  const fuel=driveH*FUEL_PER_H;
+  const chfTotal=c.camp+c.food+c.act+c.x;
+  const eurTotal=e.camp+e.food+e.act+e.x;
+  const cat={
+    camp:e.camp+c.camp*CHF2EUR, food:e.food+c.food*CHF2EUR,
+    act:e.act+c.act*CHF2EUR, x:e.x+c.x*CHF2EUR, fuel
+  };
+  let total=(cat.camp+cat.food+cat.act+cat.x+cat.fuel);
+  const div=perPerson?2:1;
+  total/=div;
+  document.getElementById('c-budget').textContent=eur(total);
+  document.getElementById('bud-total').innerHTML=`${eur(total)} <small>${perPerson?'per person':'for two'}</small>`;
+  document.getElementById('bud-chf').textContent=`🇨🇭 CHF ${Math.round(chfTotal/div).toLocaleString('en-US')}`;
+  document.getElementById('bud-eur').textContent=`🇪🇺 ${eur((eurTotal+fuel)/div)}`;
+  document.getElementById('bud-break').innerHTML=
+    `Campsites <b>${eur(cat.camp/div)}</b> · Activities <b>${eur(cat.act/div)}</b> · Food <b>${eur(cat.food/div)}</b><br>`+
+    `Fuel <b>${eur(cat.fuel/div)}</b> · Tolls &amp; vignettes <b>${eur(cat.x/div)}</b>`;
+}
+function setBudModeUI(){
+  document.getElementById('modeBudget').classList.toggle('on',!splurgeMode);
+  document.getElementById('modeSplurge').classList.toggle('on',splurgeMode);
+  document.getElementById('pcCouple').classList.toggle('on',!perPerson);
+  document.getElementById('pcPerson').classList.toggle('on',perPerson);
+}
+document.getElementById('modeBudget').addEventListener('click',()=>{splurgeMode=false;setBudModeUI();renderBudget();saveTrip();});
+document.getElementById('modeSplurge').addEventListener('click',()=>{splurgeMode=true;setBudModeUI();renderBudget();saveTrip();});
+document.getElementById('pcCouple').addEventListener('click',()=>{perPerson=false;setBudModeUI();renderBudget();saveTrip();});
+document.getElementById('pcPerson').addEventListener('click',()=>{perPerson=true;setBudModeUI();renderBudget();saveTrip();});
+
+/* ---------- MAP ---------- */
+let map=null;
+try{
+  map=L.map('map',{scrollWheelZoom:false}).setView([46.7,11.5],6);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',subdomains:'abcd',maxZoom:18}).addTo(map);
+}catch(e){
+  const mapEl=document.getElementById('map');
+  if(mapEl){mapEl.style.display='flex';mapEl.style.alignItems='center';mapEl.style.justifyContent='center';mapEl.style.textAlign='center';mapEl.style.padding='24px';
+    mapEl.innerHTML='<span style="font-family:\'DM Mono\',monospace;font-size:13px;color:var(--ink-soft)">Map couldn\'t load (offline or library blocked) — the rest of the planner still works.</span>';}
+}
+let markers=[],subMarkers=[],routeLine=null,showAttr=false;
+function drawMap(){
+  if(!map)return;
+  markers.forEach(m=>map.removeLayer(m));markers=[];
+  subMarkers.forEach(m=>map.removeLayer(m));subMarkers=[];
+  if(routeLine)map.removeLayer(routeLine);
+  const kept=DAYS.filter(d=>d.kept&&d.ll);
+  kept.forEach((d,i)=>{
+    const r=REGION[d.region];
+    const icon=L.divIcon({className:'',html:`<div class="pin" style="background:${r.color}"><span>${d.optional?'+':i+1}</span></div>`,iconSize:[26,26],iconAnchor:[13,24]});
+    const m=L.marker(d.ll,{icon}).addTo(map);
+    m.on('click',()=>openDetail(d.id));
+    m.bindTooltip(d.short,{direction:'top',offset:[0,-22]});
+    markers.push(m);
+    if(showAttr){
+      (d.stops||[]).forEach(st=>{
+        if(!st.ll)return;
+        const cm=L.circleMarker(st.ll,{radius:5,color:'#fff',weight:1.5,fillColor:st.must?'#c0552c':r.color,fillOpacity:.9}).addTo(map);
+        cm.bindTooltip(`${TAG[st.t]||'•'} ${st.n}`,{direction:'top'});
+        cm.on('click',()=>openDetail(d.id));
+        subMarkers.push(cm);
+      });
+    }
+  });
+  const pts=kept.filter(d=>!d.optional).map(d=>d.ll);
+  if(pts.length>1)routeLine=L.polyline(pts,{color:'#c0552c',weight:3,dashArray:'2,7',opacity:.8}).addTo(map);
+  if(kept.length){try{map.fitBounds(L.latLngBounds(kept.map(d=>d.ll)).pad(0.18));}catch(e){}}
+}
+document.getElementById('attrToggle').addEventListener('click',function(){showAttr=this.classList.toggle('on');drawMap();saveTrip();});
+
+/* ---------- DETAIL DRAWER ---------- */
+const overlay=document.getElementById('overlay'),drawer=document.getElementById('drawer');
+const drHero=document.getElementById('drHero'),drBody=document.getElementById('drBody');
+function stopHTML(st){
+  let opt='';
+  if(st.sp||st.bu){opt=`<div class="stop-opt">${st.sp?`<div class="sp"><b>Splurge</b>${st.sp}</div>`:''}${st.bu?`<div class="bu"><b>Budget</b>${st.bu}</div>`:''}</div>`;}
+  return `<div class="stop">
+    <div class="stop-h">${TAG[st.t]||'•'} ${st.n} ${st.must?'<span class="stop-tag must">must-do</span>':`<span class="stop-tag">${({view:'view',hike:'hike',swim:'swim',act:'activity',town:'town',food:'food',gem:'gem',van:'pitch'})[st.t]||''}</span>`}</div>
+    <div class="stop-d">${st.d}</div>
+    ${opt}
+    ${st.cost?`<div class="stop-cost">💶 ${st.cost}</div>`:''}
+  </div>`;
+}
+function openDetail(id){
+  const d=DAYS.find(x=>x.id===id);if(!d)return;
+  drawer.dataset.id=id;const r=REGION[d.region];
+  drHero.style.background=`linear-gradient(135deg,${r.color},#7a8b80)`;
+  drHero.innerHTML=`<div class="grad"></div><div class="htitle"><div class="rg">${r.name} · ${d.date}</div><h2>${d.short}</h2></div>`;
+  drBody.innerHTML=`
+    <div class="dr-meta">
+      <span>${d.drive>0?'🚐 '+d.drive+'h drive':'⛺ no transit'}</span>
+      <span>▲ Sleep: ${d.sleep}</span>
+      ${d.optional?'<span style="color:var(--terra)">Optional add-on</span>':''}
+    </div>
+    <div class="dr-sec"><h4>The pitch</h4><p>${d.note}</p><p id="dr-extract" style="color:var(--ink-soft);font-size:14px;margin-top:8px"></p></div>
+    <div class="dr-sec"><h4>Weather window · live 3-day</h4>
+      <div class="dr-weather" id="dr-weather"><span style="font-size:13px;color:var(--ink-soft)">loading…</span></div>
+      <div class="wx-links">
+        <a href="https://www.windy.com/?${d.ll[0]},${d.ll[1]},9" target="_blank">Mountain weather (Windy) ↗</a>
+        <a href="https://www.google.com/search?q=${encodeURIComponent(d.short+' webcam')}" target="_blank">Live webcams ↗</a>
+      </div>
+    </div>
+    <div class="dr-sec"><h4>Stops along this leg</h4>${(d.stops||[]).map(stopHTML).join('')||'<p style="font-size:14px;color:var(--ink-soft)">Transit leg — pick stops from neighbouring days.</p>'}</div>
+    <div class="dr-sec"><h4>Photos</h4><div class="gallery" id="dr-gallery"><span style="font-size:13px;color:var(--ink-soft)">loading…</span></div></div>
+    <div class="dr-sec simple"><h4>Why this leg</h4><ul>${d.why.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    <div class="dr-sec simple tips"><h4>Insider tips</h4><ul>${d.tips.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    ${d.badges.length?`<div class="dr-sec"><h4>Heads up</h4><div class="badges">${d.badges.map(b=>`<span class="badge ${b.w?'warn':''}">${b.t}</span>`).join('')}</div></div>`:''}
+    <div class="dr-actions">
+      <button class="dr-keep ${d.kept?'':'dropped'}" id="drKeep">${d.kept?'✓ In your trip':'+ Add to trip'}</button>
+      <a class="dr-link" href="https://en.wikipedia.org/wiki/${encodeURIComponent(d.wiki)}" target="_blank">Wikipedia ↗</a>
+      <a class="dr-link" href="https://www.google.com/maps/search/${encodeURIComponent(d.short)}" target="_blank">Maps ↗</a>
+    </div>`;
+  document.getElementById('drKeep').addEventListener('click',()=>setKept(d,!d.kept));
+  overlay.classList.add('open');drawer.classList.add('open');document.body.style.overflow='hidden';
+  drawer.scrollTop=0;loadExtract(d.wiki);loadGallery(d.wiki);loadWeather(d.ll);
+}
+function syncDrawerKeep(d){const b=document.getElementById('drKeep');if(b){b.className='dr-keep '+(d.kept?'':'dropped');b.textContent=d.kept?'✓ In your trip':'+ Add to trip';}}
+function closeDrawer(){overlay.classList.remove('open');drawer.classList.remove('open');drawer.dataset.id='';document.body.style.overflow='';}
+document.getElementById('drClose').addEventListener('click',closeDrawer);
+overlay.addEventListener('click',closeDrawer);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
+
+/* ---------- Wikipedia ---------- */
+function loadExtract(title){
+  fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro=1&explaintext=1&redirects=1&titles=${encodeURIComponent(title)}`)
+    .then(r=>r.json()).then(data=>{const p=data.query.pages,page=p[Object.keys(p)[0]],el=document.getElementById('dr-extract');
+      if(el&&page.extract){let t=page.extract.split('. ').slice(0,2).join('. ');if(t.length>300)t=t.slice(0,298)+'…';el.textContent=t;}}).catch(()=>{});
+}
+function loadGallery(title){
+  const g=document.getElementById('dr-gallery');
+  fetch(`https://en.wikipedia.org/api/rest_v1/page/media-list/${encodeURIComponent(title)}`)
+    .then(r=>r.json()).then(data=>{
+      const imgs=(data.items||[]).filter(it=>it.type==='image'&&/\.(jpe?g|png)$/i.test(it.title)&&!/(flag|icon|logo|map|seal|coat|svg)/i.test(it.title)).slice(0,8);
+      if(!imgs.length){g.innerHTML='<span style="font-size:13px;color:var(--ink-soft)">No extra photos found.</span>';return;}
+      g.innerHTML='';
+      imgs.forEach(it=>{const name=it.title.replace(/^File:/,'');
+        const im=new Image();im.src=`https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(name)}?width=500`;im.loading='lazy';
+        im.onclick=()=>window.open(`https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(name)}?width=1600`,'_blank');
+        im.onerror=()=>im.remove();g.appendChild(im);});
+    }).catch(()=>{g.innerHTML='<span style="font-size:13px;color:var(--ink-soft)">Couldn\'t load photos.</span>';});
+}
+const WMO={0:['☀️','Clear'],1:['🌤','Mostly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌫','Fog'],48:['🌫','Rime fog'],51:['🌦','Drizzle'],53:['🌦','Drizzle'],55:['🌦','Drizzle'],56:['🌧','Freezing drizzle'],57:['🌧','Freezing drizzle'],61:['🌧','Rain'],63:['🌧','Rain'],65:['🌧','Heavy rain'],66:['🌧','Freezing rain'],67:['🌧','Freezing rain'],71:['🌨','Snow'],73:['🌨','Snow'],75:['🌨','Heavy snow'],77:['🌨','Snow grains'],80:['🌦','Showers'],81:['🌦','Showers'],82:['⛈','Heavy showers'],85:['🌨','Snow showers'],86:['🌨','Snow showers'],95:['⛈','Thunderstorm'],96:['⛈','Thunderstorm'],99:['⛈','Thunderstorm']};
+function loadWeather(ll){
+  const el=document.getElementById('dr-weather');if(!el||!ll)return;
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ll[0]}&longitude=${ll[1]}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=3&timezone=auto`)
+    .then(r=>r.json()).then(d=>{
+      const dd=d.daily;if(!dd||!dd.time){el.innerHTML='<span style="font-size:13px;color:var(--ink-soft)">No forecast.</span>';return;}
+      const names=['Today','Tomorrow','In 2 days'];
+      el.innerHTML=dd.time.map((t,i)=>{const w=WMO[dd.weather_code[i]]||['•',''];
+        return `<div class="wx"><div class="wd">${names[i]||t.slice(5)}</div><div class="we" title="${w[1]}">${w[0]}</div><div class="wt">${Math.round(dd.temperature_2m_max[i])}°<small>/${Math.round(dd.temperature_2m_min[i])}°</small></div><div class="wp">💧${dd.precipitation_probability_max[i]??0}%</div></div>`;
+      }).join('');
+    }).catch(()=>{el.innerHTML='<span style="font-size:13px;color:var(--ink-soft)">Couldn\'t load forecast.</span>';});
+}
+function loadPhoto(box){
+  const title=box.dataset.wiki,id=box.dataset.id;
+  fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|extracts&exintro=1&explaintext=1&piprop=thumbnail&pithumbsize=600&redirects=1&titles=${encodeURIComponent(title)}`)
+    .then(r=>r.json()).then(data=>{const p=data.query.pages,page=p[Object.keys(p)[0]];
+      if(page.thumbnail&&page.thumbnail.source){const img=new Image();img.onload=()=>{box.appendChild(img);requestAnimationFrame(()=>img.classList.add('loaded'));};img.src=page.thumbnail.source;}
+      if(page.extract){const w=document.getElementById('wiki-'+id);if(w){let t=page.extract.split('. ')[0];if(t.length>120)t=t.slice(0,118)+'…';w.textContent=t.endsWith('.')?t:t+'.';}}}).catch(()=>{});
+}
+const io=new IntersectionObserver((ents,obs)=>{ents.forEach(e=>{if(e.isIntersecting){loadPhoto(e.target);obs.unobserve(e.target);}});},{rootMargin:'250px'});
+document.querySelectorAll('.photo[data-wiki]').forEach(p=>io.observe(p));
+
+document.getElementById('panelHead').addEventListener('click',()=>{if(window.innerWidth<=940)document.getElementById('summary').classList.toggle('collapsed');});
+
+/* ---------- IDEAS & BUCKET LIST ---------- */
+// i(title, category, area, desc)
+function i(title,cat,area,desc){return {id:title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),title,cat,area,desc};}
+const CATS={lake:'🏞 Lakes',scenic:'🛣 Scenic drives',hike:'🥾 Hikes',town:'🏘 Towns',adventure:'🪂 Adventure',detour:'🌍 Detours',food:'🍷 Food & wine'};
+const IDEAS=[
+  i('Lago di Sorapis','hike','Dolomites · Cortina','A milky-blue glacial lake under jagged spires — a 6km cliff-path hike from Passo Tre Croci. The colour is unreal.'),
+  i('Cinque Torri','hike','Dolomites · Cortina','Five tilted towers ringed by an open-air WWI front-line museum of trenches and tunnels. Easy loop, big views.'),
+  i('Passo Giau','scenic','Dolomites','The most theatrical Dolomite pass — 29 hairpins to a meadow saddle framed by Ra Gusela. Sunset here is legendary.'),
+  i('Lago di Resia','lake','South Tyrol · Vinschgau','The half-submerged 14th-c church bell tower rising from a turquoise lake — surreal and quiet, off the main route.'),
+  i('Val di Funes','town','South Tyrol','The Santa Maddalena church on a meadow knoll under the Odle spires — the most photographed church in the Alps.'),
+  i('Lake Bohinj','lake','Slovenia · Triglav NP','Bled\'s bigger, wilder, emptier sister — glacial water ringed by peaks, far fewer crowds. Pair with Vintgar Gorge.'),
+  i('Vršič Pass','scenic','Slovenia','50 cobbled hairpins over the Julian Alps from Kranjska Gora to the Soča valley — Slovenia\'s greatest drive.'),
+  i('Königssee & Berchtesgaden','lake','Bavaria · near Salzburg','Electric-green fjord lake reached by silent electric boats, echoing trumpet stop, St Bartholomä chapel. 30 min from Salzburg.'),
+  i('Eagle\'s Nest (Kehlsteinhaus)','town','Bavaria · Berchtesgaden','A mountaintop lodge at 1,834m reached by a brass-lined elevator through the rock — sweeping Alpine panorama.'),
+  i('Aletsch Glacier','scenic','Switzerland · Valais','The largest glacier in the Alps — a 23km river of ice. Ride to Eggishorn or Bettmerhorn for the jaw-drop view.'),
+  i('Lake Como (Bellagio)','lake','Italian Lakes','Palm-lined promenades, villa gardens and ferry-hopping between Bellagio, Varenna and Menaggio. A glamorous detour south.'),
+  i('Verona','town','Veneto · near Venice','Roman arena, Juliet\'s balcony and aperitivo squares — an easy first or last night on the way to/from the depot.'),
+  i('Marmolada Glacier','adventure','Dolomites','Cable car to 3,265m on the Dolomites\' highest peak, with a WWI tunnel museum inside the mountain. Glacier views over the whole range.'),
+  i('Kitzbühel & Wilder Kaiser','town','Tyrol','Postcard ski town below the saw-toothed Wilder Kaiser massif — gondolas, alpine meadows and a chic old centre.'),
+  i('Dachstein Ice Cave & Skywalk','adventure','Salzkammergut','Frozen caverns and a "Stairway to Nothingness" platform over a 400m drop — a dramatic add to a Hallstatt day.'),
+  i('Lake Misurina + Cadini di Misurina','hike','Dolomites','Beyond Tre Cime — a short scramble to the Cadini viewpoint, one of the most jaw-dropping spires panoramas anywhere.'),
+  i('Bolzano Wine Road','food','South Tyrol','Vineyard villages south of Bolzano — Kaltern, Tramin, Appiano — for Gewürztraminer tastings and Törggelen feasts.'),
+  i('Plitvice Lakes','detour','Croatia','Sixteen terraced turquoise lakes linked by waterfalls and boardwalks. A bigger swing south, but a UNESCO stunner.')
+];
+
+const BK_KEY='alpine_bucket_v1';
+let bucket=loadBucket();
+function loadBucket(){try{return JSON.parse(localStorage.getItem(BK_KEY))||[];}catch(e){return [];}}
+function saveBucket(){try{localStorage.setItem(BK_KEY,JSON.stringify(bucket));}catch(e){}}
+function inBucket(id){return bucket.some(b=>b.id===id);}
+
+let ideaFilter='all',ideaQuery='';
+const ideaCardsEl=document.getElementById('ideaCards');
+const ideaFiltersEl=document.getElementById('ideaFilters');
+
+function renderFilters(){
+  const cats=['all',...Object.keys(CATS)];
+  ideaFiltersEl.innerHTML=cats.map(c=>`<button class="fchip ${c===ideaFilter?'active':''}" data-cat="${c}">${c==='all'?'✦ All ideas':CATS[c]}</button>`).join('');
+  ideaFiltersEl.querySelectorAll('.fchip').forEach(b=>b.addEventListener('click',()=>{ideaFilter=b.dataset.cat;renderFilters();renderIdeas();}));
+}
+function renderIdeas(){
+  const q=ideaQuery.trim().toLowerCase();
+  const list=IDEAS.filter(x=>(ideaFilter==='all'||x.cat===ideaFilter)&&
+    (!q||(x.title+' '+x.area+' '+x.desc+' '+CATS[x.cat]).toLowerCase().includes(q)));
+  if(!list.length){ideaCardsEl.innerHTML='<div class="ideas-empty">No ideas match that — try another word or clear the filter.</div>';return;}
+  ideaCardsEl.innerHTML=list.map(x=>`
+    <div class="idea">
+      <div class="icat">${CATS[x.cat]}</div>
+      <h3>${x.title}</h3>
+      <div class="iarea">${x.area}</div>
+      <div class="idesc">${x.desc}</div>
+      <div class="idea-foot">
+        <button class="addbtn ${inBucket(x.id)?'saved':''}" data-add="${x.id}">${inBucket(x.id)?'✓ Saved':'+ Bucket list'}</button>
+        <a class="ilink" href="https://www.google.com/maps/search/${encodeURIComponent(x.title+' '+x.area.split('·')[0])}" target="_blank">Map ↗</a>
+      </div>
+    </div>`).join('');
+  ideaCardsEl.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>toggleIdea(b.dataset.add)));
+}
+function toggleIdea(id){
+  const idea=IDEAS.find(x=>x.id===id);if(!idea)return;
+  if(inBucket(id))bucket=bucket.filter(b=>b.id!==id);
+  else bucket.push({id:idea.id,title:idea.title,note:idea.desc,area:idea.area,custom:false});
+  saveBucket();renderIdeas();renderBucket();
+}
+
+const bkListEl=document.getElementById('bk-list');
+function renderBucket(){
+  document.getElementById('bk-count').textContent=bucket.length;
+  if(!bucket.length){bkListEl.innerHTML='<div class="bk-empty">Nothing yet — save an idea on the left, or add your own above.</div>';return;}
+  bkListEl.innerHTML=bucket.map((b,idx)=>`
+    <li>
+      <div class="bk-txt">
+        <div class="bk-t">${b.title}</div>
+        ${b.note?`<div class="bk-n">${b.note}</div>`:''}
+        ${b.area?`<div class="bk-a">📍 ${b.area}</div>`:''}
+      </div>
+      <button class="bk-del" data-del="${idx}" title="Remove">✕</button>
+    </li>`).join('');
+  bkListEl.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{
+    bucket.splice(+b.dataset.del,1);saveBucket();renderBucket();renderIdeas();
+  }));
+}
+function addCustom(){
+  const t=document.getElementById('bkTitle'),n=document.getElementById('bkNote');
+  const title=t.value.trim();if(!title)return;
+  bucket.push({id:'custom-'+Date.now(),title,note:n.value.trim(),area:'',custom:true});
+  t.value='';n.value='';saveBucket();renderBucket();
+}
+document.getElementById('bkAdd').addEventListener('click',addCustom);
+document.getElementById('bkTitle').addEventListener('keydown',e=>{if(e.key==='Enter'){document.getElementById('bkNote').focus();}});
+document.getElementById('bkNote').addEventListener('keydown',e=>{if(e.key==='Enter')addCustom();});
+document.getElementById('ideaSearch').addEventListener('input',e=>{ideaQuery=e.target.value;renderIdeas();});
+
+/* ---------- view tabs ---------- */
+document.querySelectorAll('.vtab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.vtab').forEach(o=>o.classList.remove('active'));
+  t.classList.add('active');
+  const ideas=t.dataset.view==='ideas';
+  document.getElementById('view-trip').hidden=ideas;
+  document.getElementById('view-ideas').hidden=!ideas;
+  document.querySelector('.controls').style.display=ideas?'none':'';
+  document.getElementById('summary').style.display=ideas?'none':'';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(!ideas&&map)setTimeout(()=>map.invalidateSize(),60);
+}));
+
+renderFilters();renderIdeas();renderBucket();
+restoreTrip();
+recalc();drawMap();
+</script>
+</body>
+</html>
