@@ -416,7 +416,7 @@
     </div>
     <aside class="bucket">
       <div class="panel">
-        <div class="panel-h">⭐ Your Bucket List</div>
+        <div class="panel-h" id="bk-panel-h">⭐ Your Bucket List</div>
         <div class="panel-b">
           <div class="bk-add">
             <input type="text" id="bkTitle" placeholder="Add your own idea…" />
@@ -1061,8 +1061,8 @@ document.getElementById('panelHead').addEventListener('click',()=>{if(window.inn
 /* ---------- IDEAS & BUCKET LIST ---------- */
 // i(title, category, area, desc, wiki) — wiki is the Wikipedia page used for the live photo + insight
 function i(title,cat,area,desc,wiki){return {id:title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),title,cat,area,desc,wiki:wiki||title};}
-const CATS={lake:'🏞 Lakes',scenic:'🛣 Scenic drives',hike:'🥾 Hikes',town:'🏘 Towns',adventure:'🪂 Adventure',detour:'🌍 Detours',food:'🍷 Food & wine'};
-const CATCOLOR={lake:'#4d7c8a',scenic:'#c0552c',hike:'#2f4a3a',town:'#9c5a6a',adventure:'#b8860b',detour:'#6b5b95',food:'#7a4b3a'};
+const CATS={lake:'🏞 Lakes',scenic:'🛣 Scenic drives',hike:'🥾 Hikes',town:'🏘 Towns',castle:'🏰 Castles',adventure:'🪂 Adventure',spa:'🧖 Spa & thermal',falls:'💦 Waterfalls & gorges',park:'🌲 National parks',detour:'🌍 Detours',food:'🍷 Food & wine'};
+const CATCOLOR={lake:'#4d7c8a',scenic:'#c0552c',hike:'#2f4a3a',town:'#9c5a6a',castle:'#9a6b4e',adventure:'#b8860b',spa:'#4a8a86',falls:'#3f6f95',park:'#3d6b46',detour:'#6b5b95',food:'#7a4b3a'};
 const IDEAS=[
   // ── Lakes ──
   i('Lake Bohinj','lake','Slovenia · Triglav NP','Bled\'s bigger, wilder, emptier sister — glacial water ringed by peaks, far fewer crowds. Pair with Vintgar Gorge.','Lake Bohinj'),
@@ -1088,7 +1088,7 @@ const IDEAS=[
   i('Vršič Pass','scenic','Slovenia','50 cobbled hairpins over the Julian Alps from Kranjska Gora to the Soča valley — Slovenia\'s greatest drive.','Vršič Pass'),
 
   // ── Hikes ──
-  i('Lago di Sorapis','hike','Dolomites · Cortina','A milky-blue glacial lake under jagged spires — a 6km cliff-path hike from Passo Tre Croci. The colour is unreal.','Lake Sorapis'),
+  i('Lago di Sorapis','hike','Dolomites · Cortina','A milky-blue glacial lake under jagged spires — a 6km cliff-path hike from Passo Tre Croci. The colour is unreal.','Lake Sorapiss'),
   i('Cinque Torri','hike','Dolomites · Cortina','Five tilted towers ringed by an open-air WWI front-line museum of trenches and tunnels. Easy loop, big views.','Cinque Torri'),
   i('Lagazuoi','hike','Dolomites','A cable car to 2,778m and a tunnel-laced WWI mountain, with one of the broadest Dolomite panoramas anywhere.','Lagazuoi'),
   i('Cadini di Misurina','hike','Dolomites','A short scramble near Tre Cime to a viewpoint over a fence of impossibly slender spires — a photographer\'s grail.','Cadini di Misurina'),
@@ -1108,7 +1108,7 @@ const IDEAS=[
   i('Neuschwanstein Castle','town','Bavaria','The fairytale castle that inspired Disney, perched over gorges and lakes in the Bavarian Alps.','Neuschwanstein Castle'),
   i('Predjama Castle','town','Slovenia','A Renaissance castle dramatically built into the mouth of a cave cliff — pair it with nearby Postojna.','Predjama Castle'),
   i('Interlaken','town','Switzerland · Bernese Oberland','The adventure hub between two lakes under the Eiger-Mönch-Jungfrau — paragliding, lake steamers, and rail to the peaks.','Interlaken'),
-  i('Val di Funes','town','South Tyrol','The Santa Maddalena church on a meadow knoll under the Odle spires — one of the most photographed scenes in the Alps.','Funes, South Tyrol'),
+  i('Val di Funes','town','South Tyrol','The Santa Maddalena church on a meadow knoll under the Odle spires — one of the most photographed scenes in the Alps.','Villnöß'),
 
   // ── Adventure ──
   i('Marmolada Glacier','adventure','Dolomites','Cable car to 3,265m on the Dolomites\' highest peak, with a WWI tunnel museum inside the mountain.','Marmolada'),
@@ -1121,6 +1121,31 @@ const IDEAS=[
 
   // ── Detour ──
   i('Plitvice Lakes','detour','Croatia','Sixteen terraced turquoise lakes linked by waterfalls and boardwalks — a bigger swing south, but a UNESCO stunner.','Plitvice Lakes National Park'),
+
+  // ── Castles & fortresses ──
+  i('Miramare Castle','castle','Trieste · Adriatic','A white fairytale castle on a sea promontory with botanical gardens — where the Alps melt into the Adriatic.','Miramare Castle'),
+  i('Hohenwerfen Castle','castle','Salzburg · Werfen','A 900-year clifftop fortress with daily falconry shows, perched above the Eisriesenwelt ice cave.','Hohenwerfen Castle'),
+  i('Hohensalzburg Fortress','castle','Salzburg','One of Europe\'s largest fully-intact medieval fortresses, crowning the Salzburg skyline over the old town.','Hohensalzburg Fortress'),
+  i('Tyrol Castle','castle','South Tyrol · Merano','The ancestral castle that gave the whole region its name, on a vineyard ridge above Merano.','Tyrol Castle'),
+  i('Bled Castle','castle','Slovenia · Lake Bled','A clifftop medieval castle over Bled\'s turquoise lake and island church — the ultimate Slovenian postcard.','Bled Castle'),
+
+  // ── Spa & thermal ──
+  i('Bad Gastein','spa','Salzburg','A Belle-Époque spa town built around a waterfall crashing through its centre — grand hotels and radon-thermal baths.','Bad Gastein'),
+  i('Leukerbad','spa','Valais · Switzerland','The Alps\' largest thermal resort — open-air pools steaming under 600m cliffs, reachable by mountain road.','Leukerbad'),
+  i('Bad Ragaz & Tamina Gorge','spa','Switzerland','Soak in 36°C spring water piped straight from a dramatic slot gorge — wellness plus an easy gorge walk.','Bad Ragaz'),
+  i('Bormio Terme','spa','Lombardy · Stelvio','Roman-era thermal baths at the foot of the Stelvio Pass, with panoramic outdoor pools over the valley.','Bormio'),
+
+  // ── Waterfalls & gorges ──
+  i('Vintgar Gorge','falls','Slovenia · near Bled','A wooden walkway clings to a cliff above the rushing emerald Radovna river — 1.6km of pure drama.','Vintgar Gorge'),
+  i('Peričnik Falls','falls','Slovenia · Triglav NP','A 52m waterfall you can actually walk behind, in the wild Vrata valley below Mt Triglav.','Peričnik Falls'),
+  i('Krimml Waterfalls','falls','Salzburg · Hohe Tauern','Europe\'s tallest at 380m — a misty forest trail switchbacks beside three thundering tiers.','Krimml Waterfalls'),
+  i('Liechtensteinklamm','falls','Salzburg','A slot gorge so narrow the walls nearly touch, with a glowing turquoise river churning far below.','Liechtensteinklamm'),
+
+  // ── National parks ──
+  i('Triglav National Park','park','Slovenia','Slovenia\'s only national park — the Julian Alps, the Soča river and Lake Bohinj, all crowned by Mt Triglav.','Triglav National Park'),
+  i('Hohe Tauern National Park','park','Austria','The Alps\' largest protected area — glaciers, the Grossglockner, marmots and a wall of 3,000m peaks.','Hohe Tauern National Park'),
+  i('Stelvio National Park','park','Lombardy / South Tyrol','Italy\'s largest alpine park around the Stelvio Pass — glaciers, ibex and high-mountain trails.','Stelvio National Park'),
+  i('Gran Paradiso National Park','park','Aosta · Piedmont','Italy\'s oldest national park, a former royal hunting reserve full of ibex below a 4,000m peak.','Gran Paradiso National Park'),
 
   // ── Food & wine ──
   i('South Tyrolean Wine Road','food','South Tyrol','Vineyard villages south of Bolzano — Kaltern, Tramin, Appiano — for Gewürztraminer tastings and autumn Törggelen feasts.','Kaltern'),
@@ -1146,14 +1171,15 @@ function renderFilters(){
 const mediaCache={};
 function fetchMedia(wiki){
   if(mediaCache[wiki])return Promise.resolve(mediaCache[wiki]);
-  return fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|extracts&exintro=1&explaintext=1&piprop=thumbnail&pithumbsize=600&redirects=1&titles=${encodeURIComponent(wiki)}`)
+  return fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|extracts|coordinates&coprimary=primary&colimit=1&exintro=1&explaintext=1&piprop=thumbnail&pithumbsize=600&redirects=1&titles=${encodeURIComponent(wiki)}`)
     .then(r=>r.json()).then(data=>{
       const p=data.query.pages,page=p[Object.keys(p)[0]];
       let insight='';
       if(page&&page.extract){let t=page.extract.split('. ')[0].replace(/\s*\([^)]*\)/g,'');if(t.length>150)t=t.slice(0,148)+'…';insight=t.endsWith('.')?t:t+'.';}
-      const m={thumb:(page&&page.thumbnail&&page.thumbnail.source)||null,insight};
+      const c=page&&page.coordinates&&page.coordinates[0];
+      const m={thumb:(page&&page.thumbnail&&page.thumbnail.source)||null,insight,coords:c?[c.lat,c.lon]:null};
       mediaCache[wiki]=m;return m;
-    }).catch(()=>({thumb:null,insight:''}));
+    }).catch(()=>({thumb:null,insight:'',coords:null}));
 }
 function loadIdeaMedia(box){
   if(box.dataset.media)return;box.dataset.media='1';   // load once per card
@@ -1162,6 +1188,8 @@ function loadIdeaMedia(box){
     if(m.thumb){const img=new Image();img.onload=()=>{box.appendChild(img);requestAnimationFrame(()=>img.classList.add('loaded'));};img.onerror=()=>{};img.src=m.thumb;}
     const ins=document.getElementById('ins-'+id);
     if(ins){if(m.insight)ins.innerHTML='<span class="ins-l">✦ Insight</span>'+m.insight;else ins.remove();}
+    if(m.coords){const card=box.closest('.idea'),mp=card&&card.querySelector('.imap');
+      if(mp)mp.href=`https://www.google.com/maps/search/${encodeURIComponent(mp.dataset.q)}/@${m.coords[0]},${m.coords[1]},13z`;}
   });
 }
 function renderIdeas(){
@@ -1183,7 +1211,7 @@ function renderIdeas(){
         <div class="idea-foot">
           <button class="addbtn ${inBucket(x.id)?'saved':''}" data-add="${x.id}">${inBucket(x.id)?'✓ Saved':'+ Bucket list'}</button>
           <a class="ilink" href="https://en.wikipedia.org/wiki/${encodeURIComponent(x.wiki)}" target="_blank">Read ↗</a>
-          <a class="ilink" href="https://www.google.com/maps/search/${encodeURIComponent(x.title+' '+x.area.split('·')[0])}" target="_blank">Map ↗</a>
+          <a class="ilink imap" data-q="${x.title}" href="https://www.google.com/maps/search/${encodeURIComponent(x.title)}" target="_blank">Map ↗</a>
         </div>
       </div>
     </div>`).join('');
@@ -1200,7 +1228,9 @@ function toggleIdea(id){
 
 const bkListEl=document.getElementById('bk-list');
 function renderBucket(){
-  document.getElementById('bk-count').textContent=bucket.length;
+  document.getElementById('bk-count').textContent=IDEAS.length+bucket.filter(b=>b.custom).length;
+  const ph=document.getElementById('bk-panel-h');
+  if(ph)ph.textContent=bucket.length?`⭐ Your Bucket List · ${bucket.length} saved`:'⭐ Your Bucket List';
   if(!bucket.length){bkListEl.innerHTML='<div class="bk-empty">Nothing yet — save an idea on the left, or add your own above.</div>';return;}
   bkListEl.innerHTML=bucket.map((b,idx)=>`
     <li>
