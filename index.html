@@ -35,7 +35,14 @@
   .sub{font-family:'DM Mono',monospace;font-size:14px;color:var(--ink-soft);letter-spacing:.04em}
   .intro{max-width:660px;margin-top:18px;font-size:16px;color:var(--ink-soft)}
   .legend{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft)}
-  .legend span{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:4px 10px}
+  .legend span{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:4px 10px;cursor:pointer;transition:.15s;user-select:none}
+  .legend span:hover{border-color:var(--pine);transform:translateY(-1px);box-shadow:var(--shadow)}
+  .cat-day{display:block;width:100%;text-align:left;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--terra);background:transparent;border:none;cursor:pointer;padding:2px 0 5px;margin-top:6px}
+  .cat-day:hover{text-decoration:underline}
+  .cat-filters{display:flex;flex-wrap:wrap;gap:7px;position:sticky;top:0;z-index:5;background:var(--paper);padding:6px 0 12px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+  .cat-fbtn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.03em;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);padding:6px 11px;border-radius:20px;cursor:pointer;transition:.15s}
+  .cat-fbtn:hover{border-color:var(--pine);color:var(--pine)}
+  .cat-fbtn.active{background:var(--pine);color:#fff;border-color:var(--pine)}
 
   .options{margin:26px 0 6px}
   .opt-h{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px}
@@ -237,21 +244,31 @@
   .fchip:hover{border-color:var(--pine);color:var(--pine)}
   .fchip.active{background:var(--glacier);color:#fff;border-color:var(--glacier)}
 
-  .idea-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .idea-count{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-soft);margin:-4px 0 14px}
+  .idea-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media(max-width:680px){.idea-cards{grid-template-columns:1fr}}
-  .idea{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 16px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .2s}
-  .idea:hover{transform:translateY(-2px)}
-  .idea .icat{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--glacier)}
-  .idea h3{font-family:'Fraunces',serif;font-weight:600;font-size:20px;line-height:1.08;margin:5px 0 3px}
-  .idea .iarea{font-family:'DM Mono',monospace;font-size:11px;color:var(--terra);margin-bottom:7px}
-  .idea .idesc{font-size:13.5px;color:var(--ink-soft);margin-bottom:12px}
-  .idea-foot{display:flex;gap:8px;margin-top:auto;align-items:center}
+  .idea{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .2s}
+  .idea:hover{transform:translateY(-3px)}
+  .iphoto{position:relative;height:152px;background:linear-gradient(135deg,#c9bfa6,#9caa9b);overflow:hidden}
+  .iphoto img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:0;transition:opacity .6s;z-index:0}
+  .iphoto img.loaded{opacity:1}
+  .iphoto::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 42%,rgba(20,28,23,.74));z-index:1}
+  .icat-chip{position:absolute;top:10px;left:10px;z-index:2;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#fff;padding:4px 8px;border-radius:3px}
+  .iph-label{position:absolute;left:13px;right:13px;bottom:10px;z-index:2;font-family:'Fraunces',serif;font-weight:600;font-size:20px;line-height:1.04;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.55)}
+  .idea-b{padding:13px 15px 14px;display:flex;flex-direction:column;flex:1}
+  .idea-b .iarea{font-family:'DM Mono',monospace;font-size:11px;color:var(--terra);margin-bottom:6px}
+  .idea-b .idesc{font-size:13.5px;color:var(--ink-soft);margin-bottom:9px}
+  .iinsight{font-size:12.5px;color:var(--ink);background:rgba(77,124,138,.08);border-left:2px solid var(--glacier);border-radius:0 8px 8px 0;padding:8px 10px;margin-bottom:12px;line-height:1.45}
+  .iinsight .ins-l{display:block;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--glacier);margin-bottom:3px}
+  .iinsight .ins-load{font-style:italic;color:var(--ink-soft)}
+  .idea-foot{display:flex;gap:9px;margin-top:auto;align-items:center;flex-wrap:wrap}
   .addbtn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;border:1.5px solid var(--pine);color:var(--pine);background:transparent;padding:7px 13px;border-radius:30px;cursor:pointer;transition:.2s;white-space:nowrap}
   .addbtn:hover{background:rgba(47,74,58,.07)}
   .addbtn.saved{background:var(--pine);color:#fff}
   .idea .ilink{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--line)}
   .idea .ilink:hover{color:var(--terra)}
   .ideas-empty{grid-column:1/-1;text-align:center;padding:40px 20px;font-size:14px;color:var(--ink-soft);font-style:italic}
+  .bk-thumb{flex:0 0 auto;width:52px;height:52px;border-radius:9px;background:var(--paper-2) center/cover no-repeat;border:1px solid var(--line)}
 
   /* ---------- bucket list panel ---------- */
   .bucket{position:sticky;top:74px}
@@ -280,8 +297,8 @@
     <h1>The Great <em>Alpine</em> Loop</h1>
     <p class="sub">VENEZIA → SWITZERLAND → AUSTRIA → DOLOMITES → VENEZIA · 1 – 17 AUG 2026</p>
     <p class="intro">Every leg mapped with its bucket-list <b>anchor</b> plus the worthwhile stops along the way — viewpoints, lake swims, towns, activities and hidden gems. Pricey stops show a <b>splurge vs budget</b> call. <b>Tap any card or map pin</b> for the full breakdown.</p>
-    <div class="legend">
-      <span>🔭 Viewpoint</span><span>🥾 Hike</span><span>🏊 Swim</span><span>🪂 Activity</span><span>🏘 Town</span><span>🍽 Food</span><span>💎 Hidden gem</span><span>🌙 Van pitch</span><span style="color:var(--terra)">● must-do (locked)</span>
+    <div class="legend" id="legend">
+      <span data-cat="view">🔭 Viewpoint</span><span data-cat="hike">🥾 Hike</span><span data-cat="swim">🏊 Swim</span><span data-cat="act">🪂 Activity</span><span data-cat="town">🏘 Town</span><span data-cat="food">🍽 Food</span><span data-cat="gem">💎 Hidden gem</span><span data-cat="van">🌙 Van pitch</span><span data-cat="must" style="color:var(--terra)">● must-do (locked)</span>
     </div>
 
     <div class="options">
@@ -394,6 +411,7 @@
         <input type="search" class="idea-search" id="ideaSearch" placeholder="Search ideas — e.g. lake, Slovenia, glacier, wine…" />
       </div>
       <div class="idea-filters" id="ideaFilters"></div>
+      <div class="idea-count" id="ideaCount"></div>
       <div class="idea-cards" id="ideaCards"></div>
     </div>
     <aside class="bucket">
@@ -964,6 +982,39 @@ document.getElementById('drClose').addEventListener('click',closeDrawer);
 overlay.addEventListener('click',closeDrawer);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
 
+/* ---------- CATEGORY BROWSER (filter every stop by type) ---------- */
+const CATLABEL={view:'🔭 Viewpoints',hike:'🥾 Hikes',swim:'🏊 Swims',act:'🪂 Activities',town:'🏘 Towns',food:'🍽 Food',gem:'💎 Hidden gems',van:'🌙 Van pitches',must:'● Must-do'};
+let catFilter=new Set();
+function stopCats(st){const c=[st.t];if(st.must)c.push('must');return c;}
+function openCategoryBrowser(initial){
+  catFilter=new Set(initial&&initial!=='all'?[initial]:[]);
+  drawer.dataset.id='';
+  overlay.classList.add('open');drawer.classList.add('open');document.body.style.overflow='hidden';drawer.scrollTop=0;
+  renderCatBrowser();
+}
+function renderCatBrowser(){
+  const matches=[];
+  DAYS.forEach(d=>(d.stops||[]).forEach(st=>{
+    if(catFilter.size===0||stopCats(st).some(c=>catFilter.has(c)))matches.push({st,d});
+  }));
+  drHero.style.background='linear-gradient(135deg,var(--pine),#7a8b80)';
+  drHero.innerHTML=`<div class="grad"></div><div class="htitle"><div class="rg">Browse every stop · ${matches.length} shown</div><h2>Things to see &amp; do</h2></div>`;
+  const fbtns=`<button class="cat-fbtn ${catFilter.size===0?'active':''}" data-f="all">✦ All</button>`+
+    Object.keys(CATLABEL).map(c=>`<button class="cat-fbtn ${catFilter.has(c)?'active':''}" data-f="${c}">${CATLABEL[c]}</button>`).join('');
+  const list=matches.length
+    ? matches.map(({st,d})=>`<div><button class="cat-day" data-jump="${d.id}">📅 ${d.date} · ${d.short}${d.kept?'':' · <span style="opacity:.65">not in current route</span>'} ↗</button>${stopHTML(st)}</div>`).join('')
+    : `<div class="dr-sec"><p style="font-size:14px;color:var(--ink-soft)">Nothing matches that filter — pick another category above.</p></div>`;
+  drBody.innerHTML=`<div class="cat-filters">${fbtns}</div><div>${list}</div>`;
+  drBody.querySelectorAll('.cat-fbtn').forEach(b=>b.addEventListener('click',()=>{
+    const f=b.dataset.f;
+    if(f==='all')catFilter.clear();
+    else if(catFilter.has(f))catFilter.delete(f);else catFilter.add(f);
+    renderCatBrowser();
+  }));
+  drBody.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>openDetail(b.dataset.jump)));
+}
+document.querySelectorAll('#legend span[data-cat]').forEach(s=>s.addEventListener('click',()=>openCategoryBrowser(s.dataset.cat)));
+
 /* ---------- Wikipedia ---------- */
 function loadExtract(title){
   fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro=1&explaintext=1&redirects=1&titles=${encodeURIComponent(title)}`)
@@ -1008,28 +1059,72 @@ document.querySelectorAll('.photo[data-wiki]').forEach(p=>io.observe(p));
 document.getElementById('panelHead').addEventListener('click',()=>{if(window.innerWidth<=940)document.getElementById('summary').classList.toggle('collapsed');});
 
 /* ---------- IDEAS & BUCKET LIST ---------- */
-// i(title, category, area, desc)
-function i(title,cat,area,desc){return {id:title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),title,cat,area,desc};}
+// i(title, category, area, desc, wiki) — wiki is the Wikipedia page used for the live photo + insight
+function i(title,cat,area,desc,wiki){return {id:title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),title,cat,area,desc,wiki:wiki||title};}
 const CATS={lake:'🏞 Lakes',scenic:'🛣 Scenic drives',hike:'🥾 Hikes',town:'🏘 Towns',adventure:'🪂 Adventure',detour:'🌍 Detours',food:'🍷 Food & wine'};
+const CATCOLOR={lake:'#4d7c8a',scenic:'#c0552c',hike:'#2f4a3a',town:'#9c5a6a',adventure:'#b8860b',detour:'#6b5b95',food:'#7a4b3a'};
 const IDEAS=[
-  i('Lago di Sorapis','hike','Dolomites · Cortina','A milky-blue glacial lake under jagged spires — a 6km cliff-path hike from Passo Tre Croci. The colour is unreal.'),
-  i('Cinque Torri','hike','Dolomites · Cortina','Five tilted towers ringed by an open-air WWI front-line museum of trenches and tunnels. Easy loop, big views.'),
-  i('Passo Giau','scenic','Dolomites','The most theatrical Dolomite pass — 29 hairpins to a meadow saddle framed by Ra Gusela. Sunset here is legendary.'),
-  i('Lago di Resia','lake','South Tyrol · Vinschgau','The half-submerged 14th-c church bell tower rising from a turquoise lake — surreal and quiet, off the main route.'),
-  i('Val di Funes','town','South Tyrol','The Santa Maddalena church on a meadow knoll under the Odle spires — the most photographed church in the Alps.'),
-  i('Lake Bohinj','lake','Slovenia · Triglav NP','Bled\'s bigger, wilder, emptier sister — glacial water ringed by peaks, far fewer crowds. Pair with Vintgar Gorge.'),
-  i('Vršič Pass','scenic','Slovenia','50 cobbled hairpins over the Julian Alps from Kranjska Gora to the Soča valley — Slovenia\'s greatest drive.'),
-  i('Königssee & Berchtesgaden','lake','Bavaria · near Salzburg','Electric-green fjord lake reached by silent electric boats, echoing trumpet stop, St Bartholomä chapel. 30 min from Salzburg.'),
-  i('Eagle\'s Nest (Kehlsteinhaus)','town','Bavaria · Berchtesgaden','A mountaintop lodge at 1,834m reached by a brass-lined elevator through the rock — sweeping Alpine panorama.'),
-  i('Aletsch Glacier','scenic','Switzerland · Valais','The largest glacier in the Alps — a 23km river of ice. Ride to Eggishorn or Bettmerhorn for the jaw-drop view.'),
-  i('Lake Como (Bellagio)','lake','Italian Lakes','Palm-lined promenades, villa gardens and ferry-hopping between Bellagio, Varenna and Menaggio. A glamorous detour south.'),
-  i('Verona','town','Veneto · near Venice','Roman arena, Juliet\'s balcony and aperitivo squares — an easy first or last night on the way to/from the depot.'),
-  i('Marmolada Glacier','adventure','Dolomites','Cable car to 3,265m on the Dolomites\' highest peak, with a WWI tunnel museum inside the mountain. Glacier views over the whole range.'),
-  i('Kitzbühel & Wilder Kaiser','town','Tyrol','Postcard ski town below the saw-toothed Wilder Kaiser massif — gondolas, alpine meadows and a chic old centre.'),
-  i('Dachstein Ice Cave & Skywalk','adventure','Salzkammergut','Frozen caverns and a "Stairway to Nothingness" platform over a 400m drop — a dramatic add to a Hallstatt day.'),
-  i('Lake Misurina + Cadini di Misurina','hike','Dolomites','Beyond Tre Cime — a short scramble to the Cadini viewpoint, one of the most jaw-dropping spires panoramas anywhere.'),
-  i('Bolzano Wine Road','food','South Tyrol','Vineyard villages south of Bolzano — Kaltern, Tramin, Appiano — for Gewürztraminer tastings and Törggelen feasts.'),
-  i('Plitvice Lakes','detour','Croatia','Sixteen terraced turquoise lakes linked by waterfalls and boardwalks. A bigger swing south, but a UNESCO stunner.')
+  // ── Lakes ──
+  i('Lake Bohinj','lake','Slovenia · Triglav NP','Bled\'s bigger, wilder, emptier sister — glacial water ringed by peaks, far fewer crowds. Pair with Vintgar Gorge.','Lake Bohinj'),
+  i('Königssee','lake','Bavaria · near Salzburg','Electric-green fjord lake reached by silent electric boats, an echoing trumpet stop, and the red-domed St Bartholomä chapel.','Königssee'),
+  i('Lake Como','lake','Italian Lakes','Palm-lined promenades and villa gardens — ferry-hop between Bellagio, Varenna and Menaggio. A glamorous detour south.','Lake Como'),
+  i('Lake Maggiore','lake','Italian Lakes · Piedmont','The Borromean Islands float palaces and terraced gardens on a deep-blue lake straddling Italy and Switzerland.','Lake Maggiore'),
+  i('Eibsee','lake','Bavaria · Zugspitze','A turquoise forest lake at the foot of Germany\'s highest peak — rent a rowboat or walk the easy 7km shoreline loop.','Eibsee'),
+  i('Achensee','lake','Tyrol','Tyrol\'s largest lake, a fjord-like ribbon of teal water with a heritage steam cog railway and crisp alpine swims.','Achensee'),
+  i('Wolfgangsee','lake','Salzkammergut','Storybook lake villages St Wolfgang and St Gilgen, with the Schafberg cog railway climbing straight off the shore.','Wolfgangsee'),
+  i('Traunsee','lake','Salzkammergut','Austria\'s deepest lake under the Traunstein cliff, with the fairytale Orth Castle on its own little islet.','Traunsee'),
+  i('Lago di Resia','lake','South Tyrol · Vinschgau','The half-submerged 14th-c church bell tower rising from turquoise water — surreal, quiet, and unforgettable.','Reschensee'),
+  i('Lake Lugano','lake','Ticino · Switzerland','A palm-fringed Mediterranean lake city tucked into the Swiss-Italian border — funiculars, lakefront, and easy day-trips.','Lake Lugano'),
+  i('Lake Iseo & Monte Isola','lake','Lombardy','The largest lake-island in Europe rises car-free from the water — quiet fishing villages and a sleeper among the famous lakes.','Lake Iseo'),
+  i('Lake Orta & Isola San Giulio','lake','Piedmont','The most romantic small lake — a basilica island, a frescoed Sacro Monte, and almost no crowds.','Lake Orta'),
+
+  // ── Scenic drives & railways ──
+  i('Passo Giau','scenic','Dolomites','The most theatrical Dolomite pass — 29 hairpins to a meadow saddle framed by Ra Gusela. Sunset here is legendary.','Giau Pass'),
+  i('Sella Pass','scenic','Dolomites','The heart of the Sella Ronda loop — switchbacks beneath the sheer Sassolungo and Sella massifs.','Sella Pass'),
+  i('Pordoi Pass','scenic','Dolomites','A 2,239m pass with a cable car to Sass Pordoi, the "terrace of the Dolomites," for a sea-of-peaks panorama.','Pordoi Pass'),
+  i('Bernina Express','scenic','Switzerland · Graubünden','A UNESCO railway spiralling over the Landwasser Viaduct and Bernina glaciers from Chur to Italian Tirano.','Bernina railway'),
+  i('Glacier Express','scenic','Switzerland','The "slowest express in the world" — 8 panoramic hours across 291 bridges between Zermatt and St Moritz.','Glacier Express'),
+  i('Aletsch Glacier','scenic','Switzerland · Valais','The largest glacier in the Alps — a 23km river of ice. Ride to Eggishorn or Bettmerhorn for the jaw-drop view.','Aletsch Glacier'),
+  i('Vršič Pass','scenic','Slovenia','50 cobbled hairpins over the Julian Alps from Kranjska Gora to the Soča valley — Slovenia\'s greatest drive.','Vršič Pass'),
+
+  // ── Hikes ──
+  i('Lago di Sorapis','hike','Dolomites · Cortina','A milky-blue glacial lake under jagged spires — a 6km cliff-path hike from Passo Tre Croci. The colour is unreal.','Lake Sorapis'),
+  i('Cinque Torri','hike','Dolomites · Cortina','Five tilted towers ringed by an open-air WWI front-line museum of trenches and tunnels. Easy loop, big views.','Cinque Torri'),
+  i('Lagazuoi','hike','Dolomites','A cable car to 2,778m and a tunnel-laced WWI mountain, with one of the broadest Dolomite panoramas anywhere.','Lagazuoi'),
+  i('Cadini di Misurina','hike','Dolomites','A short scramble near Tre Cime to a viewpoint over a fence of impossibly slender spires — a photographer\'s grail.','Cadini di Misurina'),
+  i('Creux du Van','hike','Switzerland · Jura','A vast natural rock amphitheatre — a 160m cliff arc with ibex and a "Swiss Grand Canyon" rim walk.','Creux du Van'),
+  i('Partnach Gorge','hike','Bavaria · Garmisch','A boardwalk threads a roaring 700m gorge of waterfalls and ice — dramatic in every season.','Partnach Gorge'),
+  i('Soča Valley & Tolmin Gorge','hike','Slovenia','An impossibly turquoise alpine river through emerald gorges — rafting, WWI history, and the greenest water you\'ll see.','Soča'),
+  i('Ritten Earth Pyramids','hike','South Tyrol','Eerie hoodoo spires capped with boulders above Bolzano, reached by a cable car and a narrow-gauge train.','Ritten'),
+
+  // ── Towns & castles ──
+  i('Verona','town','Veneto · near Venice','Roman arena, Juliet\'s balcony and aperitivo squares — an easy first or last night on the way to/from the depot.','Verona'),
+  i('Kitzbühel','town','Tyrol','A chic medieval ski town below the saw-toothed Wilder Kaiser — pastel lanes, gondolas and alpine meadows.','Kitzbühel'),
+  i('Merano','town','South Tyrol','A spa town with palm-lined promenades and the world-class Trauttmansdorff botanical gardens under the peaks.','Merano'),
+  i('Brixen / Bressanone','town','South Tyrol','The oldest town in Tyrol — arcaded streets, a baroque cathedral, and a gateway to the Plose and Funes valleys.','Brixen'),
+  i('Bergamo Città Alta','town','Lombardy','A walled hilltop old town of Venetian ramparts and piazzas, reached by funicular — a stunning gateway near Milan.','Bergamo'),
+  i('Ljubljana','town','Slovenia','A pocket-sized capital of dragon bridges, riverside cafés and a hilltop castle — car-free, green, and effortless.','Ljubljana'),
+  i('Trieste','town','Friuli · Adriatic','A grand Habsburg seaport of Viennese cafés and a clifftop castle where the Alps meet the Adriatic.','Trieste'),
+  i('Neuschwanstein Castle','town','Bavaria','The fairytale castle that inspired Disney, perched over gorges and lakes in the Bavarian Alps.','Neuschwanstein Castle'),
+  i('Predjama Castle','town','Slovenia','A Renaissance castle dramatically built into the mouth of a cave cliff — pair it with nearby Postojna.','Predjama Castle'),
+  i('Interlaken','town','Switzerland · Bernese Oberland','The adventure hub between two lakes under the Eiger-Mönch-Jungfrau — paragliding, lake steamers, and rail to the peaks.','Interlaken'),
+  i('Val di Funes','town','South Tyrol','The Santa Maddalena church on a meadow knoll under the Odle spires — one of the most photographed scenes in the Alps.','Funes, South Tyrol'),
+
+  // ── Adventure ──
+  i('Marmolada Glacier','adventure','Dolomites','Cable car to 3,265m on the Dolomites\' highest peak, with a WWI tunnel museum inside the mountain.','Marmolada'),
+  i('Zugspitze','adventure','Bavaria / Tyrol','Germany\'s highest summit at 2,962m — a cogwheel and cable car to a glacier, with a four-country panorama.','Zugspitze'),
+  i('Eisriesenwelt Ice Cave','adventure','Salzburg · Werfen','The largest ice cave on earth — 42km of frozen halls in the mountain, below a clifftop medieval fortress.','Eisriesenwelt'),
+  i('Postojna Cave','adventure','Slovenia','An underground railway glides deep into a karst cavern of cathedral chambers and rare "baby dragon" olms.','Postojna Cave'),
+  i('Swarovski Crystal Worlds','adventure','Tyrol · Wattens','A surreal crystal art park behind a grass-covered giant\'s head — playful, weird, and great on a rainy day.','Swarovski Kristallwelten'),
+  i('Eagle\'s Nest (Kehlsteinhaus)','adventure','Bavaria · Berchtesgaden','A mountaintop lodge at 1,834m reached by a brass-lined elevator bored through the rock — a sweeping panorama.','Kehlsteinhaus'),
+  i('Dachstein Ice Cave & Skywalk','adventure','Salzkammergut','Frozen caverns and a "Stairway to Nothingness" platform over a 400m drop — a dramatic add to a Hallstatt day.','Dachstein Mountains'),
+
+  // ── Detour ──
+  i('Plitvice Lakes','detour','Croatia','Sixteen terraced turquoise lakes linked by waterfalls and boardwalks — a bigger swing south, but a UNESCO stunner.','Plitvice Lakes National Park'),
+
+  // ── Food & wine ──
+  i('South Tyrolean Wine Road','food','South Tyrol','Vineyard villages south of Bolzano — Kaltern, Tramin, Appiano — for Gewürztraminer tastings and autumn Törggelen feasts.','Kaltern'),
+  i('Trento & Trentodoc','food','Trentino','An elegant Renaissance city and home of Italy\'s best metodo-classico sparkling wine — cellar tours and piazzas.','Trento')
 ];
 
 const BK_KEY='alpine_bucket_v1';
@@ -1047,28 +1142,59 @@ function renderFilters(){
   ideaFiltersEl.innerHTML=cats.map(c=>`<button class="fchip ${c===ideaFilter?'active':''}" data-cat="${c}">${c==='all'?'✦ All ideas':CATS[c]}</button>`).join('');
   ideaFiltersEl.querySelectorAll('.fchip').forEach(b=>b.addEventListener('click',()=>{ideaFilter=b.dataset.cat;renderFilters();renderIdeas();}));
 }
+// live Wikipedia media (thumbnail + one-line insight), cached so each page is fetched once
+const mediaCache={};
+function fetchMedia(wiki){
+  if(mediaCache[wiki])return Promise.resolve(mediaCache[wiki]);
+  return fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|extracts&exintro=1&explaintext=1&piprop=thumbnail&pithumbsize=600&redirects=1&titles=${encodeURIComponent(wiki)}`)
+    .then(r=>r.json()).then(data=>{
+      const p=data.query.pages,page=p[Object.keys(p)[0]];
+      let insight='';
+      if(page&&page.extract){let t=page.extract.split('. ')[0].replace(/\s*\([^)]*\)/g,'');if(t.length>150)t=t.slice(0,148)+'…';insight=t.endsWith('.')?t:t+'.';}
+      const m={thumb:(page&&page.thumbnail&&page.thumbnail.source)||null,insight};
+      mediaCache[wiki]=m;return m;
+    }).catch(()=>({thumb:null,insight:''}));
+}
+function loadIdeaMedia(box){
+  if(box.dataset.media)return;box.dataset.media='1';   // load once per card
+  const wiki=box.dataset.wiki,id=box.dataset.id;
+  fetchMedia(wiki).then(m=>{
+    if(m.thumb){const img=new Image();img.onload=()=>{box.appendChild(img);requestAnimationFrame(()=>img.classList.add('loaded'));};img.onerror=()=>{};img.src=m.thumb;}
+    const ins=document.getElementById('ins-'+id);
+    if(ins){if(m.insight)ins.innerHTML='<span class="ins-l">✦ Insight</span>'+m.insight;else ins.remove();}
+  });
+}
 function renderIdeas(){
   const q=ideaQuery.trim().toLowerCase();
   const list=IDEAS.filter(x=>(ideaFilter==='all'||x.cat===ideaFilter)&&
     (!q||(x.title+' '+x.area+' '+x.desc+' '+CATS[x.cat]).toLowerCase().includes(q)));
+  document.getElementById('ideaCount').textContent=list.length+(list.length===1?' idea':' ideas')+(ideaFilter==='all'&&!q?' to explore':'');
   if(!list.length){ideaCardsEl.innerHTML='<div class="ideas-empty">No ideas match that — try another word or clear the filter.</div>';return;}
   ideaCardsEl.innerHTML=list.map(x=>`
     <div class="idea">
-      <div class="icat">${CATS[x.cat]}</div>
-      <h3>${x.title}</h3>
-      <div class="iarea">${x.area}</div>
-      <div class="idesc">${x.desc}</div>
-      <div class="idea-foot">
-        <button class="addbtn ${inBucket(x.id)?'saved':''}" data-add="${x.id}">${inBucket(x.id)?'✓ Saved':'+ Bucket list'}</button>
-        <a class="ilink" href="https://www.google.com/maps/search/${encodeURIComponent(x.title+' '+x.area.split('·')[0])}" target="_blank">Map ↗</a>
+      <div class="iphoto" data-wiki="${x.wiki}" data-id="${x.id}">
+        <span class="icat-chip" style="background:${CATCOLOR[x.cat]}">${CATS[x.cat]}</span>
+        <div class="iph-label">${x.title}</div>
+      </div>
+      <div class="idea-b">
+        <div class="iarea">📍 ${x.area}</div>
+        <div class="idesc">${x.desc}</div>
+        <div class="iinsight" id="ins-${x.id}"><span class="ins-load">loading insight…</span></div>
+        <div class="idea-foot">
+          <button class="addbtn ${inBucket(x.id)?'saved':''}" data-add="${x.id}">${inBucket(x.id)?'✓ Saved':'+ Bucket list'}</button>
+          <a class="ilink" href="https://en.wikipedia.org/wiki/${encodeURIComponent(x.wiki)}" target="_blank">Read ↗</a>
+          <a class="ilink" href="https://www.google.com/maps/search/${encodeURIComponent(x.title+' '+x.area.split('·')[0])}" target="_blank">Map ↗</a>
+        </div>
       </div>
     </div>`).join('');
   ideaCardsEl.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>toggleIdea(b.dataset.add)));
+  // load each card's photo + insight (cached, so re-renders/searches are free)
+  ideaCardsEl.querySelectorAll('.iphoto').forEach(loadIdeaMedia);
 }
 function toggleIdea(id){
   const idea=IDEAS.find(x=>x.id===id);if(!idea)return;
   if(inBucket(id))bucket=bucket.filter(b=>b.id!==id);
-  else bucket.push({id:idea.id,title:idea.title,note:idea.desc,area:idea.area,custom:false});
+  else bucket.push({id:idea.id,title:idea.title,note:idea.desc,area:idea.area,wiki:idea.wiki,custom:false});
   saveBucket();renderIdeas();renderBucket();
 }
 
@@ -1078,6 +1204,7 @@ function renderBucket(){
   if(!bucket.length){bkListEl.innerHTML='<div class="bk-empty">Nothing yet — save an idea on the left, or add your own above.</div>';return;}
   bkListEl.innerHTML=bucket.map((b,idx)=>`
     <li>
+      ${b.wiki?`<div class="bk-thumb" data-wiki="${b.wiki}"></div>`:''}
       <div class="bk-txt">
         <div class="bk-t">${b.title}</div>
         ${b.note?`<div class="bk-n">${b.note}</div>`:''}
@@ -1088,6 +1215,7 @@ function renderBucket(){
   bkListEl.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{
     bucket.splice(+b.dataset.del,1);saveBucket();renderBucket();renderIdeas();
   }));
+  bkListEl.querySelectorAll('.bk-thumb[data-wiki]').forEach(t=>fetchMedia(t.dataset.wiki).then(m=>{if(m.thumb)t.style.backgroundImage=`url("${m.thumb}")`;}));
 }
 function addCustom(){
   const t=document.getElementById('bkTitle'),n=document.getElementById('bkNote');
@@ -1110,6 +1238,7 @@ document.querySelectorAll('.vtab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelector('.controls').style.display=ideas?'none':'';
   document.getElementById('summary').style.display=ideas?'none':'';
   window.scrollTo({top:0,behavior:'smooth'});
+  if(ideas)renderIdeas();                              // re-attach observer while visible
   if(!ideas&&map)setTimeout(()=>map.invalidateSize(),60);
 }));
 
