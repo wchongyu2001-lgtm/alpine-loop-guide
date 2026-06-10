@@ -189,8 +189,16 @@
   @media(max-width:940px){
     .summary{position:fixed;bottom:0;left:0;right:0;top:auto;z-index:50}
     .summary .panel{border-radius:14px 14px 0 0}
-    .summary .panel-h{cursor:pointer}
+    .summary .panel-h{cursor:pointer;padding:13px 19px calc(13px + env(safe-area-inset-bottom)*0)}
+    /* chevron affordance — flips when collapsed */
+    .summary .panel-h::after{content:"▾";margin-left:auto;font-size:15px;opacity:.85;transition:transform .25s}
+    .summary.collapsed .panel-h::after{transform:rotate(180deg)}
     .summary.collapsed .panel-b{display:none}
+    /* expanded sheet must never swallow the screen: cap + inner scroll */
+    .summary .panel-b{max-height:52vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(17px + env(safe-area-inset-bottom))}
+    .summary.collapsed .panel-h{padding-bottom:calc(13px + env(safe-area-inset-bottom))}
+    /* keep page content readable above the docked bar */
+    body{padding-bottom:76px}
     .picks-h,#picks{display:none}
   }
 
@@ -1425,6 +1433,8 @@ function renderCampTab(){
 }
 
 document.getElementById('panelHead').addEventListener('click',()=>{if(window.innerWidth<=940)document.getElementById('summary').classList.toggle('collapsed');});
+/* on phones the trip sheet starts collapsed — tap 🧭 Your Trip to expand */
+if(window.innerWidth<=940)document.getElementById('summary').classList.add('collapsed');
 
 /* ---------- IDEAS & BUCKET LIST ---------- */
 // i(title, category, area, desc, wiki) — wiki is the Wikipedia page used for the live photo + insight
