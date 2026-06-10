@@ -315,6 +315,27 @@
   #bk-list .bk-del{flex:0 0 auto;border:none;background:transparent;color:var(--ink-soft);font-size:16px;cursor:pointer;line-height:1;padding:2px 4px;border-radius:6px;transition:.15s}
   #bk-list .bk-del:hover{color:var(--terra);background:rgba(192,85,44,.1)}
   .bk-empty{font-size:13px;color:var(--ink-soft);font-style:italic;text-align:center;padding:18px 8px}
+
+  /* ---------- mobile gap-fill (<=600px) ---------- */
+  @media(max-width:600px){
+    /* no horizontal page scroll */
+    html,body{max-width:100%;overflow-x:hidden}
+    .wrap{padding:0 16px}
+    img,#map,.dr-hero img,.iphoto img,.photo img{max-width:100%}
+    /* view tabs: wrap & keep tap targets tall enough */
+    .viewtabs{flex-wrap:wrap;gap:7px}
+    .vtab{flex:1 1 auto;justify-content:center;padding:11px 14px;min-height:42px}
+    /* controls bar stats wrap comfortably, toggles stay tappable */
+    .controls .wrap{gap:11px 16px}
+    .toggle{min-height:40px}
+    .ctl-spacer{flex-basis:100%;height:0}
+    /* drawer hero title never overflows */
+    .dr-hero .htitle h2{font-size:clamp(24px,7vw,32px)}
+    /* keep decorative mono labels >= 11px on mobile */
+    .big-stats .l,.wx .wd,.stop-tag,.stop-opt b,.sleep::before{font-size:11px}
+    /* legend / filter chips wrap (already flex-wrap) stay >=11px */
+    .legend,.region-chip,.expand-hint,.badge,.opt.active::after,.wx .wp,.dr-sec.simple li::before{font-size:11px}
+  }
 </style>
 </head>
 <body>
