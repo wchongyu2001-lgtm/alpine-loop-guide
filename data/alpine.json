@@ -1,0 +1,2235 @@
+{
+ "meta": {
+  "key": "alpine",
+  "label": "🏔 Alpine Loop",
+  "kicker": "Indie Campers · Field Guide",
+  "h1Html": "The Great <em>Alpine</em> Loop",
+  "sub": "VENEZIA → SWITZERLAND → AUSTRIA → DOLOMITES → VENEZIA · 1 – 17 AUG 2026",
+  "intro": "Every leg mapped with its bucket-list <b>anchor</b> plus the worthwhile stops along the way — viewpoints, lake swims, towns, activities and hidden gems. Pricey stops show a <b>splurge vs budget</b> call. <b>Tap any card or map pin</b> for the full breakdown.",
+  "mapCenter": [
+   46.7,
+   11.5
+  ],
+  "mapZoom": 6,
+  "startCard": {
+   "title": "Pick up the van — Venice",
+   "meta": "FRI 1 AUG · afternoon collection · stock groceries, fuel up"
+  },
+  "endCard": {
+   "title": "Return van AM → Rialto, Venice",
+   "meta": "MON 17 AUG · Venice 17–19 · train to Milan 19th · fly Iceland 20th"
+  },
+  "curSymbol": "€",
+  "hasSecondary": true,
+  "fuelPerH": 13,
+  "xLabel": "Tolls &amp; vignettes",
+  "start": [
+   2026,
+   7,
+   1
+  ],
+  "presets": [
+   {
+    "key": "grand",
+    "label": "🏔 The Grand Loop",
+    "desc": "All three countries — Switzerland, Austria & the Dolomites, a stop a night.",
+    "om": "16 nights · ~26h driving · most ambitious"
+   },
+   {
+    "key": "easy",
+    "label": "🌿 Easy Pace",
+    "desc": "Skip Switzerland. The same 16 nights spent slower across Austria, a Lake Bled detour & the Dolomites.",
+    "om": "16 nights · ~21h driving · most relaxed"
+   },
+   {
+    "key": "swissdolo",
+    "label": "🇨🇭 Swiss & Dolomites",
+    "desc": "Switzerland + the Dolomites via the Stelvio Pass, with extra nights to linger instead of deeper Austria.",
+    "om": "16 nights · ~22h driving · scenery max"
+   }
+  ]
+ },
+ "days": [
+  {
+   "id": "garda",
+   "date": "SAT 1 AUG",
+   "drive": 2,
+   "region": "italy",
+   "ll": [
+    45.55,
+    10.62
+   ],
+   "wiki": "Lake Garda",
+   "short": "Lake Garda",
+   "note": "Ease into van life on Italy's biggest lake — a warm first night before the mountains begin.",
+   "sleep": "Peschiera / Sirmione",
+   "badges": [],
+   "why": [
+    "Sirmione's thermal peninsula and Scaliger water-castle",
+    "Easy turquoise swims to shake off the flight",
+    "A soft, lively landing into van life"
+   ],
+   "tips": [
+    "Big cheap supermarket shop here — Swiss prices later will sting",
+    "Camping Butterfly / San Benedetto have lake-edge pitches; book ahead"
+   ],
+   "cost": "Campsite €35–55 · most stops free",
+   "stops": [
+    {
+     "n": "Sirmione & Grotte di Catullo",
+     "t": "town",
+     "ll": [
+      45.498,
+      10.606
+     ],
+     "d": "Storybook lakefront town on a thin peninsula, with sprawling Roman villa ruins at the tip.",
+     "cost": "Ruins €8pp"
+    },
+    {
+     "n": "Jamaica Beach swim",
+     "t": "swim",
+     "ll": [
+      45.503,
+      10.604
+     ],
+     "d": "Flat-rock shallows off Sirmione with impossibly clear turquoise water — the iconic Garda swim.",
+     "must": true,
+     "cost": "Free"
+    },
+    {
+     "n": "Borghetto sul Mincio",
+     "t": "gem",
+     "ll": [
+      45.396,
+      10.733
+     ],
+     "d": "Fairytale medieval watermill hamlet on the river — a quiet detour most tourists miss.",
+     "cost": "Free"
+    },
+    {
+     "n": "Bardolino lakeside dinner",
+     "t": "food",
+     "ll": [
+      45.553,
+      10.717
+     ],
+     "d": "Your Italy food night — lakefront trattoria, fresh lake fish and a glass of local Bardolino red.",
+     "must": true,
+     "cost": "~€30pp"
+    }
+   ],
+   "plan": [
+    {
+     "id": "wl-sirmione",
+     "n": "Sirmione",
+     "t": "town",
+     "ll": [
+      45.4934,
+      10.6082
+     ],
+     "time": "09:00–11:00",
+     "d": "Storybook lakefront town on a thin peninsula — Scaliger water-castle + Grotte di Catullo (~€8pp). Park outside the old town; it is van-restricted."
+    },
+    {
+     "id": "wl-jamaica",
+     "n": "Jamaica Beach",
+     "t": "lake",
+     "ll": [
+      45.5003,
+      10.6052
+     ],
+     "time": "11:00–12:30",
+     "d": "MUST-DO. Flat-rock shallows off Sirmione with impossibly clear turquoise water. Free. Bring water shoes."
+    },
+    {
+     "id": "wl-borghetto",
+     "n": "Borghetto sul Mincio",
+     "t": "town",
+     "ll": [
+      45.353,
+      10.7305
+     ],
+     "time": "15:00–16:30",
+     "d": "Hidden gem — fairytale medieval watermill hamlet on the river. Free. Quiet detour en route to the evening base."
+    },
+    {
+     "id": "wl-bardolino",
+     "n": "Bardolino dinner",
+     "t": "food",
+     "ll": [
+      45.5469,
+      10.7203
+     ],
+     "time": "19:30–21:00",
+     "d": "MUST-DO food night. Lakefront trattoria — lake fish + local Bardolino red, ~€30pp. Big supermarket shop here too."
+    }
+   ]
+  },
+  {
+   "id": "lucerne",
+   "date": "SUN 2 AUG",
+   "drive": 4,
+   "region": "swiss",
+   "swiss": true,
+   "ll": [
+    47.05,
+    8.31
+   ],
+   "wiki": "Lucerne",
+   "short": "Lucerne & Pilatus",
+   "note": "Transit over the Gotthard into Switzerland, then two wishlist thrills by the lake.",
+   "sleep": "Lucerne",
+   "badges": [
+    {
+     "t": "Buy Swiss vignette at border",
+     "w": true
+    }
+   ],
+   "why": [
+    "Fräkigaudi toboggan — Switzerland's longest summer run",
+    "Stoos ridge — cliff walk off the world's steepest funicular",
+    "Painted old town and the wooden Chapel Bridge"
+   ],
+   "tips": [
+    "Swiss vignette (CHF 40) mandatory — buy at the border",
+    "Cook in the van; Switzerland is eye-wateringly pricey"
+   ],
+   "cost": "Vignette CHF 40 · activities below",
+   "stops": [
+    {
+     "n": "Fräkigaudi toboggan (Pilatus)",
+     "t": "act",
+     "ll": [
+      46.978,
+      8.262
+     ],
+     "d": "1,350m summer toboggan run down Fräkmüntegg — your wishlist thrill. Ride the cable car up.",
+     "must": true,
+     "cost": "~CHF 9/run",
+     "sp": "Pilatus golden round-trip (cogwheel+boat) ~CHF 90pp",
+     "bu": "Just the toboggan + cable car ~CHF 37pp"
+    },
+    {
+     "n": "Stoos Ridge Trail",
+     "t": "hike",
+     "ll": [
+      46.978,
+      8.66
+     ],
+     "d": "Easy 2h cliff-edge ridge walk between Klingenstock and Fronalpstock, reached by the steepest funicular on earth.",
+     "cost": "Funicular ~CHF 39pp"
+    },
+    {
+     "n": "Chapel Bridge & Lion Monument",
+     "t": "town",
+     "ll": [
+      47.052,
+      8.308
+     ],
+     "d": "14th-c covered bridge and the mournful carved lion — a free evening old-town wander.",
+     "cost": "Free"
+    },
+    {
+     "n": "Lake Lucerne swim (Lido)",
+     "t": "swim",
+     "ll": [
+      47.044,
+      8.33
+     ],
+     "d": "Cool off in the lake at the city Lido or a free shoreline spot.",
+     "must": true,
+     "cost": "Lido ~CHF 7 / free spots"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "jungfrau1",
+   "date": "MON 3 AUG",
+   "drive": 1,
+   "region": "swiss",
+   "swiss": true,
+   "ll": [
+    46.593,
+    7.909
+   ],
+   "wiki": "Lauterbrunnen",
+   "short": "Lauterbrunnen Valley",
+   "note": "Into the Jungfrau valley — 72 waterfalls off sheer walls. Your base for three nights, and your paragliding day.",
+   "sleep": "Lauterbrunnen",
+   "badges": [
+    {
+     "t": "Book campsite NOW — peak Aug",
+     "w": true
+    }
+   ],
+   "why": [
+    "The most jaw-dropping valley floor in the Alps",
+    "Tandem paragliding over the valley — your locked must-do",
+    "Cliff villages of Mürren & Wengen above"
+   ],
+   "tips": [
+    "Camping Jungfrau books months ahead for August — reserve now",
+    "Park and use cable cars/trains; valley driving is limited"
+   ],
+   "cost": "Campsite CHF 45–60 · activities below",
+   "stops": [
+    {
+     "n": "Paragliding over Lauterbrunnen",
+     "t": "act",
+     "ll": [
+      46.598,
+      7.908
+     ],
+     "d": "Tandem flight floating past waterfalls and cliffs — the signature Swiss adrenaline hit and your locked must-do.",
+     "must": true,
+     "cost": "~CHF 180pp"
+    },
+    {
+     "n": "Staubbach Falls",
+     "t": "view",
+     "ll": [
+      46.591,
+      7.906
+     ],
+     "d": "300m freefall waterfall drifting in the wind right above the village — a short free walk behind it.",
+     "cost": "Free"
+    },
+    {
+     "n": "Trümmelbach Falls",
+     "t": "gem",
+     "ll": [
+      46.583,
+      7.899
+     ],
+     "d": "Ten glacier waterfalls thundering *inside* the mountain, reached by a tunnel lift. Eerie and unforgettable.",
+     "cost": "CHF 14pp"
+    },
+    {
+     "n": "Mürren cliff village",
+     "t": "town",
+     "ll": [
+      46.559,
+      7.892
+     ],
+     "d": "Car-free timber village on a ledge with full Eiger-Mönch-Jungfrau views; great fondue dinner here.",
+     "must": true,
+     "cost": "Cable car ~CHF 12 · fondue ~CHF 28pp"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "jungfraujoch",
+   "date": "TUE 4 AUG",
+   "drive": 0,
+   "region": "swiss",
+   "swiss": true,
+   "ll": [
+    46.547,
+    7.98
+   ],
+   "wiki": "Jungfraujoch",
+   "short": "Jungfraujoch",
+   "note": "The big one — 'Top of Europe'. Or swap the steep ticket for a cheaper, hike-rich alternative.",
+   "sleep": "Lauterbrunnen",
+   "badges": [
+    {
+     "t": "Splurge stop — pick a clear day",
+     "w": false
+    }
+   ],
+   "why": [
+    "Europe's highest railway station at 3,454m",
+    "Ice Palace inside the glacier + Sphinx deck",
+    "The vast Aletsch glacier below you"
+   ],
+   "tips": [
+    "First train = clear morning views before cloud builds",
+    "Only worth it on a bluebird day — check the webcams"
+   ],
+   "cost": "See splurge vs budget below",
+   "stops": [
+    {
+     "n": "Jungfraujoch railway",
+     "t": "view",
+     "ll": [
+      46.547,
+      7.98
+     ],
+     "d": "Cogwheel through the Eiger to the 3,454m saddle, ice palace and glacier panorama.",
+     "cost": "~CHF 230pp return",
+     "sp": "Full Jungfraujoch — once-in-a-lifetime, ~CHF 230pp",
+     "bu": "Stop at Kleine Scheidegg (Eiger face) or ride Männlichen ~CHF 60pp"
+    },
+    {
+     "n": "First → Bachalpsee hike",
+     "t": "hike",
+     "ll": [
+      46.659,
+      8.057
+     ],
+     "d": "Budget alternative: cable car to First, then easy 1h walk to the mirror-still Bachalpsee. Half the price, arguably better.",
+     "cost": "First ~CHF 75pp"
+    },
+    {
+     "n": "Lake Brienz swim (Iseltwald)",
+     "t": "swim",
+     "ll": [
+      46.706,
+      7.974
+     ],
+     "d": "Detour to the electric-turquoise lake — swim at Iseltwald or Bönigen on the way back.",
+     "must": true,
+     "cost": "Free"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "first",
+   "date": "WED 5 AUG",
+   "drive": 0,
+   "region": "swiss",
+   "swiss": true,
+   "ll": [
+    46.659,
+    8.057
+   ],
+   "wiki": "Grindelwald",
+   "short": "Grindelwald First & Schilthorn",
+   "note": "A big-views play day: cliff walks, scooters, ziplines and a revolving Bond summit.",
+   "sleep": "Lauterbrunnen",
+   "badges": [],
+   "why": [
+    "First Cliff Walk cantilevered over the void",
+    "The Trottibike scooter descent (your wishlist)",
+    "Schilthorn's Bond-film revolving restaurant"
+   ],
+   "tips": [
+    "Do First OR Schilthorn — both in a day is rushed",
+    "Trottibikes are first-come at the Bort mid-station"
+   ],
+   "cost": "First pass ~CHF 75pp · activities below",
+   "stops": [
+    {
+     "n": "First Cliff Walk & Flyer",
+     "t": "act",
+     "ll": [
+      46.659,
+      8.057
+     ],
+     "d": "Glass-floored cliff walkway, then zip back toward Grindelwald on the First Flyer.",
+     "cost": "Flyer ~CHF 31"
+    },
+    {
+     "n": "Trottibike scooter descent",
+     "t": "act",
+     "ll": [
+      46.645,
+      8.054
+     ],
+     "d": "Kick-scooter the winding mountain road down from Bort — your wishlist, pure fun.",
+     "must": true,
+     "cost": "~CHF 19"
+    },
+    {
+     "n": "Schilthorn / Piz Gloria",
+     "t": "view",
+     "ll": [
+      46.558,
+      7.835
+     ],
+     "d": "Revolving 360° summit restaurant from On Her Majesty's Secret Service.",
+     "cost": "see options",
+     "sp": "Full Schilthorn cable car ~CHF 108pp",
+     "bu": "Ride only to Birg mid-station for the thrill walk ~CHF 70pp"
+    },
+    {
+     "n": "Lake Thun swim (Spiez)",
+     "t": "swim",
+     "ll": [
+      46.686,
+      7.68
+     ],
+     "d": "Vineyard-backed bay at Spiez — a gentler, warmer swim than the glacier lakes.",
+     "must": true,
+     "cost": "Free"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "zermatt",
+   "date": "THU 6 AUG",
+   "drive": 2.5,
+   "region": "swiss",
+   "swiss": true,
+   "ll": [
+    46.02,
+    7.749
+   ],
+   "wiki": "Zermatt",
+   "short": "Zermatt",
+   "note": "Car-free village beneath the Matterhorn — park at Täsch and shuttle up.",
+   "sleep": "Täsch / Randa",
+   "badges": [
+    {
+     "t": "Car-free — park at Täsch",
+     "w": false
+    }
+   ],
+   "why": [
+    "First look at the Matterhorn over the rooftops",
+    "Charming car-free Walliser village",
+    "Gateway to Gornergrat and the glaciers"
+   ],
+   "tips": [
+    "Vans park at the Matterhorn Terminal in Täsch (~CHF 16/day)",
+    "Camping Alphubel in Täsch is the practical base"
+   ],
+   "cost": "Täsch parking ~CHF 16/day · shuttle ~CHF 8pp",
+   "stops": [
+    {
+     "n": "Kirchbrücke Matterhorn view",
+     "t": "view",
+     "ll": [
+      46.02,
+      7.748
+     ],
+     "d": "The classic shot — Matterhorn framed down the river from the church bridge, best at sunrise.",
+     "cost": "Free"
+    },
+    {
+     "n": "Sunnegga & Leisee",
+     "t": "swim",
+     "ll": [
+      46.027,
+      7.766
+     ],
+     "d": "Funicular to a little lake that mirrors the Matterhorn — and you can actually swim in it.",
+     "must": true,
+     "cost": "Funicular ~CHF 27pp"
+    },
+    {
+     "n": "Gorner Gorge",
+     "t": "gem",
+     "ll": [
+      46.013,
+      7.745
+     ],
+     "d": "Boardwalks through a deep marbled gorge just outside town — a cool, quiet hour.",
+     "cost": "~CHF 6pp"
+    },
+    {
+     "n": "Charr / raclette night",
+     "t": "food",
+     "ll": [
+      46.02,
+      7.747
+     ],
+     "d": "Your Swiss cheese moment — bubbling raclette or fondue in the village.",
+     "cost": "~CHF 35pp"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "matterhorn",
+   "date": "FRI 7 AUG",
+   "drive": 0,
+   "region": "swiss",
+   "swiss": true,
+   "ll": [
+    45.976,
+    7.658
+   ],
+   "wiki": "Matterhorn",
+   "short": "Gornergrat & Matterhorn",
+   "note": "The Gornergrat railway and the most famous peak in the Alps — Switzerland's finale.",
+   "sleep": "Täsch",
+   "badges": [],
+   "why": [
+    "Cog railway to a 3,089m, 29-peak panorama",
+    "The Riffelsee Matterhorn reflection",
+    "Easy downhill alpine hike back"
+   ],
+   "tips": [
+    "Morning light is best on the Matterhorn's east face",
+    "Ride up, hike down a stage to save francs and see more"
+   ],
+   "cost": "See splurge vs budget below",
+   "stops": [
+    {
+     "n": "Gornergrat railway",
+     "t": "view",
+     "ll": [
+      45.983,
+      7.786
+     ],
+     "d": "Switzerland's highest open-air cog railway to a glacier-ringed summit terrace.",
+     "cost": "~CHF 132pp",
+     "sp": "Full Gornergrat return ~CHF 132pp",
+     "bu": "One-way up, hike down via Riffelberg ~CHF 66pp"
+    },
+    {
+     "n": "Riffelsee reflection",
+     "t": "hike",
+     "ll": [
+      45.991,
+      7.77
+     ],
+     "d": "Short walk from Rotenboden to the tarn that mirrors the Matterhorn perfectly — the postcard.",
+     "must": false,
+     "cost": "Free once up"
+    },
+    {
+     "n": "Glacier Paradise (optional)",
+     "t": "view",
+     "ll": [
+      45.938,
+      7.73
+     ],
+     "d": "Europe's highest cable-car station at 3,883m with an ice palace — for serious splurgers.",
+     "cost": "~CHF 120pp"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "innsbruck1",
+   "date": "SAT 8 AUG",
+   "drive": 4.5,
+   "region": "austria",
+   "ll": [
+    47.269,
+    11.394
+   ],
+   "wiki": "Innsbruck",
+   "short": "Drive east → Innsbruck",
+   "note": "The long haul east. Break it with turquoise lakes and a tiny country, arrive Innsbruck by evening.",
+   "sleep": "Innsbruck",
+   "badges": [
+    {
+     "t": "Longest drive of the trip",
+     "w": true
+    }
+   ],
+   "why": [
+    "Links the Swiss and Austrian Alps",
+    "Stunning Fernpass lakes to break the drive",
+    "Optional Liechtenstein country-tick"
+   ],
+   "tips": [
+    "Start early to beat A12 holiday traffic",
+    "Austria needs its own vignette — sort it before the border"
+   ],
+   "cost": "Austria vignette ~€12 · fuel is the main cost",
+   "stops": [
+    {
+     "n": "Liechtenstein (Vaduz)",
+     "t": "town",
+     "ll": [
+      47.141,
+      9.521
+     ],
+     "d": "Tick off a whole country in an afternoon — castle above the vineyards, passport stamp at the tourist office.",
+     "cost": "Free · stamp €3"
+    },
+    {
+     "n": "Blindsee / Fernsteinsee",
+     "t": "swim",
+     "ll": [
+      47.366,
+      10.882
+     ],
+     "d": "Jewel-turquoise lakes right by the Fernpass road — the perfect mid-drive swim and picnic.",
+     "must": true,
+     "cost": "Free / small parking fee"
+    },
+    {
+     "n": "St Anton am Arlberg",
+     "t": "town",
+     "ll": [
+      47.13,
+      10.262
+     ],
+     "d": "Famous ski town for a coffee-and-strudel leg stretch over the Arlberg pass.",
+     "cost": "Free"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "innsbruck2",
+   "date": "SUN 9 AUG",
+   "drive": 0,
+   "region": "austria",
+   "ll": [
+    47.269,
+    11.394
+   ],
+   "wiki": "Innsbruck",
+   "short": "Innsbruck",
+   "note": "Imperial old town wrapped in mountains, with a cable car straight to 2,000m.",
+   "sleep": "Innsbruck",
+   "badges": [],
+   "why": [
+    "Golden Roof and pastel old town",
+    "Nordkette — city centre to alpine ridge in 20 min",
+    "Architectural funicular by Zaha Hadid"
+   ],
+   "tips": [
+    "Nordkette funicular leaves from the centre — no car needed",
+    "Climb the City Tower for the rooftop-and-peaks view"
+   ],
+   "cost": "Nordkette ~€44pp · old town free",
+   "stops": [
+    {
+     "n": "Nordkettenbahn",
+     "t": "view",
+     "ll": [
+      47.308,
+      11.385
+     ],
+     "d": "Zaha Hadid funicular + cable cars from downtown to a 2,256m ridge over the city.",
+     "cost": "see options",
+     "sp": "All the way to Hafelekar ridge ~€44pp",
+     "bu": "Just to Hungerburg terrace for the view ~€10pp"
+    },
+    {
+     "n": "Golden Roof & Old Town",
+     "t": "town",
+     "ll": [
+      47.269,
+      11.393
+     ],
+     "d": "Gilded oriel, medieval lanes, Hofkirche — a free wander through Habsburg history.",
+     "cost": "Free"
+    },
+    {
+     "n": "Bergisel Ski Jump",
+     "t": "view",
+     "ll": [
+      47.249,
+      11.4
+     ],
+     "d": "Glide up the futuristic Olympic jump tower for a panorama and a coffee at the top.",
+     "cost": "~€11pp"
+    },
+    {
+     "n": "Tyrolean dinner",
+     "t": "food",
+     "ll": [
+      47.269,
+      11.393
+     ],
+     "d": "Austria food-night option — Stiftskeller beer garden, schnitzel and a Tyrolean beer.",
+     "must": true,
+     "cost": "~€25pp"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "salzburg",
+   "date": "MON 10 AUG",
+   "drive": 2,
+   "region": "austria",
+   "ll": [
+    47.801,
+    13.045
+   ],
+   "wiki": "Salzburg",
+   "short": "Salzburg",
+   "note": "Mozart's baroque city — clifftop fortress, domes, beer gardens and Sound of Music.",
+   "sleep": "Salzburg",
+   "badges": [],
+   "why": [
+    "Hohensalzburg, a vast intact medieval fortress",
+    "UNESCO baroque old town and Mozart's house",
+    "Monastery beer hall — your Austria food night"
+   ],
+   "tips": [
+    "Park & ride on the edge; the centre is tight for vans",
+    "Funicular up the fortress beats the summer climb"
+   ],
+   "cost": "Fortress + funicular ~€16pp · campsite €30–40",
+   "stops": [
+    {
+     "n": "Hohensalzburg Fortress",
+     "t": "view",
+     "ll": [
+      47.795,
+      13.047
+     ],
+     "d": "Clifftop castle over the city — ramparts, princely rooms and rooftop panoramas.",
+     "cost": "~€16pp w/ funicular"
+    },
+    {
+     "n": "Old Town & Getreidegasse",
+     "t": "town",
+     "ll": [
+      47.8,
+      13.043
+     ],
+     "d": "Wrought-iron signs, Mozart's birthplace, Domquartier squares — free to roam.",
+     "cost": "Free"
+    },
+    {
+     "n": "Augustiner Bräustübl",
+     "t": "food",
+     "ll": [
+      47.806,
+      13.03
+     ],
+     "d": "Cavernous monastery beer garden where you pour your own stein under chestnut trees — your locked Austria food night.",
+     "must": true,
+     "cost": "~€20pp"
+    },
+    {
+     "n": "Hellbrunn trick fountains",
+     "t": "gem",
+     "ll": [
+      47.762,
+      13.061
+     ],
+     "d": "Playful 400-year-old water-joke gardens — silly, soaking, great on a hot day.",
+     "cost": "~€13pp"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "hallstatt",
+   "date": "TUE 11 AUG",
+   "drive": 1.5,
+   "region": "austria",
+   "ll": [
+    47.561,
+    13.649
+   ],
+   "wiki": "Hallstatt",
+   "short": "Hallstatt & Salzkammergut",
+   "note": "The lake-village postcard come to life — go early, before the day-trippers.",
+   "sleep": "Obertraun / Bad Goisern",
+   "badges": [
+    {
+     "t": "Vans restricted — park & walk in",
+     "w": false
+    }
+   ],
+   "why": [
+    "The world's most photographed alpine village",
+    "Oldest salt mine on earth + Skywalk",
+    "A ring of swimmable Salzkammergut lakes"
+   ],
+   "tips": [
+    "Day-tour buses hit ~10am — arrive at opening or stay till evening",
+    "Park at P1/P2 or stay in Obertraun across the lake"
+   ],
+   "cost": "See splurge vs budget below",
+   "stops": [
+    {
+     "n": "Hallstatt village & Classic view",
+     "t": "town",
+     "ll": [
+      47.561,
+      13.649
+     ],
+     "d": "Wander the lanes and hit the famous Classic Hallstatt viewpoint — completely free.",
+     "cost": "Free"
+    },
+    {
+     "n": "Salzwelten salt mine + Skywalk",
+     "t": "view",
+     "ll": [
+      47.554,
+      13.643
+     ],
+     "d": "Funicular up to the oldest salt mine and the \"Welterbeblick\" platform jutting over the lake.",
+     "cost": "see options",
+     "sp": "Salt mine + Skywalk combo ~€40pp",
+     "bu": "Just the Skywalk viewpoint via funicular ~€20pp"
+    },
+    {
+     "n": "Gosausee",
+     "t": "swim",
+     "ll": [
+      47.534,
+      13.49
+     ],
+     "d": "Mirror lake reflecting the Dachstein glacier — a stunning, quiet free swim nearby.",
+     "must": true,
+     "cost": "Free"
+    },
+    {
+     "n": "Five Fingers viewpoint",
+     "t": "view",
+     "ll": [
+      47.527,
+      13.692
+     ],
+     "d": "Hand-shaped platform over a sheer drop on Krippenstein — vertigo and glory.",
+     "cost": "Cable car ~€40pp"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "grossglockner",
+   "date": "WED 12 AUG",
+   "drive": 2,
+   "region": "austria",
+   "ll": [
+    47.074,
+    12.829
+   ],
+   "wiki": "Grossglockner High Alpine Road",
+   "short": "Grossglockner Road",
+   "note": "Austria's greatest drive — 36 hairpins to 2,500m, ending on Lake Zell.",
+   "sleep": "Zell am See",
+   "badges": [
+    {
+     "t": "Toll road ~€40",
+     "w": false
+    }
+   ],
+   "why": [
+    "36 hairpins to 2,504m at Hochtor",
+    "Glacier and highest-peak views at Franz-Josefs-Höhe",
+    "Marmots, ibex and alpine meadows"
+   ],
+   "tips": [
+    "Toll (~€39) includes same-day re-entry — go early",
+    "Low gear on the descents; it's steep but well-built"
+   ],
+   "cost": "Toll ~€39/vehicle · Zell campsite €35",
+   "stops": [
+    {
+     "n": "Franz-Josefs-Höhe",
+     "t": "view",
+     "ll": [
+      47.075,
+      12.751
+     ],
+     "d": "The road's climax — staring straight at the Pasterze glacier and the Grossglockner summit.",
+     "cost": "Incl. in toll"
+    },
+    {
+     "n": "Edelweissspitze",
+     "t": "view",
+     "ll": [
+      47.125,
+      12.831
+     ],
+     "d": "Short cobbled spur to the road's highest point — a 360° sea of peaks.",
+     "cost": "Incl. in toll"
+    },
+    {
+     "n": "Krimml Waterfalls",
+     "t": "gem",
+     "ll": [
+      47.207,
+      12.174
+     ],
+     "d": "Optional detour to Europe's tallest waterfall — a misty forest trail beside 380m of falls.",
+     "cost": "~€8pp"
+    },
+    {
+     "n": "Zell am See lakefront",
+     "t": "swim",
+     "ll": [
+      47.323,
+      12.794
+     ],
+     "d": "End the day with a swim and a lakeside dinner on the Zeller See.",
+     "must": true,
+     "cost": "Free swim"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "toblach",
+   "date": "THU 13 AUG",
+   "drive": 3,
+   "region": "dolomites",
+   "ll": [
+    46.73,
+    12.221
+   ],
+   "wiki": "Toblach",
+   "short": "Into the Dolomites",
+   "note": "Drop south into South Tyrol — Italy with a German accent and dolomite spires.",
+   "sleep": "Toblach / Niederdorf",
+   "badges": [],
+   "why": [
+    "The handover from Austria into South Tyrol",
+    "Easy first dolomite lakes and valleys",
+    "Speck, dumplings and a great campsite base"
+   ],
+   "tips": [
+    "Restock in Bruneck/Toblach; valley shops are tiny",
+    "Camping Olympia Toblach is top-rated and well-serviced"
+   ],
+   "cost": "Campsite €38–48 · stops below",
+   "stops": [
+    {
+     "n": "Lienz",
+     "t": "town",
+     "ll": [
+      46.829,
+      12.769
+     ],
+     "d": "Sunny Tyrolean market town on the way down — arcaded streets and a castle.",
+     "cost": "Free"
+    },
+    {
+     "n": "Lago di Dobbiaco",
+     "t": "swim",
+     "ll": [
+      46.715,
+      12.226
+     ],
+     "d": "Calm reed-fringed lake with an easy loop and a swim spot below the peaks.",
+     "must": true,
+     "cost": "Free"
+    },
+    {
+     "n": "San Candido / Innichen",
+     "t": "gem",
+     "ll": [
+      46.733,
+      12.279
+     ],
+     "d": "Pretty pastel village with a Romanesque collegiate church — gelato stop.",
+     "cost": "Free"
+    },
+    {
+     "n": "First Südtirol dinner",
+     "t": "food",
+     "ll": [
+      46.73,
+      12.221
+     ],
+     "d": "Speck, canederli dumplings and a Lagrein red — your South Tyrol food night begins.",
+     "must": true,
+     "cost": "~€28pp"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "braies",
+   "date": "FRI 14 AUG",
+   "drive": 0,
+   "region": "dolomites",
+   "ll": [
+    46.694,
+    12.085
+   ],
+   "wiki": "Pragser Wildsee",
+   "short": "Pragser Wildsee + Tre Cime",
+   "note": "The emerald lake of every postcard, then the most iconic hike in the Dolomites.",
+   "sleep": "Cortina / Misurina",
+   "badges": [
+    {
+     "t": "Braies vehicle ban 9:30–16:00 · arrive before 9am",
+     "w": true
+    }
+   ],
+   "why": [
+    "Lago di Braies — turquoise water and wooden rowboats",
+    "Tre Cime di Lavaredo — the three towers loop",
+    "Misurina lake for the golden-hour reflection"
+   ],
+   "tips": [
+    "Braies road is closed to cars ~9:30–16:00 in summer — be there before 9am",
+    "Tre Cime toll road to Rifugio Auronzo saves a long climb"
+   ],
+   "cost": "Braies early-free · Tre Cime road ~€30",
+   "stops": [
+    {
+     "n": "Lago di Braies",
+     "t": "view",
+     "ll": [
+      46.694,
+      12.085
+     ],
+     "d": "Row a wooden boat across glassy turquoise water beneath sheer cliffs. Dawn is magic and crowd-free.",
+     "must": false,
+     "cost": "Boat €30/30min · parking ~€7/hr"
+    },
+    {
+     "n": "Tre Cime di Lavaredo loop",
+     "t": "hike",
+     "ll": [
+      46.618,
+      12.301
+     ],
+     "d": "The Dolomites' signature ~4h circuit around the three towers, past rifugios and WWI tunnels. Moderate, mostly level.",
+     "cost": "Toll road ~€30/car"
+    },
+    {
+     "n": "Lago di Misurina",
+     "t": "swim",
+     "ll": [
+      46.581,
+      12.255
+     ],
+     "d": "Lakeside resort that turns gold at sunset; gentle stroll and a paddle.",
+     "must": true,
+     "cost": "Free"
+    },
+    {
+     "n": "Lago d'Antorno",
+     "t": "gem",
+     "ll": [
+      46.61,
+      12.273
+     ],
+     "d": "Tiny mirror lake on the Tre Cime road — the reflection shot everyone misses.",
+     "cost": "Free"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "seceda",
+   "date": "SAT 15 AUG",
+   "drive": 0,
+   "region": "dolomites",
+   "ll": [
+    46.566,
+    11.674
+   ],
+   "wiki": "Seceda",
+   "short": "Val Gardena & Seceda",
+   "note": "Seceda's tilted knife-edge ridge, alpine meadows, and the great Dolomite passes.",
+   "sleep": "Val Gardena / Bolzano",
+   "badges": [],
+   "why": [
+    "Seceda's surreal tilted ridgeline",
+    "Alpe di Siusi — Europe's largest alpine meadow",
+    "Driving the Sella & Pordoi passes"
+   ],
+   "tips": [
+    "Ortisei–Seceda cable car for fast morning light",
+    "Loop a couple of Sella Ronda passes if you've energy"
+   ],
+   "cost": "Seceda cable car ~€45pp · campsite €40",
+   "stops": [
+    {
+     "n": "Seceda ridge",
+     "t": "view",
+     "ll": [
+      46.604,
+      11.731
+     ],
+     "d": "Cable car to the otherworldly tilted ridge above Ortisei — one of the great Dolomite views.",
+     "cost": "see options",
+     "sp": "Ortisei–Seceda cable car ~€45pp return",
+     "bu": "Drive to Alpe di Siusi base + meadow walk ~€18 bus"
+    },
+    {
+     "n": "Alpe di Siusi",
+     "t": "hike",
+     "ll": [
+      46.541,
+      11.61
+     ],
+     "d": "Rolling green high plateau under the Sassolungo spires — easy meadow trails, best at sunrise.",
+     "must": false,
+     "cost": "Cable car/bus ~€18"
+    },
+    {
+     "n": "Ortisei",
+     "t": "town",
+     "ll": [
+      46.576,
+      11.672
+     ],
+     "d": "Woodcarving capital of Val Gardena — pretty pedestrian centre and gelato.",
+     "cost": "Free"
+    },
+    {
+     "n": "Lago di Carezza",
+     "t": "gem",
+     "ll": [
+      46.41,
+      11.577
+     ],
+     "d": "The \"rainbow lake\" reflecting the Latemar — a quick stunner on the way toward Bolzano.",
+     "cost": "Parking ~€6"
+    },
+    {
+     "n": "South Tyrol wine dinner",
+     "t": "food",
+     "ll": [
+      46.566,
+      11.674
+     ],
+     "d": "Your big food/wine night — a Gardena hut or a Bolzano-area winery: Gewürztraminer and Schlutzkrapfen.",
+     "must": true,
+     "cost": "~€35pp"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "return",
+   "date": "SUN 16 AUG",
+   "drive": 3,
+   "region": "italy",
+   "ll": [
+    45.493,
+    12.243
+   ],
+   "wiki": "Venice",
+   "short": "Back to Venice",
+   "note": "A slow mountain morning, then an easy roll back to the lagoon for the hand-back.",
+   "sleep": "Mestre",
+   "badges": [],
+   "why": [
+    "Final dolomite views before the plains",
+    "A sparkling-wine detour through the Prosecco hills",
+    "Calm overnight near the depot"
+   ],
+   "tips": [
+    "Refuel and empty the van's tanks before drop-off",
+    "Camping Jolly/Venezia in Mestre is close to depot + Venice bus"
+   ],
+   "cost": "Mestre campsite €35 · fuel top-up",
+   "stops": [
+    {
+     "n": "Prosecco Hills (Valdobbiadene)",
+     "t": "gem",
+     "ll": [
+      45.897,
+      12.012
+     ],
+     "d": "UNESCO vineyard ridges — a last Italian lunch with a glass of proper Prosecco straight from the source.",
+     "must": true,
+     "cost": "Tasting ~€15pp"
+    },
+    {
+     "n": "Treviso",
+     "t": "town",
+     "ll": [
+      45.666,
+      12.243
+     ],
+     "d": "Canals, frescoed porticoes and tiramisù's birthplace — a relaxed final town stop.",
+     "cost": "Free"
+    },
+    {
+     "n": "Mestre van prep",
+     "t": "van",
+     "ll": [
+      45.493,
+      12.243
+     ],
+     "d": "Settle near the depot, empty tanks, repack — ready for the easy morning hand-back.",
+     "cost": "Campsite €35"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "liecht",
+   "date": "OPT · Aug 8",
+   "drive": 0.5,
+   "region": "swiss",
+   "optional": true,
+   "ll": [
+    47.141,
+    9.521
+   ],
+   "wiki": "Vaduz",
+   "short": "Liechtenstein (Vaduz)",
+   "note": "A tiny-country leg-stretch on the long Zermatt→Innsbruck drive.",
+   "sleep": "(en route)",
+   "badges": [
+    {
+     "t": "Add-on · breaks up Aug 8",
+     "w": false
+    }
+   ],
+   "why": [
+    "Tick off a whole country in an afternoon",
+    "Vaduz castle above the vineyards",
+    "Passport souvenir stamp"
+   ],
+   "tips": [
+    "Worth ~1–2h; it's a stop, not a stay",
+    "Right on the Switzerland→Austria route"
+   ],
+   "cost": "Free–€10 · passport stamp €3",
+   "stops": [
+    {
+     "n": "Vaduz Castle viewpoint",
+     "t": "view",
+     "ll": [
+      47.139,
+      9.524
+     ],
+     "d": "Walk up to the princely castle gates for a vineyard-and-valley view.",
+     "cost": "Free"
+    },
+    {
+     "n": "Passport stamp",
+     "t": "gem",
+     "ll": [
+      47.141,
+      9.521
+     ],
+     "d": "Get the novelty Liechtenstein stamp at the tourist office.",
+     "cost": "€3"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "stelvio",
+   "date": "OPT · Dolomites link",
+   "drive": 1,
+   "region": "dolomites",
+   "optional": true,
+   "ll": [
+    46.528,
+    10.454
+   ],
+   "wiki": "Stelvio Pass",
+   "short": "Stelvio Pass",
+   "note": "The most spectacular driving pass in the Alps — 48 hairpins of pure theatre.",
+   "sleep": "(en route)",
+   "badges": [
+    {
+     "t": "Add-on · big van? check gradient",
+     "w": false
+    }
+   ],
+   "why": [
+    "48 stacked hairpins to 2,757m",
+    "Glacier and ridgeline views from the top",
+    "A rite of passage between Switzerland and the Dolomites"
+   ],
+   "tips": [
+    "Big vans manage it but go early — it's slow and busy",
+    "Can close for weather even in summer; check first"
+   ],
+   "cost": "Free · summit café",
+   "stops": [
+    {
+     "n": "Stelvio summit",
+     "t": "view",
+     "ll": [
+      46.529,
+      10.454
+     ],
+     "d": "Stand at the top of the hairpin wall with a bratwurst and a coffee.",
+     "cost": "Free"
+    },
+    {
+     "n": "Tibet hairpin viewpoint",
+     "t": "view",
+     "ll": [
+      46.539,
+      10.451
+     ],
+     "d": "The famous bend looking back down all 48 switchbacks.",
+     "cost": "Free"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "bolzano",
+   "date": "OPT · Dolomites",
+   "drive": 0.5,
+   "region": "dolomites",
+   "optional": true,
+   "ll": [
+    46.498,
+    11.354
+   ],
+   "wiki": "Bolzano",
+   "short": "Bolzano & Ötzi",
+   "note": "South Tyrol's capital — a relaxed city rest-day with the world's oldest iceman.",
+   "sleep": "Bolzano",
+   "badges": [],
+   "why": [
+    "Ötzi the 5,300-year-old iceman",
+    "Porticoed streets, Italian-Tyrolean blend",
+    "Best apple strudel and a gentle day"
+   ],
+   "tips": [
+    "Great rest day between hikes",
+    "Ritten cable car + narrow-gauge train for a half-day"
+   ],
+   "cost": "Ötzi museum ~€14pp · agriturismo €35",
+   "stops": [
+    {
+     "n": "South Tyrol Museum (Ötzi)",
+     "t": "gem",
+     "ll": [
+      46.498,
+      11.353
+     ],
+     "d": "Meet the astonishingly preserved Copper-Age iceman and his gear.",
+     "cost": "~€14pp"
+    },
+    {
+     "n": "Ritten cable car",
+     "t": "view",
+     "ll": [
+      46.517,
+      11.355
+     ],
+     "d": "Glide above the city to earth-pyramid hoodoos and meadow walks.",
+     "cost": "~€8pp"
+    }
+   ],
+   "plan": []
+  },
+  {
+   "id": "bled",
+   "date": "OPT · Slovenia detour",
+   "drive": 2.5,
+   "region": "austria",
+   "optional": true,
+   "ll": [
+    46.364,
+    14.094
+   ],
+   "wiki": "Lake Bled",
+   "short": "Lake Bled (Slovenia)",
+   "note": "A fairytale island church and clifftop castle — an easy detour east of Austria.",
+   "sleep": "Bled",
+   "badges": [
+    {
+     "t": "Add-on · adds a country",
+     "w": false
+    }
+   ],
+   "why": [
+    "Island church in a glacial lake",
+    "Clifftop Bled Castle",
+    "Cheaper than the Alps — and gorgeous"
+   ],
+   "tips": [
+    "Row a traditional pletna boat to the island",
+    "Pairs if you swing south from Salzburg/Grossglockner"
+   ],
+   "cost": "Pletna ~€18pp · castle ~€15pp · campsite €30",
+   "stops": [
+    {
+     "n": "Bled Island",
+     "t": "swim",
+     "ll": [
+      46.362,
+      14.088
+     ],
+     "d": "Row out to the island church, ring the wishing bell, swim off the boat.",
+     "must": true,
+     "cost": "Pletna ~€18pp"
+    },
+    {
+     "n": "Bled Castle",
+     "t": "view",
+     "ll": [
+      46.369,
+      14.101
+     ],
+     "d": "Clifftop medieval castle over the red rooftops and turquoise water.",
+     "cost": "~€15pp"
+    },
+    {
+     "n": "Vintgar Gorge",
+     "t": "gem",
+     "ll": [
+      46.393,
+      14.078
+     ],
+     "d": "Boardwalk through an emerald river gorge a short drive away.",
+     "cost": "~€10pp"
+    }
+   ],
+   "plan": []
+  }
+ ],
+ "order": [
+  "garda",
+  "lucerne",
+  "jungfrau1",
+  "jungfraujoch",
+  "first",
+  "zermatt",
+  "matterhorn",
+  "liecht",
+  "innsbruck1",
+  "innsbruck2",
+  "salzburg",
+  "hallstatt",
+  "bled",
+  "grossglockner",
+  "stelvio",
+  "toblach",
+  "braies",
+  "seceda",
+  "bolzano",
+  "return"
+ ],
+ "presets": {
+  "grand": [
+   "garda",
+   "lucerne",
+   "jungfrau1",
+   "jungfraujoch",
+   "first",
+   "zermatt",
+   "matterhorn",
+   "innsbruck1",
+   "innsbruck2",
+   "salzburg",
+   "hallstatt",
+   "grossglockner",
+   "toblach",
+   "braies",
+   "seceda",
+   "return"
+  ],
+  "easy": [
+   "garda",
+   "innsbruck1",
+   "innsbruck2",
+   [
+    "salzburg",
+    2
+   ],
+   "hallstatt",
+   [
+    "bled",
+    2
+   ],
+   "grossglockner",
+   [
+    "toblach",
+    2
+   ],
+   "braies",
+   [
+    "seceda",
+    2
+   ],
+   "bolzano",
+   "return"
+  ],
+  "swissdolo": [
+   "garda",
+   "lucerne",
+   [
+    "jungfrau1",
+    2
+   ],
+   "jungfraujoch",
+   "first",
+   "zermatt",
+   "matterhorn",
+   "innsbruck1",
+   "stelvio",
+   "toblach",
+   "braies",
+   [
+    "seceda",
+    2
+   ],
+   "bolzano",
+   "return"
+  ]
+ },
+ "budget": {
+  "garda": {
+   "camp": 45,
+   "food": 60,
+   "act": 16
+  },
+  "lucerne": {
+   "camp": 50,
+   "food": 25,
+   "act": {
+    "sp": 180,
+    "bu": 74
+   },
+   "x": 40
+  },
+  "jungfrau1": {
+   "camp": 55,
+   "food": 56,
+   "act": 360,
+   "x": 28
+  },
+  "jungfraujoch": {
+   "camp": 55,
+   "food": 20,
+   "act": {
+    "sp": 460,
+    "bu": 120
+   }
+  },
+  "first": {
+   "camp": 55,
+   "food": 30,
+   "act": {
+    "sp": 300,
+    "bu": 188
+   }
+  },
+  "zermatt": {
+   "camp": 50,
+   "food": 70,
+   "act": 66,
+   "x": 32
+  },
+  "matterhorn": {
+   "camp": 50,
+   "food": 20,
+   "act": {
+    "sp": 264,
+    "bu": 132
+   }
+  },
+  "innsbruck1": {
+   "camp": 40,
+   "food": 40,
+   "act": 6,
+   "x": 12
+  },
+  "innsbruck2": {
+   "camp": 40,
+   "food": 50,
+   "act": {
+    "sp": 110,
+    "bu": 42
+   }
+  },
+  "salzburg": {
+   "camp": 35,
+   "food": 40,
+   "act": 58
+  },
+  "hallstatt": {
+   "camp": 40,
+   "food": 30,
+   "act": {
+    "sp": 160,
+    "bu": 80
+   }
+  },
+  "grossglockner": {
+   "camp": 35,
+   "food": 50,
+   "act": 16,
+   "x": 39
+  },
+  "toblach": {
+   "camp": 43,
+   "food": 56
+  },
+  "braies": {
+   "camp": 40,
+   "food": 40,
+   "act": 60
+  },
+  "seceda": {
+   "camp": 40,
+   "food": 70,
+   "act": {
+    "sp": 96,
+    "bu": 42
+   }
+  },
+  "return": {
+   "camp": 35,
+   "food": 40,
+   "act": 30
+  },
+  "liecht": {
+   "x": 6
+  },
+  "stelvio": {},
+  "bolzano": {
+   "camp": 35,
+   "food": 30,
+   "act": 44
+  },
+  "bled": {
+   "camp": 30,
+   "food": 40,
+   "act": 86
+  }
+ },
+ "ideas": [
+  {
+   "id": "lake-bohinj",
+   "title": "Lake Bohinj",
+   "cat": "lake",
+   "area": "Slovenia · Triglav NP",
+   "desc": "Bled's bigger, wilder, emptier sister — glacial water ringed by peaks, far fewer crowds. Pair with Vintgar Gorge.",
+   "wiki": "Lake Bohinj"
+  },
+  {
+   "id": "k-nigssee",
+   "title": "Königssee",
+   "cat": "lake",
+   "area": "Bavaria · near Salzburg",
+   "desc": "Electric-green fjord lake reached by silent electric boats, an echoing trumpet stop, and the red-domed St Bartholomä chapel.",
+   "wiki": "Königssee"
+  },
+  {
+   "id": "lake-como",
+   "title": "Lake Como",
+   "cat": "lake",
+   "area": "Italian Lakes",
+   "desc": "Palm-lined promenades and villa gardens — ferry-hop between Bellagio, Varenna and Menaggio. A glamorous detour south.",
+   "wiki": "Lake Como"
+  },
+  {
+   "id": "lake-maggiore",
+   "title": "Lake Maggiore",
+   "cat": "lake",
+   "area": "Italian Lakes · Piedmont",
+   "desc": "The Borromean Islands float palaces and terraced gardens on a deep-blue lake straddling Italy and Switzerland.",
+   "wiki": "Lake Maggiore"
+  },
+  {
+   "id": "eibsee",
+   "title": "Eibsee",
+   "cat": "lake",
+   "area": "Bavaria · Zugspitze",
+   "desc": "A turquoise forest lake at the foot of Germany's highest peak — rent a rowboat or walk the easy 7km shoreline loop.",
+   "wiki": "Eibsee"
+  },
+  {
+   "id": "achensee",
+   "title": "Achensee",
+   "cat": "lake",
+   "area": "Tyrol",
+   "desc": "Tyrol's largest lake, a fjord-like ribbon of teal water with a heritage steam cog railway and crisp alpine swims.",
+   "wiki": "Achensee"
+  },
+  {
+   "id": "wolfgangsee",
+   "title": "Wolfgangsee",
+   "cat": "lake",
+   "area": "Salzkammergut",
+   "desc": "Storybook lake villages St Wolfgang and St Gilgen, with the Schafberg cog railway climbing straight off the shore.",
+   "wiki": "Wolfgangsee"
+  },
+  {
+   "id": "traunsee",
+   "title": "Traunsee",
+   "cat": "lake",
+   "area": "Salzkammergut",
+   "desc": "Austria's deepest lake under the Traunstein cliff, with the fairytale Orth Castle on its own little islet.",
+   "wiki": "Traunsee"
+  },
+  {
+   "id": "lago-di-resia",
+   "title": "Lago di Resia",
+   "cat": "lake",
+   "area": "South Tyrol · Vinschgau",
+   "desc": "The half-submerged 14th-c church bell tower rising from turquoise water — surreal, quiet, and unforgettable.",
+   "wiki": "Reschensee"
+  },
+  {
+   "id": "lake-lugano",
+   "title": "Lake Lugano",
+   "cat": "lake",
+   "area": "Ticino · Switzerland",
+   "desc": "A palm-fringed Mediterranean lake city tucked into the Swiss-Italian border — funiculars, lakefront, and easy day-trips.",
+   "wiki": "Lake Lugano"
+  },
+  {
+   "id": "lake-iseo-monte-isola",
+   "title": "Lake Iseo & Monte Isola",
+   "cat": "lake",
+   "area": "Lombardy",
+   "desc": "The largest lake-island in Europe rises car-free from the water — quiet fishing villages and a sleeper among the famous lakes.",
+   "wiki": "Lake Iseo"
+  },
+  {
+   "id": "lake-orta-isola-san-giulio",
+   "title": "Lake Orta & Isola San Giulio",
+   "cat": "lake",
+   "area": "Piedmont",
+   "desc": "The most romantic small lake — a basilica island, a frescoed Sacro Monte, and almost no crowds.",
+   "wiki": "Lake Orta"
+  },
+  {
+   "id": "passo-giau",
+   "title": "Passo Giau",
+   "cat": "scenic",
+   "area": "Dolomites",
+   "desc": "The most theatrical Dolomite pass — 29 hairpins to a meadow saddle framed by Ra Gusela. Sunset here is legendary.",
+   "wiki": "Giau Pass"
+  },
+  {
+   "id": "sella-pass",
+   "title": "Sella Pass",
+   "cat": "scenic",
+   "area": "Dolomites",
+   "desc": "The heart of the Sella Ronda loop — switchbacks beneath the sheer Sassolungo and Sella massifs.",
+   "wiki": "Sella Pass"
+  },
+  {
+   "id": "pordoi-pass",
+   "title": "Pordoi Pass",
+   "cat": "scenic",
+   "area": "Dolomites",
+   "desc": "A 2,239m pass with a cable car to Sass Pordoi, the \"terrace of the Dolomites,\" for a sea-of-peaks panorama.",
+   "wiki": "Pordoi Pass"
+  },
+  {
+   "id": "bernina-express",
+   "title": "Bernina Express",
+   "cat": "scenic",
+   "area": "Switzerland · Graubünden",
+   "desc": "A UNESCO railway spiralling over the Landwasser Viaduct and Bernina glaciers from Chur to Italian Tirano.",
+   "wiki": "Bernina railway"
+  },
+  {
+   "id": "glacier-express",
+   "title": "Glacier Express",
+   "cat": "scenic",
+   "area": "Switzerland",
+   "desc": "The \"slowest express in the world\" — 8 panoramic hours across 291 bridges between Zermatt and St Moritz.",
+   "wiki": "Glacier Express"
+  },
+  {
+   "id": "aletsch-glacier",
+   "title": "Aletsch Glacier",
+   "cat": "scenic",
+   "area": "Switzerland · Valais",
+   "desc": "The largest glacier in the Alps — a 23km river of ice. Ride to Eggishorn or Bettmerhorn for the jaw-drop view.",
+   "wiki": "Aletsch Glacier"
+  },
+  {
+   "id": "vr-i-pass",
+   "title": "Vršič Pass",
+   "cat": "scenic",
+   "area": "Slovenia",
+   "desc": "50 cobbled hairpins over the Julian Alps from Kranjska Gora to the Soča valley — Slovenia's greatest drive.",
+   "wiki": "Vršič Pass"
+  },
+  {
+   "id": "lago-di-sorapis",
+   "title": "Lago di Sorapis",
+   "cat": "hike",
+   "area": "Dolomites · Cortina",
+   "desc": "A milky-blue glacial lake under jagged spires — a 6km cliff-path hike from Passo Tre Croci. The colour is unreal.",
+   "wiki": "Lake Sorapiss"
+  },
+  {
+   "id": "cinque-torri",
+   "title": "Cinque Torri",
+   "cat": "hike",
+   "area": "Dolomites · Cortina",
+   "desc": "Five tilted towers ringed by an open-air WWI front-line museum of trenches and tunnels. Easy loop, big views.",
+   "wiki": "Cinque Torri"
+  },
+  {
+   "id": "lagazuoi",
+   "title": "Lagazuoi",
+   "cat": "hike",
+   "area": "Dolomites",
+   "desc": "A cable car to 2,778m and a tunnel-laced WWI mountain, with one of the broadest Dolomite panoramas anywhere.",
+   "wiki": "Lagazuoi"
+  },
+  {
+   "id": "cadini-di-misurina",
+   "title": "Cadini di Misurina",
+   "cat": "hike",
+   "area": "Dolomites",
+   "desc": "A short scramble near Tre Cime to a viewpoint over a fence of impossibly slender spires — a photographer's grail.",
+   "wiki": "Cadini di Misurina"
+  },
+  {
+   "id": "creux-du-van",
+   "title": "Creux du Van",
+   "cat": "hike",
+   "area": "Switzerland · Jura",
+   "desc": "A vast natural rock amphitheatre — a 160m cliff arc with ibex and a \"Swiss Grand Canyon\" rim walk.",
+   "wiki": "Creux du Van"
+  },
+  {
+   "id": "partnach-gorge",
+   "title": "Partnach Gorge",
+   "cat": "hike",
+   "area": "Bavaria · Garmisch",
+   "desc": "A boardwalk threads a roaring 700m gorge of waterfalls and ice — dramatic in every season.",
+   "wiki": "Partnach Gorge"
+  },
+  {
+   "id": "so-a-valley-tolmin-gorge",
+   "title": "Soča Valley & Tolmin Gorge",
+   "cat": "hike",
+   "area": "Slovenia",
+   "desc": "An impossibly turquoise alpine river through emerald gorges — rafting, WWI history, and the greenest water you'll see.",
+   "wiki": "Soča"
+  },
+  {
+   "id": "ritten-earth-pyramids",
+   "title": "Ritten Earth Pyramids",
+   "cat": "hike",
+   "area": "South Tyrol",
+   "desc": "Eerie hoodoo spires capped with boulders above Bolzano, reached by a cable car and a narrow-gauge train.",
+   "wiki": "Ritten"
+  },
+  {
+   "id": "verona",
+   "title": "Verona",
+   "cat": "town",
+   "area": "Veneto · near Venice",
+   "desc": "Roman arena, Juliet's balcony and aperitivo squares — an easy first or last night on the way to/from the depot.",
+   "wiki": "Verona"
+  },
+  {
+   "id": "kitzb-hel",
+   "title": "Kitzbühel",
+   "cat": "town",
+   "area": "Tyrol",
+   "desc": "A chic medieval ski town below the saw-toothed Wilder Kaiser — pastel lanes, gondolas and alpine meadows.",
+   "wiki": "Kitzbühel"
+  },
+  {
+   "id": "merano",
+   "title": "Merano",
+   "cat": "town",
+   "area": "South Tyrol",
+   "desc": "A spa town with palm-lined promenades and the world-class Trauttmansdorff botanical gardens under the peaks.",
+   "wiki": "Merano"
+  },
+  {
+   "id": "brixen-bressanone",
+   "title": "Brixen / Bressanone",
+   "cat": "town",
+   "area": "South Tyrol",
+   "desc": "The oldest town in Tyrol — arcaded streets, a baroque cathedral, and a gateway to the Plose and Funes valleys.",
+   "wiki": "Brixen"
+  },
+  {
+   "id": "bergamo-citt-alta",
+   "title": "Bergamo Città Alta",
+   "cat": "town",
+   "area": "Lombardy",
+   "desc": "A walled hilltop old town of Venetian ramparts and piazzas, reached by funicular — a stunning gateway near Milan.",
+   "wiki": "Bergamo"
+  },
+  {
+   "id": "ljubljana",
+   "title": "Ljubljana",
+   "cat": "town",
+   "area": "Slovenia",
+   "desc": "A pocket-sized capital of dragon bridges, riverside cafés and a hilltop castle — car-free, green, and effortless.",
+   "wiki": "Ljubljana"
+  },
+  {
+   "id": "trieste",
+   "title": "Trieste",
+   "cat": "town",
+   "area": "Friuli · Adriatic",
+   "desc": "A grand Habsburg seaport of Viennese cafés and a clifftop castle where the Alps meet the Adriatic.",
+   "wiki": "Trieste"
+  },
+  {
+   "id": "neuschwanstein-castle",
+   "title": "Neuschwanstein Castle",
+   "cat": "town",
+   "area": "Bavaria",
+   "desc": "The fairytale castle that inspired Disney, perched over gorges and lakes in the Bavarian Alps.",
+   "wiki": "Neuschwanstein Castle"
+  },
+  {
+   "id": "predjama-castle",
+   "title": "Predjama Castle",
+   "cat": "town",
+   "area": "Slovenia",
+   "desc": "A Renaissance castle dramatically built into the mouth of a cave cliff — pair it with nearby Postojna.",
+   "wiki": "Predjama Castle"
+  },
+  {
+   "id": "interlaken",
+   "title": "Interlaken",
+   "cat": "town",
+   "area": "Switzerland · Bernese Oberland",
+   "desc": "The adventure hub between two lakes under the Eiger-Mönch-Jungfrau — paragliding, lake steamers, and rail to the peaks.",
+   "wiki": "Interlaken"
+  },
+  {
+   "id": "val-di-funes",
+   "title": "Val di Funes",
+   "cat": "town",
+   "area": "South Tyrol",
+   "desc": "The Santa Maddalena church on a meadow knoll under the Odle spires — one of the most photographed scenes in the Alps.",
+   "wiki": "Villnöß"
+  },
+  {
+   "id": "marmolada-glacier",
+   "title": "Marmolada Glacier",
+   "cat": "adventure",
+   "area": "Dolomites",
+   "desc": "Cable car to 3,265m on the Dolomites' highest peak, with a WWI tunnel museum inside the mountain.",
+   "wiki": "Marmolada"
+  },
+  {
+   "id": "zugspitze",
+   "title": "Zugspitze",
+   "cat": "adventure",
+   "area": "Bavaria / Tyrol",
+   "desc": "Germany's highest summit at 2,962m — a cogwheel and cable car to a glacier, with a four-country panorama.",
+   "wiki": "Zugspitze"
+  },
+  {
+   "id": "eisriesenwelt-ice-cave",
+   "title": "Eisriesenwelt Ice Cave",
+   "cat": "adventure",
+   "area": "Salzburg · Werfen",
+   "desc": "The largest ice cave on earth — 42km of frozen halls in the mountain, below a clifftop medieval fortress.",
+   "wiki": "Eisriesenwelt"
+  },
+  {
+   "id": "postojna-cave",
+   "title": "Postojna Cave",
+   "cat": "adventure",
+   "area": "Slovenia",
+   "desc": "An underground railway glides deep into a karst cavern of cathedral chambers and rare \"baby dragon\" olms.",
+   "wiki": "Postojna Cave"
+  },
+  {
+   "id": "swarovski-crystal-worlds",
+   "title": "Swarovski Crystal Worlds",
+   "cat": "adventure",
+   "area": "Tyrol · Wattens",
+   "desc": "A surreal crystal art park behind a grass-covered giant's head — playful, weird, and great on a rainy day.",
+   "wiki": "Swarovski Kristallwelten"
+  },
+  {
+   "id": "eagle-s-nest-kehlsteinhaus",
+   "title": "Eagle's Nest (Kehlsteinhaus)",
+   "cat": "adventure",
+   "area": "Bavaria · Berchtesgaden",
+   "desc": "A mountaintop lodge at 1,834m reached by a brass-lined elevator bored through the rock — a sweeping panorama.",
+   "wiki": "Kehlsteinhaus"
+  },
+  {
+   "id": "dachstein-ice-cave-skywalk",
+   "title": "Dachstein Ice Cave & Skywalk",
+   "cat": "adventure",
+   "area": "Salzkammergut",
+   "desc": "Frozen caverns and a \"Stairway to Nothingness\" platform over a 400m drop — a dramatic add to a Hallstatt day.",
+   "wiki": "Dachstein Mountains"
+  },
+  {
+   "id": "plitvice-lakes",
+   "title": "Plitvice Lakes",
+   "cat": "detour",
+   "area": "Croatia",
+   "desc": "Sixteen terraced turquoise lakes linked by waterfalls and boardwalks — a bigger swing south, but a UNESCO stunner.",
+   "wiki": "Plitvice Lakes National Park"
+  },
+  {
+   "id": "miramare-castle",
+   "title": "Miramare Castle",
+   "cat": "castle",
+   "area": "Trieste · Adriatic",
+   "desc": "A white fairytale castle on a sea promontory with botanical gardens — where the Alps melt into the Adriatic.",
+   "wiki": "Miramare Castle"
+  },
+  {
+   "id": "hohenwerfen-castle",
+   "title": "Hohenwerfen Castle",
+   "cat": "castle",
+   "area": "Salzburg · Werfen",
+   "desc": "A 900-year clifftop fortress with daily falconry shows, perched above the Eisriesenwelt ice cave.",
+   "wiki": "Hohenwerfen Castle"
+  },
+  {
+   "id": "hohensalzburg-fortress",
+   "title": "Hohensalzburg Fortress",
+   "cat": "castle",
+   "area": "Salzburg",
+   "desc": "One of Europe's largest fully-intact medieval fortresses, crowning the Salzburg skyline over the old town.",
+   "wiki": "Hohensalzburg Fortress"
+  },
+  {
+   "id": "tyrol-castle",
+   "title": "Tyrol Castle",
+   "cat": "castle",
+   "area": "South Tyrol · Merano",
+   "desc": "The ancestral castle that gave the whole region its name, on a vineyard ridge above Merano.",
+   "wiki": "Tyrol Castle"
+  },
+  {
+   "id": "bled-castle",
+   "title": "Bled Castle",
+   "cat": "castle",
+   "area": "Slovenia · Lake Bled",
+   "desc": "A clifftop medieval castle over Bled's turquoise lake and island church — the ultimate Slovenian postcard.",
+   "wiki": "Bled Castle"
+  },
+  {
+   "id": "bad-gastein",
+   "title": "Bad Gastein",
+   "cat": "spa",
+   "area": "Salzburg",
+   "desc": "A Belle-Époque spa town built around a waterfall crashing through its centre — grand hotels and radon-thermal baths.",
+   "wiki": "Bad Gastein"
+  },
+  {
+   "id": "leukerbad",
+   "title": "Leukerbad",
+   "cat": "spa",
+   "area": "Valais · Switzerland",
+   "desc": "The Alps' largest thermal resort — open-air pools steaming under 600m cliffs, reachable by mountain road.",
+   "wiki": "Leukerbad"
+  },
+  {
+   "id": "bad-ragaz-tamina-gorge",
+   "title": "Bad Ragaz & Tamina Gorge",
+   "cat": "spa",
+   "area": "Switzerland",
+   "desc": "Soak in 36°C spring water piped straight from a dramatic slot gorge — wellness plus an easy gorge walk.",
+   "wiki": "Bad Ragaz"
+  },
+  {
+   "id": "bormio-terme",
+   "title": "Bormio Terme",
+   "cat": "spa",
+   "area": "Lombardy · Stelvio",
+   "desc": "Roman-era thermal baths at the foot of the Stelvio Pass, with panoramic outdoor pools over the valley.",
+   "wiki": "Bormio"
+  },
+  {
+   "id": "vintgar-gorge",
+   "title": "Vintgar Gorge",
+   "cat": "falls",
+   "area": "Slovenia · near Bled",
+   "desc": "A wooden walkway clings to a cliff above the rushing emerald Radovna river — 1.6km of pure drama.",
+   "wiki": "Vintgar Gorge"
+  },
+  {
+   "id": "peri-nik-falls",
+   "title": "Peričnik Falls",
+   "cat": "falls",
+   "area": "Slovenia · Triglav NP",
+   "desc": "A 52m waterfall you can actually walk behind, in the wild Vrata valley below Mt Triglav.",
+   "wiki": "Peričnik Falls"
+  },
+  {
+   "id": "krimml-waterfalls",
+   "title": "Krimml Waterfalls",
+   "cat": "falls",
+   "area": "Salzburg · Hohe Tauern",
+   "desc": "Europe's tallest at 380m — a misty forest trail switchbacks beside three thundering tiers.",
+   "wiki": "Krimml Waterfalls"
+  },
+  {
+   "id": "liechtensteinklamm",
+   "title": "Liechtensteinklamm",
+   "cat": "falls",
+   "area": "Salzburg",
+   "desc": "A slot gorge so narrow the walls nearly touch, with a glowing turquoise river churning far below.",
+   "wiki": "Liechtensteinklamm"
+  },
+  {
+   "id": "triglav-national-park",
+   "title": "Triglav National Park",
+   "cat": "park",
+   "area": "Slovenia",
+   "desc": "Slovenia's only national park — the Julian Alps, the Soča river and Lake Bohinj, all crowned by Mt Triglav.",
+   "wiki": "Triglav National Park"
+  },
+  {
+   "id": "hohe-tauern-national-park",
+   "title": "Hohe Tauern National Park",
+   "cat": "park",
+   "area": "Austria",
+   "desc": "The Alps' largest protected area — glaciers, the Grossglockner, marmots and a wall of 3,000m peaks.",
+   "wiki": "Hohe Tauern National Park"
+  },
+  {
+   "id": "stelvio-national-park",
+   "title": "Stelvio National Park",
+   "cat": "park",
+   "area": "Lombardy / South Tyrol",
+   "desc": "Italy's largest alpine park around the Stelvio Pass — glaciers, ibex and high-mountain trails.",
+   "wiki": "Stelvio National Park"
+  },
+  {
+   "id": "gran-paradiso-national-park",
+   "title": "Gran Paradiso National Park",
+   "cat": "park",
+   "area": "Aosta · Piedmont",
+   "desc": "Italy's oldest national park, a former royal hunting reserve full of ibex below a 4,000m peak.",
+   "wiki": "Gran Paradiso National Park"
+  },
+  {
+   "id": "south-tyrolean-wine-road",
+   "title": "South Tyrolean Wine Road",
+   "cat": "food",
+   "area": "South Tyrol",
+   "desc": "Vineyard villages south of Bolzano — Kaltern, Tramin, Appiano — for Gewürztraminer tastings and autumn Törggelen feasts.",
+   "wiki": "Kaltern"
+  },
+  {
+   "id": "trento-trentodoc",
+   "title": "Trento & Trentodoc",
+   "cat": "food",
+   "area": "Trentino",
+   "desc": "An elegant Renaissance city and home of Italy's best metodo-classico sparkling wine — cellar tours and piazzas.",
+   "wiki": "Trento"
+  }
+ ],
+ "checklists": [
+  {
+   "id": "before-departure",
+   "title": "Before departure — Alpine Loop",
+   "items": [
+    {
+     "t": "Swiss vignette (CHF 40) — buy at the border",
+     "done": false
+    },
+    {
+     "t": "Austria vignette (~€12) — sort before the border",
+     "done": false
+    },
+    {
+     "t": "International Driving Permit + passports",
+     "done": false
+    },
+    {
+     "t": "Travel insurance + EHIC/GHIC card",
+     "done": false
+    },
+    {
+     "t": "Book Lauterbrunnen campsite NOW (peak August)",
+     "done": false
+    },
+    {
+     "t": "Book paragliding (Lauterbrunnen) + Tre Cime toll road",
+     "done": false
+    },
+    {
+     "t": "Download offline maps for the whole route",
+     "done": false
+    },
+    {
+     "t": "Van: check height/length for Stelvio & tunnels",
+     "done": false
+    }
+   ]
+  }
+ ]
+}

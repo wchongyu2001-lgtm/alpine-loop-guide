@@ -1,0 +1,92 @@
+{
+ "regions": {
+  "italy": {
+   "name": "Italy",
+   "color": "#b9531a"
+  },
+  "swiss": {
+   "name": "Switzerland",
+   "color": "#2a5a5a"
+  },
+  "austria": {
+   "name": "Austria",
+   "color": "#5a6342"
+  },
+  "dolomites": {
+   "name": "Dolomites",
+   "color": "#9c5a6a"
+  },
+  "reykjavik": {
+   "color": "#3f6f8c",
+   "name": "Reykjavík"
+  },
+  "golden": {
+   "color": "#c79a2e",
+   "name": "Golden Circle"
+  },
+  "south": {
+   "color": "#2f8f6b",
+   "name": "South Coast"
+  },
+  "east": {
+   "color": "#7d5ba6",
+   "name": "East Fjords"
+  },
+  "north": {
+   "color": "#2b6d8a",
+   "name": "North"
+  },
+  "west": {
+   "color": "#b5552c",
+   "name": "Snæfellsnes / West"
+  }
+ },
+ "tags": {
+  "view": "🔭",
+  "hike": "🥾",
+  "swim": "🏊",
+  "act": "🪂",
+  "town": "🏘",
+  "food": "🍽",
+  "gem": "💎",
+  "van": "🌙"
+ },
+ "cats": {
+  "lake": "🏞 Lakes",
+  "scenic": "🛣 Scenic drives",
+  "hike": "🥾 Hikes",
+  "town": "🏘 Towns",
+  "castle": "🏰 Castles",
+  "adventure": "🪂 Adventure",
+  "spa": "🧖 Spa & thermal",
+  "falls": "💦 Waterfalls & gorges",
+  "park": "🌲 National parks",
+  "detour": "🌍 Detours",
+  "food": "🍷 Food & wine"
+ },
+ "catColors": {
+  "lake": "#2a5a5a",
+  "scenic": "#b9531a",
+  "hike": "#5a6342",
+  "town": "#9c5a6a",
+  "castle": "#9a6b4e",
+  "adventure": "#b8860b",
+  "spa": "#4a8a86",
+  "falls": "#3f6f95",
+  "park": "#3d6b46",
+  "detour": "#6b5b95",
+  "food": "#7a4b3a"
+ },
+ "catLabels": {
+  "view": "🔭 Viewpoints",
+  "hike": "🥾 Hikes",
+  "swim": "🏊 Swims",
+  "act": "🪂 Activities",
+  "town": "🏘 Towns",
+  "food": "🍽 Food",
+  "gem": "💎 Hidden gems",
+  "van": "🌙 Van pitches",
+  "must": "● Must-do"
+ },
+ "chf2eur": 13
+}

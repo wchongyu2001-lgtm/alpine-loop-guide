@@ -1,0 +1,159 @@
+{
+ "meta": {
+  "key": "preexchange",
+  "label": "🇮🇹 Pre-exchange",
+  "kicker": "City hop · Field Guide",
+  "h1Html": "Pre-exchange · <em>Italia</em>",
+  "sub": "MILANO → LAKE COMO → GENOVA → FIRENZE → BOLOGNA · 24 JUL – 1 AUG 2026",
+  "intro": "The city-hop week before the van: Milan landing, Como day trips, Genova, Florence and Bologna — then pick up the Alpine Loop in Venice on 1 Aug.",
+  "mapCenter": [44.9, 10.5],
+  "mapZoom": 7,
+  "curSymbol": "€",
+  "start": [2026, 6, 24]
+ },
+ "days": [
+  {
+   "id": "px-jul24",
+   "date": "FRI 24 JUL",
+   "iso": "2026-07-24",
+   "region": "italy",
+   "ll": [45.4842, 9.2012],
+   "wiki": "Milan",
+   "short": "Land in Milano",
+   "note": "EK 353 + EK 205, land MXP 14:10. Check in at UNA Century, easy evening around Sempione.",
+   "sleep": "UNA Hotels Century Milano",
+   "plan": [
+    { "id": "px-sempione", "n": "Parco Sempione", "t": "scenic", "ll": [45.4722, 9.1772], "d": "Milan's central park behind the castle — shake off the flight." },
+    { "id": "px-arco", "n": "Arco della Pace", "t": "town", "ll": [45.4758, 9.1725], "d": "Napoleonic arch at the park's north gate; aperitivo bars around it." }
+   ]
+  },
+  {
+   "id": "px-jul25",
+   "date": "SAT 25 JUL",
+   "iso": "2026-07-25",
+   "region": "italy",
+   "ll": [45.4642, 9.19],
+   "wiki": "Milan",
+   "short": "Milano classics",
+   "note": "Duomo first thing, then the Galleria and the famous schiacciata queue.",
+   "sleep": "UNA Hotels Century Milano",
+   "plan": [
+    { "id": "px-duomo", "n": "Duomo di Milano", "t": "castle", "ll": [45.4642, 9.1916], "d": "Rooftop terraces are the move — book the early slot." },
+    { "id": "px-ciacco", "n": "Ciacco gelato", "t": "food", "ll": [45.4631, 9.1873], "d": "Natural gelato near the Duomo." },
+    { "id": "px-galleria", "n": "Galleria Vittorio Emanuele II", "t": "town", "ll": [45.4659, 9.19], "d": "The world's prettiest shopping arcade." },
+    { "id": "px-vinaio", "n": "All'Antico Vinaio", "t": "food", "ll": [45.4622, 9.1859], "d": "Florence's cult schiacciata — Milan outpost, queue moves fast." }
+   ]
+  },
+  {
+   "id": "px-jul26",
+   "date": "SUN 26 JUL",
+   "iso": "2026-07-26",
+   "region": "italy",
+   "ll": [45.9876, 9.2572],
+   "wiki": "Lake Como",
+   "short": "Lake Como day trip",
+   "note": "Train Milano Centrale → Varenna (~1h). Ferry triangle: Varenna–Bellagio–Menaggio.",
+   "sleep": "UNA Hotels Century Milano",
+   "plan": [
+    { "id": "px-como", "n": "Lake Como (Varenna + Bellagio)", "t": "lake", "ll": [45.9876, 9.2572], "d": "Mid-lake ferry hop; swim at Varenna's lido if hot." }
+   ]
+  },
+  {
+   "id": "px-jul27",
+   "date": "MON 27 JUL",
+   "iso": "2026-07-27",
+   "region": "italy",
+   "ll": [44.4161, 8.9203],
+   "wiki": "Genoa",
+   "short": "Train to Genova",
+   "note": "06:05 Trenitalia from Rogoredo, in Genova by 08:38. Old town, port, focaccia.",
+   "sleep": "B&B Hotel Genova",
+   "plan": [
+    { "id": "px-genova", "n": "Genova old town + Porto Antico", "t": "town", "ll": [44.4109, 8.9326], "d": "Europe's largest medieval old town; focaccia col formaggio for lunch." }
+   ]
+  },
+  {
+   "id": "px-jul28",
+   "date": "TUE 28 JUL",
+   "iso": "2026-07-28",
+   "region": "italy",
+   "ll": [43.7696, 11.2558],
+   "wiki": "Florence",
+   "short": "Genova → Firenze",
+   "note": "Train to Florence, check in at Garibaldi Blu on Santa Maria Novella.",
+   "sleep": "Garibaldi Blu, Firenze",
+   "plan": [
+    { "id": "px-firenze1", "n": "Florence first wander", "t": "town", "ll": [43.7696, 11.2558], "d": "Duomo exterior, Ponte Vecchio at golden hour." }
+   ]
+  },
+  {
+   "id": "px-jul29",
+   "date": "WED 29 JUL",
+   "iso": "2026-07-29",
+   "region": "italy",
+   "ll": [43.7696, 11.2558],
+   "wiki": "Florence",
+   "short": "Firenze full day",
+   "note": "Uffizi or Accademia (book ahead), Oltrarno evening.",
+   "sleep": "Garibaldi Blu, Firenze",
+   "plan": [
+    { "id": "px-firenze2", "n": "Uffizi / Accademia", "t": "castle", "ll": [43.7687, 11.2556], "d": "Pick one big museum; timed entry sells out in summer." }
+   ]
+  },
+  {
+   "id": "px-jul30",
+   "date": "THU 30 JUL",
+   "iso": "2026-07-30",
+   "region": "italy",
+   "ll": [44.5008, 11.3426],
+   "wiki": "Bologna",
+   "short": "Firenze → Bologna",
+   "note": "Note: Wanderlog has both Garibaldi Blu (night 3) and Hotel Internazionale Bologna booked tonight — resolve the overlap.",
+   "sleep": "Hotel Internazionale, Bologna",
+   "plan": [
+    { "id": "px-bologna1", "n": "Bologna porticoes + Quadrilatero", "t": "food", "ll": [44.4949, 11.3426], "d": "Food-market lanes; tagliatelle al ragù where it was born." }
+   ]
+  },
+  {
+   "id": "px-jul31",
+   "date": "FRI 31 JUL",
+   "iso": "2026-07-31",
+   "region": "italy",
+   "ll": [44.5008, 11.3426],
+   "wiki": "Bologna",
+   "short": "Bologna",
+   "note": "Towers, Archiginnasio, last slow Italian city day before van life.",
+   "sleep": "Hotel Internazionale, Bologna",
+   "plan": [
+    { "id": "px-bologna2", "n": "Asinelli Tower climb", "t": "scenic", "ll": [44.4946, 11.3466], "d": "498 steps, the classic red-roof panorama." }
+   ]
+  },
+  {
+   "id": "px-aug1",
+   "date": "SAT 1 AUG",
+   "iso": "2026-08-01",
+   "region": "italy",
+   "ll": [45.4408, 12.3155],
+   "wiki": "Venice",
+   "short": "To Venezia → van pickup",
+   "note": "Train Bologna → Venezia, collect the Indie Campers van — the Alpine Loop trip takes over from here.",
+   "sleep": "Butterfly Camping Village (Alpine Loop day 1)",
+   "plan": []
+  }
+ ],
+ "ideas": [],
+ "budget": {},
+ "checklists": [
+  {
+   "id": "px-pretrip",
+   "title": "Before flying out",
+   "items": [
+    { "t": "Passports + boarding passes offline", "done": false },
+    { "t": "Travel insurance docs downloaded", "done": false },
+    { "t": "Notify bank / enable overseas spending", "done": false },
+    { "t": "eSIM for Italy/EU installed", "done": false },
+    { "t": "Trenitalia tickets saved offline", "done": false }
+   ]
+  }
+ ]
+}

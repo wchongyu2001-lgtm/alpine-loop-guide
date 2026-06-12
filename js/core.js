@@ -1,0 +1,101 @@
+/* Pure helpers — no DOM. Tested by tools/test-core.mjs (node). */
+
+export function haversineKm(a, b) {
+  const toR = x => x * Math.PI / 180;
+  const dLat = toR(b[0] - a[0]), dLng = toR(b[1] - a[1]);
+  const s = Math.sin(dLat / 2) ** 2 + Math.cos(toR(a[0])) * Math.cos(toR(b[0])) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(s));
+}
+
+// Straight-line distance scaled to road reality (winding alpine roads ≈ ×1.3).
+export function routeStats(points, roadFactor = 1.3, avgKmh = 55) {
+  let km = 0;
+  for (let i = 1; i < points.length; i++) km += haversineKm(points[i - 1], points[i]);
+  km *= roadFactor;
+  return { km: Math.round(km), hours: Math.round(km / avgKmh * 10) / 10 };
+}
+
+// Nearest-neighbour reorder, keeping the first point fixed.
+export function optimizeOrder(items, getLL) {
+  if (items.length < 3) return items.slice();
+  const rest = items.slice(1), out = [items[0]];
+  while (rest.length) {
+    const cur = getLL(out[out.length - 1]);
+    let best = 0, bestD = Infinity;
+    rest.forEach((it, i) => {
+      const d = haversineKm(cur, getLL(it));
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    out.push(rest.splice(best, 1)[0]);
+  }
+  return out;
+}
+
+export const gmapsUrl = (ll, name) => ll
+  ? `https://www.google.com/maps/search/?api=1&query=${ll[0]},${ll[1]}`
+  : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name || '')}`;
+
+export const amapsUrl = (ll, name) => ll
+  ? `https://maps.apple.com/?ll=${ll[0]},${ll[1]}&q=${encodeURIComponent(name || 'Pin')}`
+  : `https://maps.apple.com/?q=${encodeURIComponent(name)}`;
+
+export const gmapsDirUrl = (points) =>
+  `https://www.google.com/maps/dir/${points.map(p => `${p[0]},${p[1]}`).join('/')}`;
+
+export const flightStatusUrl = code =>
+  `https://www.google.com/search?q=${encodeURIComponent(code + ' flight status')}`;
+
+// Assign a booking to the smallest-date-range trip containing its start date.
+export function assignTrip(trips, startISO) {
+  if (!startISO) return 'unassigned';
+  const d = startISO.slice(0, 10);
+  const hits = trips.filter(t => t.start <= d && d <= t.end);
+  if (!hits.length) return 'unassigned';
+  hits.sort((a, b) => (new Date(a.end) - new Date(a.start)) - (new Date(b.end) - new Date(b.start)));
+  return hits[0].id;
+}
+
+// Overlay day-plans replace base plans per day; base kept where overlay silent.
+export function effectivePlans(days, overlayPlans) {
+  const out = {};
+  for (const d of days) out[d.id] = (overlayPlans && overlayPlans[d.id]) || d.plan || [];
+  return out;
+}
+
+// Expense splitting between two travellers (extensible to N via shares).
+// split: {type:'equal'} | {type:'solo'} (payer only) | {type:'shares', shares:{name:fraction}}
+export function computeBalances(expenses, travellers) {
+  const paid = {}, owes = {};
+  travellers.forEach(t => { paid[t] = 0; owes[t] = 0; });
+  for (const e of expenses) {
+    const amt = Number(e.amount) || 0;
+    if (!amt || !e.paidBy || !(e.paidBy in paid)) continue;
+    paid[e.paidBy] += amt;
+    const split = e.split || { type: 'equal' };
+    if (split.type === 'solo') owes[e.paidBy] += amt;
+    else if (split.type === 'shares' && split.shares) {
+      travellers.forEach(t => { owes[t] += amt * (split.shares[t] || 0); });
+    } else travellers.forEach(t => { owes[t] += amt / travellers.length; });
+  }
+  const net = {};
+  travellers.forEach(t => { net[t] = Math.round((paid[t] - owes[t]) * 100) / 100; });
+  return { paid, owes, net };
+}
+
+export function fmtMoney(n, cur = '€') {
+  if (n == null || isNaN(n)) return '—';
+  const v = Math.round(Number(n));
+  return cur.length > 1 ? `${cur}${v.toLocaleString()}` : `${cur}${v.toLocaleString()}`;
+}
+
+// Date for the i-th kept day. meta.start = [y, monthIndex, day].
+export function dayDate(start, i) {
+  const d = new Date(start[0], start[1], start[2] + i);
+  const W = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const M = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return { label: `${W[d.getDay()]} ${d.getDate()} ${M[d.getMonth()]}`, iso };
+}
+
+export const esc = s => String(s ?? '').replace(/[&<>"']/g,
+  c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
