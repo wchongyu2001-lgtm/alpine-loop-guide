@@ -27,7 +27,7 @@ day cleanly at 390px width.
 
 ## P1 — Bookings = single source of truth
 
-### B04 · status: todo · pillar: bookings
+### B04 · status: wip · pillar: bookings
 **Booking gap/conflict detector.** Scan a trip's bookings + days and surface: missing return leg
 (outbound flight/train with no return), overlapping bookings (same time window), and bookings whose
 date falls outside the trip range. Show as a dismissible banner/list in the bookings view.
