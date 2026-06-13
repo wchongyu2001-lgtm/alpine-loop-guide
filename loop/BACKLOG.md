@@ -46,7 +46,7 @@ against the computed leg travel time (routing.js / haversine fallback). Flag leg
 > gap, and flag over-packed days (sum of legs + dwell > waking hours). Inline on the itinerary.
 Accept: a deliberately tight Alpine leg shows a warning; a comfortable one does not.
 
-### B07 · status: todo · pillar: discovery
+### B07 · status: wip · pillar: discovery
 **Nearby discovery into itinerary.** For a selected day/place, suggest a few nearby eat/do options
 (reuse places.js enrichment / a free POI source) with one-tap "add to day". Accept: suggestions
 appear for an Alpine place and one can be added to the day plan.
