@@ -75,3 +75,13 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 1cf8e9f
+
+### 2026-06-14T06:15Z · B09 Forward-to address label in bookings
+- status: done
+- pillar: bookings
+- what: Bookings view now shows a dedicated "📨 Forward booking confirmations to <addr>" line with a one-tap Copy button, backed by a single INBOUND_ADDR constant in bookings.js. Frontend-only; forwarded mail still flows via the existing daily pipeline sync.
+- verified: PASS — independent agent confirmed merge c8c0c83 on origin/main (INBOUND_ADDR + .bk-forward-addr/#bkcopyaddr in bookings.js, .bk-forward* CSS); test-core exits 0 (no failures); live homepage + live js/bookings.js serve HTTP 200 with the bk-forward-addr marker after Pages propagation.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: c8c0c83
+- note: deferred the INBOUND_TODO item-4 bkhelp deletion — that block still backs the Gmail-fetch-error fallback in wireFetch, so removing it was out of B09's accept scope.

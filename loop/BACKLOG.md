@@ -60,7 +60,7 @@ budget-vs-actual per day. Accept: adding an expense updates balances and the set
 
 ## P3 — Safe roadmap (no new secrets)
 
-### B09 · status: wip · pillar: bookings
+### B09 · status: done · c8c0c83 · pillar: bookings — dedicated `.bk-forward` line in the bookings view ("📨 Forward booking confirmations to <addr>") with a one-tap Copy button (#bkcopyaddr), backed by a single `INBOUND_ADDR` constant in bookings.js. No backend change. (Deferred from INBOUND_TODO item 4: left the `bkhelp` Apps-Script block in place — it still backs the Gmail-fetch-error fallback UX in wireFetch.)
 **Frontend label for the inbound booking-forward address** (per INBOUND_TODO.md item 4) — show the
 forward-to address in the bookings view so the user knows where to forward confirmations. Accept:
 address visible; no backend change required.
