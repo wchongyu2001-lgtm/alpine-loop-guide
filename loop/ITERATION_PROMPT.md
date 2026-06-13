@@ -26,10 +26,16 @@ with bypassPermissions. Do exactly ONE backlog item, then stop. Be surgical and 
    - For every changed `js/*.js`: `node --check <file>`
    - For every changed `data/*.json`: parse it with `node -e "JSON.parse(require('fs').readFileSync('<f>','utf8'))"`
    - If anything under `server/` changed: `cd server && .venv/bin/python -m pytest -q && cd ..`
-   - Sanity-render: `node -e` a quick check that index.html still references your new files / no obvious
-     breakage, OR serve locally (`python3 -m http.server` in a subshell, curl localhost, kill it) to
-     confirm the page returns 200 and contains an expected marker for your feature. Prefer the served
-     check for UI features.
+   - Served sanity check (for UI features): start a local server and fetch it with **Node's built-in
+     fetch (do NOT use curl/WebFetch — they are blocked in this environment; node fetch runs inside
+     node and is fine)**:
+     ```bash
+     python3 -m http.server 8123 >/dev/null 2>&1 & SRV=$!; sleep 1
+     node -e "fetch('http://localhost:8123/').then(r=>r.text()).then(t=>{if(!/Travel Companion/.test(t)){console.error('marker missing');process.exit(1)}console.log('served OK '+t.length+' bytes')}).catch(e=>{console.error(e);process.exit(1)})"
+     RC=$?; kill $SRV 2>/dev/null; [ $RC -eq 0 ]
+     ```
+     Adjust the regex/path to a marker specific to your feature. Also `node -e` to confirm index.html
+     references any new files you added.
    - Add or extend a test in `tools/test-core.mjs` for any new pure logic you wrote.
 
 6. **Green → ship. Red → abandon.**
