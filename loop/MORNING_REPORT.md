@@ -85,3 +85,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - deploy: live (frontend)
 - commit: c8c0c83
 - note: deferred the INBOUND_TODO item-4 bkhelp deletion — that block still backs the Gmail-fetch-error fallback in wireFetch, so removing it was out of B09's accept scope.
+
+### 2026-06-14T07:00:00Z · B10 Itinerary print/share view
+- status: done
+- pillar: polish
+- what: "🖨 Print day-by-day" button in the Itinerary view opens the print dialog; a new @media print stylesheet hides interactive chrome and breaks each day onto its own page, keeping places/times/notes/route/bookings for an offline paper (or Save-as-PDF) backup.
+- verified: PASS — independent agent confirmed merge b5f243e on origin/main (@media print in css/app.css + window.print in js/itinerary.js), test-core exit 0, local+live served checks 200 with markers; live already propagated.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: b5f243e

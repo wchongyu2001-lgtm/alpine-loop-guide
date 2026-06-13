@@ -65,6 +65,6 @@ budget-vs-actual per day. Accept: adding an expense updates balances and the set
 forward-to address in the bookings view so the user knows where to forward confirmations. Accept:
 address visible; no backend change required.
 
-### B10 · status: wip · pillar: polish
+### B10 · status: done · b5f243e · pillar: polish — "🖨 Print day-by-day" button in the itinerary view calls `window.print()`; new `@media print` block in css/app.css strips chrome (nav/tabs/add-place/suggestions/drawers/handles/actions via display:none) and breaks each day card onto its own page (`.daycard+.daycard{break-before:page}`) while keeping places/times/notes/route/bookings. No new deps, no pure logic (no test-core guard needed). Verified live.
 **Itinerary print/share view** — a clean, printable one-page-per-day summary (places, times, bookings)
 for an offline paper backup. Accept: print stylesheet produces a readable per-day handout.
