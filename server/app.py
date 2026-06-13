@@ -163,13 +163,16 @@ def placephoto(ref: str, w: int = 400):
 
 
 # ============================================================================
-# Three-way hub: Telegram bot (capture + briefings) + Wanderlog share-link import
-# Secrets come only from env: TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, TG_WEBHOOK_SECRET.
-# Trip base data is read from the dashboard mirror clone (TRIPS_APP_DIR); edits
-# are written to the same overlays the dashboard syncs. Everything degrades when
-# unconfigured — endpoints just refuse politely.
+# Three-way hub. Inbound Telegram commands (/trip /wl /place) are handled by the
+# EXISTING budget_bot (python-telegram-bot, long-polling on Render) which calls
+# /trip-brief, /capture, /wl-import here — a bot's incoming updates can only go to
+# one consumer, so we don't run a second webhook. Outbound: the daily briefing is
+# pushed from here via the SAME bot token (sending isn't exclusive).
+# Secrets from env only: TELEGRAM_BOT_TOKEN (same bot as budget_bot),
+# TELEGRAM_CHAT_ID, TG_WEBHOOK_SECRET (guards /tg/brief). Trip data is read from
+# the dashboard mirror clone (TRIPS_APP_DIR). Everything degrades politely.
 # ============================================================================
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN") or os.environ.get("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 TG_SECRET = os.environ.get("TG_WEBHOOK_SECRET", "")
 TRIPS_APP_DIR = Path(os.environ.get("TRIPS_APP_DIR", "/opt/trips/app"))
@@ -318,47 +321,22 @@ def wl_import(url, trip):
     return {"ok": True, "places": addp, "reservations": addr, "summary": summary}
 
 
-def handle_text(text, chat):
-    cmd, arg = TH.parse_cmd(text)
-    if cmd == "start":
-        return (f"👋 Travel Companion bot is live.\nYour chat id: {chat}\n"
-                "Commands: /today · /next · /add <text> · /wl <share-url> · /help")
-    if cmd == "help":
-        return ("Commands:\n/today – today's plan, weather, next booking\n/next – same\n"
-                "/add <text> – capture a place, idea (\"idea: …\"), or forwarded booking\n"
-                "/wl <url> – import a public Wanderlog trip into the dashboard")
-    if cmd in ("today", "next"):
-        return build_brief()
-    if cmd == "wl":
-        return wl_import(arg.strip(), current_trip_id())["summary"]
-    payload = arg if cmd == "add" else text
-    return capture_and_store(payload) if payload.strip() else None
+# ---- Endpoints the budget_bot calls (token-guarded) ----
+
+@app.get("/trip-brief")
+def trip_brief(x_trips_token: str = Header(default="")):
+    require_token(x_trips_token)
+    return {"ok": True, "text": build_brief()}
 
 
-@app.post("/tg/webhook")
-async def tg_webhook(request: Request, x_telegram_bot_api_secret_token: str = Header(default="")):
-    if TG_SECRET and x_telegram_bot_api_secret_token != TG_SECRET:
-        raise HTTPException(401, "bad secret")
-    upd = await request.json()
-    msg = upd.get("message") or upd.get("edited_message") or {}
-    chat = (msg.get("chat") or {}).get("id")
-    text = msg.get("text") or msg.get("caption") or ""
-    try:
-        reply = handle_text(text, chat)
-        if reply:
-            tg_send(reply, chat)
-    except Exception as e:
-        tg_send(f"⚠ couldn't handle that: {e}", chat)
-    return {"ok": True}  # always 200 so Telegram doesn't retry-storm
-
-
-@app.get("/tg/brief")
-def tg_brief(key: str = ""):
-    if not TG_SECRET or key != TG_SECRET:
-        raise HTTPException(401, "bad key")
-    text = build_brief()
-    tg_send(text)
-    return {"ok": True, "sent": bool(TELEGRAM_TOKEN and TELEGRAM_CHAT_ID)}
+@app.post("/capture")
+async def capture_endpoint(request: Request, x_trips_token: str = Header(default="")):
+    require_token(x_trips_token)
+    body = await request.json()
+    text = (body.get("text") or "").strip()
+    if not text:
+        return {"ok": False, "summary": "Nothing to capture."}
+    return {"ok": True, "summary": capture_and_store(text)}
 
 
 @app.post("/wl-import")
@@ -366,6 +344,16 @@ async def wl_import_endpoint(request: Request, x_trips_token: str = Header(defau
     require_token(x_trips_token)
     body = await request.json()
     return wl_import(body.get("url", ""), body.get("trip") or current_trip_id())
+
+
+# ---- Outbound daily briefing (timer hits this; sends via the same bot token) ----
+
+@app.get("/tg/brief")
+def tg_brief(key: str = ""):
+    if not TG_SECRET or key != TG_SECRET:
+        raise HTTPException(401, "bad key")
+    tg_send(build_brief())
+    return {"ok": True, "sent": bool(TELEGRAM_TOKEN and TELEGRAM_CHAT_ID)}
 
 
 # ---- Inbound-email booking capture (server/inbound.py) ----
