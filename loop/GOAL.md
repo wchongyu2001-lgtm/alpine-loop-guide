@@ -26,8 +26,14 @@ Priority 2: broader trip-planner power across all four pain pillars below.
   test + merge, but mark the item `deployed: needs-manual-vps` in the report. NEVER ssh-restart the
   live service from inside an iteration.
 
+## Per-feature flow (every iteration)
+build → green-gate → merge+deploy → **independent verification agent (must PASS, else roll back to
+the pre-merge commit and mark blocked)** → record the feature in `data/shipped.json` (the app's
+"✨ What's new" tab) → report → exit. The fresh next fire is the "compact" before the next feature.
+
 ## Hard rules
 - ONE backlog item per iteration. Smallest correct change (see global CLAUDE.md).
+- A feature is only `done` after the verification agent PASSES and it is recorded in the What's-new tab.
 - Match existing patterns (vanilla ES modules, no build step, no new deps unless trivial & justified).
 - Fail-soft: if blocked, abandon the branch cleanly and mark the item blocked. Never leave main broken.
 - Never edit: `.env*`, anything under `server/.venv`, `data/trips.json`/`data/*.json` trip content

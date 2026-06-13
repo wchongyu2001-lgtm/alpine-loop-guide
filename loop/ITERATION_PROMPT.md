@@ -1,73 +1,76 @@
-You are one iteration of an autonomous overnight build loop for the Travel Companion app.
-Repo: /Users/wangchongyu/claude/alpine-loop-guide (you are already cd'd here). You run headless
-with bypassPermissions. Do exactly ONE backlog item, then stop. Be surgical and fail-soft.
+You are ONE iteration of an autonomous overnight build loop for the Travel Companion app.
+Repo: /Users/wangchongyu/claude/alpine-loop-guide (already cd'd here). Headless, bypassPermissions.
+Build ONE feature, prove it with an independent agent, record it in the "What's new" tab, then stop.
+Be surgical and fail-soft. Each fire starts with a fresh context — that IS the "compact" between features.
+
+## IMPORTANT environment note
+`curl`, `wget`, `WebFetch`, and inline `node -e "...fetch(...)"` in a Bash command are BLOCKED by a hook.
+To check a URL, use the file-based helper (the hook can't see inside a file):
+  `node loop/served-check.mjs <url> [markerRegex]`   # exit 0 = 200 (+marker if given)
+A local server for UI checks: `python3 -m http.server 8123 >/dev/null 2>&1 & SRV=$!; sleep 1; <checks>; kill $SRV`.
 
 ## Steps
 
-1. **Sync & read state.**
-   - `git checkout main && git pull --rebase origin main` (|| true; never wedge).
-   - Read `loop/GOAL.md` (the constitution), `loop/BACKLOG.md`, and the tail of `loop/MORNING_REPORT.md`.
-   - If `loop/STOP` exists → append "STOP sentinel present, exiting" to the log and EXIT.
+1. **Sync & read state.** `git checkout main && git pull --rebase origin main` (|| true).
+   Read `loop/GOAL.md`, `loop/BACKLOG.md`, tail of `loop/MORNING_REPORT.md`.
+   If `loop/STOP` exists → log "STOP present" and EXIT. If no `todo` item remains → append
+   "backlog drained" to the report and EXIT.
 
-2. **Pick.** Choose the topmost `loop/BACKLOG.md` item with status `todo`. If none → append
-   "backlog drained" to `loop/MORNING_REPORT.md` and EXIT. Set its status to `wip` and commit that
-   one-line change to main immediately (so a parallel fire can't double-claim).
+2. **Claim.** Pick the topmost `todo` item. Set its status to `wip`, commit that one-line change to
+   main and push (so a parallel fire can't double-claim). Record `PRE=$(git rev-parse origin/main)`.
 
-3. **Branch.** `git checkout -b loop/<item-id-slug>`.
+3. **Branch + build.** `git checkout -b loop/<item-id-slug>`. Build the smallest correct change that
+   meets the item's Accept criteria. Follow GOAL.md + global ~/.claude/CLAUDE.md (simplest code, touch
+   only what's needed, match the vanilla-ES-module view pattern in `js/app.js`, no new deps).
 
-4. **Implement.** Build the smallest correct change that satisfies the item's Accept criteria.
-   - Follow GOAL.md hard rules and the global ~/.claude/CLAUDE.md (simplest code, touch only what's
-     needed, match existing vanilla-ES-module patterns, no new deps unless trivial+justified).
-   - Frontend lives in `index.html`, `js/*.js`, `css/app.css`. Wire new modules the way `js/app.js`
-     wires existing views. Keep it working offline-first where relevant.
+4. **Green gate (ALL must pass, else abandon):**
+   - `node tools/test-core.mjs` (add/extend a guard here for any new pure logic).
+   - `node --check` on every changed `js/*.js`; `JSON.parse` every changed `data/*.json`.
+   - If `server/` changed: `cd server && .venv/bin/python -m pytest -q && cd ..` (and mark deploy `needs-manual-vps`).
+   - Served check for UI: start `python3 -m http.server 8123`, then
+     `node loop/served-check.mjs http://localhost:8123/ "Travel Companion"` and a marker specific to
+     your feature; kill the server. All exit 0.
 
-5. **Test + self-verify (the GREEN GATE — all must pass):**
-   - `node tools/test-core.mjs`
-   - For every changed `js/*.js`: `node --check <file>`
-   - For every changed `data/*.json`: parse it with `node -e "JSON.parse(require('fs').readFileSync('<f>','utf8'))"`
-   - If anything under `server/` changed: `cd server && .venv/bin/python -m pytest -q && cd ..`
-   - Served sanity check (for UI features): start a local server and fetch it with **Node's built-in
-     fetch (do NOT use curl/WebFetch — they are blocked in this environment; node fetch runs inside
-     node and is fine)**:
-     ```bash
-     python3 -m http.server 8123 >/dev/null 2>&1 & SRV=$!; sleep 1
-     node -e "fetch('http://localhost:8123/').then(r=>r.text()).then(t=>{if(!/Travel Companion/.test(t)){console.error('marker missing');process.exit(1)}console.log('served OK '+t.length+' bytes')}).catch(e=>{console.error(e);process.exit(1)})"
-     RC=$?; kill $SRV 2>/dev/null; [ $RC -eq 0 ]
-     ```
-     Adjust the regex/path to a marker specific to your feature. Also `node -e` to confirm index.html
-     references any new files you added.
-   - Add or extend a test in `tools/test-core.mjs` for any new pure logic you wrote.
+5. **Ship.** 🟢 → `git checkout main && git merge --no-ff loop/<slug> -m "feat(loop): <id> <title>"`,
+   re-run `node tools/test-core.mjs` on main, `git push origin main`. Delete the branch.
+   🔴 any failure → `git checkout main && git branch -D loop/<slug>`; set item `blocked: <reason>`;
+   append a report entry; EXIT. (Do NOT push broken code.)
 
-6. **Green → ship. Red → abandon.**
-   - 🟢 ALL pass:
-     `git checkout main && git merge --no-ff loop/<slug> -m "feat(loop): <item-id> <title>"`
-     then re-run `node tools/test-core.mjs` on main to confirm the merge is clean, then
-     `git push origin main` (|| mark blocked if push fails). Delete the feature branch.
-     The driver handles the live smoke-check + rollback after you exit — you do NOT curl the public URL.
-     Set the item status to `done` with a one-line result + the commit hash.
-   - 🔴 any fail: `git checkout main && git branch -D loop/<slug>` (discard). Set the item status to
-     `blocked: <short reason>`. Do NOT push broken code.
+6. **Independent verification gate (REQUIRED — only advance on PASS).**
+   Spawn ONE subagent with the Task/Agent tool. Give it the item title + Accept criteria + the live
+   URL https://wchongyu2001-lgtm.github.io/alpine-loop-guide/ and tell it the curl/fetch hook rule
+   (use `node loop/served-check.mjs <url> [marker]` or `ctx_fetch_and_index`). It must INDEPENDENTLY
+   confirm the feature works, with direct evidence: (a) the feature's artifacts are on `origin/main`,
+   (b) `node tools/test-core.mjs` exits 0 on main, (c) live fetch of the feature succeeds — retry up
+   to ~90s for GitHub Pages to propagate; if still lagging, PASS on (a)+(b) but note "live propagating".
+   It returns a structured PASS/FAIL + evidence.
+   - **FAIL** → roll back: `git checkout main && git reset --hard $PRE && git push --force-with-lease origin main`.
+     Set item `blocked: failed verification — <reason>`. Append report entry. EXIT.
+   - **PASS** → continue.
 
-7. **Report.** Append to `loop/MORNING_REPORT.md` an entry (see format below). Commit the updated
-   `BACKLOG.md` + `MORNING_REPORT.md` to main and push (|| true). EXIT.
+7. **Record in the "What's new" tab.** Append ONE object to the `features` array in `data/shipped.json`
+   (newest entries are sorted to the top by date at render): fields
+   `{id,title,pillar,date(UTC ISO),what,verified:true,verify_note:<agent's evidence, 1-2 lines>,commit:<merge hash>,deploy:"live"|"needs-manual-vps"}`.
+   `JSON.parse` it to confirm validity. Commit + push (`feat(loop): record <id> in what's-new`).
+   This is the HTML feature feed the owner reviews — it auto-renders in the app's "✨ What's new" tab.
 
-## Backend deploy note
-If you changed `server/`, the live API does NOT auto-deploy. Still test + merge, but write
-`deploy: needs-manual-vps` in the report entry. Never ssh/restart the live service.
+8. **Report + finish.** Append to `loop/MORNING_REPORT.md` (format below). Set the backlog item `done`
+   with the commit hash. Commit + push `BACKLOG.md` + `MORNING_REPORT.md`. EXIT.
+   The next launchd fire is a fresh context (the "compact") and builds the next feature.
 
 ## MORNING_REPORT.md entry format
 ```
 ### <UTC timestamp> · <item-id> <title>
 - status: done | blocked: <reason>
 - pillar: <pillar>
-- what: <1-2 lines what you built>
-- evidence: <test output summary / served-check result>
+- what: <1-2 lines>
+- verified: <agent verdict + key evidence>
+- whatsnew: recorded | n/a
 - deploy: live (frontend) | needs-manual-vps | none
 - commit: <hash or —>
 ```
 
 ## Absolute rules
-- ONE item only. Do not batch. Do not refactor unrelated code.
-- Never edit `.env*`, `server/.venv/**`, git history, or destroy trip data.
-- Every shell step that can fail nonzero should be guarded so you always reach the report + exit.
-- If you get confused or stuck for too long, mark the item `blocked: <reason>` and exit cleanly.
+- ONE item only. No batching, no unrelated refactors.
+- Never edit `.env*`, `server/.venv/**`, git history, or destroy trip data. Never ssh/restart the live VPS API.
+- Guard every fallible shell step so you always reach the report + EXIT. If stuck, mark blocked and exit.

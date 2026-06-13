@@ -52,15 +52,22 @@ Alpine trip (Jun 15) bulletproof first, then broader planner power.**
 
 ## One iteration (inside `claude -p`)
 
-1. `git pull` (sync) · read `GOAL.md`, `BACKLOG.md`, `MORNING_REPORT.md`.
-2. If `loop/STOP` exists or backlog has no unblocked items → exit 0.
-3. Pick the **highest-value unblocked** item.
-4. Branch `loop/<slug>` · implement surgically (follow repo patterns + global CLAUDE.md: simplest
-   code, touch only what's needed).
-5. Test + self-verify (commands scaled to what changed; see green gate).
-6. 🟢 → merge `--no-ff` into `main`, push. Re-verify on `main`. (Driver does live smoke after.)
-   🔴 → abandon branch, mark item `blocked: <reason>`.
-7. Append a `MORNING_REPORT.md` entry with evidence. Update `BACKLOG.md`. Exit.
+1. `git pull` (sync) · read `GOAL.md`, `BACKLOG.md`, `MORNING_REPORT.md`. STOP/drained → exit 0.
+2. Claim the highest-value `todo` item (`wip`, push) · record pre-merge `$PRE`.
+3. Branch `loop/<slug>` · implement surgically (repo patterns + global CLAUDE.md).
+4. Green gate: `test-core` + `node --check` + JSON parse + (pytest if backend) + served check via
+   **`node loop/served-check.mjs`** (file-based — inline `curl`/`fetch` is hook-blocked).
+5. 🟢 → merge `--no-ff` into `main`, re-test on main, push (frontend deploys). 🔴 → abandon + `blocked`.
+6. **Independent verification agent (gate).** Spawn one subagent; it must PASS with direct evidence
+   (artifacts on origin/main + tests green + live fetch, ~90s retry for Pages). **FAIL → roll back to
+   `$PRE` (`git reset --hard` + force-with-lease) + `blocked`.** Only PASS advances.
+7. **Record in the app's "✨ What's new" tab:** append the verified feature to `data/shipped.json`
+   (rendered by `js/shipped.js`), commit + push.
+8. Append a `MORNING_REPORT.md` entry; mark item `done`. Exit — the fresh next fire is the "compact".
+
+The user-requested per-feature loop (ship → verify-agent → write to a What's-new HTML tab → compact →
+next) maps onto the launchd model: each fire is one feature in a fresh context (= compaction), with
+the verify-agent and What's-new write added as steps 6–7.
 
 ## Seeded backlog (priority order)
 
