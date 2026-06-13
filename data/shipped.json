@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B04",
+      "title": "Booking gap & conflict detector",
+      "pillar": "bookings",
+      "date": "2026-06-14T02:30:00Z",
+      "what": "The bookings view now scans your trip and flags problems in a dismissible banner: bookings dated outside the trip, two bookings overlapping the same time window, and broken flight chains (you arrive at one airport but the next flight departs another — a missing connecting/return leg). Conservative by design — hotels and campervans never count as time clashes and clean multi-city itineraries stay silent, so the seeded Alpine & Iceland trips raise nothing.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge 66f686f on origin/main (bookingWarnings in core.js, bk-warnings banner in bookings.js); test-core exits 0 with 6 new B04 guards; detector raises 0 warnings on real preexchange/alpine/iceland data and 1 on a deliberately broken booking; live core.js serves 200 with the marker.",
+      "commit": "66f686f",
+      "deploy": "live"
+    },
+    {
       "id": "B03",
       "title": "Mobile \"Today\" view",
       "pillar": "offline",
