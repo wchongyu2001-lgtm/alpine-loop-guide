@@ -68,3 +68,15 @@ address visible; no backend change required.
 ### B10 · status: done · b5f243e · pillar: polish — "🖨 Print day-by-day" button in the itinerary view calls `window.print()`; new `@media print` block in css/app.css strips chrome (nav/tabs/add-place/suggestions/drawers/handles/actions via display:none) and breaks each day card onto its own page (`.daycard+.daycard{break-before:page}`) while keeping places/times/notes/route/bookings. No new deps, no pure logic (no test-core guard needed). Verified live.
 **Itinerary print/share view** — a clean, printable one-page-per-day summary (places, times, bookings)
 for an offline paper backup. Accept: print stylesheet produces a readable per-day handout.
+
+## P2 — Mobile today-view live awareness (trip starts 2026-06-15)
+
+### B11 · status: wip · pillar: mobile/live — todo
+**"Where am I in the day?" — now/next progress on the Today plan.** On the Today view, when the
+open day is actually today, mark each timed stop as past / now / next so a traveler sees at a glance
+which stop is current and what's coming up — instead of a flat list where everything looks the same.
+Add a pure `planProgress(plan, nowHHMM)` in core.js (status per stop: `now` while its time window
+contains now, `next` for the first upcoming timed stop, `past` once finished, untimed → neutral) and
+render it as a subtle highlight + NOW/NEXT pill in today.js. No new deps; only applies on the real
+current day. Accept: with a seeded day and a fixed "now", planProgress labels the right stops; the
+Today view visibly highlights the current/next stop at 390px.
