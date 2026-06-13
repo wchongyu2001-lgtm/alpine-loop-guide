@@ -99,9 +99,14 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .bkcard.dragover{border-color:var(--pine);background:var(--paper-2);border-style:dashed}
 .bkatt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px}
 .bkatt .bkchip,.bk-suggest .bkchip{font-family:'JetBrains Mono',monospace;font-size:.7em;border:1px solid var(--line);
-  background:var(--paper-2);border-radius:999px;padding:2px 8px;text-decoration:none;color:var(--pine)}
-.bkattach{border:1px dashed var(--line);background:none;border-radius:999px;padding:1px 7px;
-  font-size:.75em;cursor:pointer;color:var(--ink-soft)}
+  background:var(--paper-2);border-radius:999px;padding:2px 8px;text-decoration:none;color:var(--pine);cursor:pointer}
+.bkattach{border:1px solid var(--pine);background:var(--card);border-radius:999px;padding:3px 11px;
+  font-size:.76em;cursor:pointer;color:var(--pine);font-weight:600}
+.bkattach:hover{background:var(--pine);color:#fff}
+.bkhelp{margin-top:8px;font-size:.85em}
+.bkhelp summary{cursor:pointer;color:var(--glacier)}
+.bkhelp ol{margin:6px 0;padding-left:20px}
+.bkhelp code{font-family:'JetBrains Mono',monospace;font-size:.92em;background:var(--paper-2);padding:1px 4px;border-radius:4px}
 .bkmsg{font-size:.72em;min-height:0}
 .bkmsg:empty{display:none}
 .bkfetchbar{display:flex;gap:10px;align-items:center;margin-top:8px}

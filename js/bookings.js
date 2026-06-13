@@ -1,9 +1,14 @@
 /* Bookings timeline: pipeline + Wanderlog-seeded + manual; unassigned inbox.
-   Attachments: drag-drop / 📎 → Apps Script → private Drive folder; metadata in overlay.
+   Attachments: drag-drop / 📎 → stored locally (IndexedDB) so it works with no
+   backend; also uploaded to Drive best-effort for cross-device once Code.gs is
+   redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
 import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, assignTrip, parseEmailStub } from './core.js';
 import { tripBookings, allBookings } from './data.js';
 import { uploadAttachment, fetchMail } from './sync.js';
+import { putFile, openLocal, hasIDB } from './attachments.js';
+
+let attSeq = 0; // unique-per-call suffix; Date.now alone collides in a loop
 
 const TYPE_ICON = { flight: '✈', hotel: '🛏', train: '🚆', bus: '🚌', car: '🚗', activity: '🎟', other: '📌' };
 const TYPES = Object.keys(TYPE_ICON);
@@ -25,12 +30,21 @@ export function render(root, ctx) {
 
   root.innerHTML = `
     <div class="bk-intro">
-      <p>Everything booked for <b>${esc(state.trip.label)}</b> — imported from Gmail by the pipeline (or seeded from Wanderlog). Forward any confirmation email to <b>wchongyu2001@gmail.com</b> and it appears here after the next sync — or pull it now with the button below. Drop a PDF on any booking to attach it.</p>
+      <p>Everything booked for <b>${esc(state.trip.label)}</b> — imported from Gmail by the pipeline (or seeded from Wanderlog). Forward any confirmation email to <b>wchongyu2001@gmail.com</b> and it appears here after the daily sync. <b>Drop a PDF (or image) on any booking, or tap “📎 Attach PDF”</b> — it's saved on this device right away.</p>
       <div class="lastsync">${esc(syncLabel(state))}</div>
       <div class="bkfetchbar">
         <button id="bkfetch">📥 Fetch from Gmail</button>
         <span id="bkfetcherr" class="muted"></span>
       </div>
+      <details class="bkhelp"><summary>Gmail fetch &amp; cross-device sync need a one-time setup</summary>
+        <p class="muted">Your dashboard is a static site — it can't read Gmail or sync edits on its own. Both run through a Google Apps Script that hasn't been redeployed yet:</p>
+        <ol class="muted">
+          <li>Open the Apps Script project (the old bucket-list one).</li>
+          <li>Replace its code with <code>apps-script/Code.gs</code> from this repo; re-paste your Telegram token at the top.</li>
+          <li>Deploy → Manage deployments → edit → <b>New version</b> (same /exec URL), and approve the new Gmail + Drive permissions.</li>
+        </ol>
+        <p class="muted">Until then, PDF attachments still work — they're stored locally on this device.</p>
+      </details>
       <div id="bksuggest">${suggestionsHtml(state)}</div>
     </div>
     ${Object.keys(byDate).sort().map(d => `
@@ -120,6 +134,11 @@ function wireAttachments(root, ctx, state) {
       if (e.dataTransfer.files.length) handleFiles(root, ctx, state, el.dataset.bid, e.dataTransfer.files);
     };
   });
+  root.querySelectorAll('[data-openatt]').forEach(btn => btn.onclick = async () => {
+    const bid = btn.closest('.bkcard')?.dataset.bid;
+    const ok = await openLocal(btn.dataset.openatt);
+    if (!ok && bid) cardMsg(root, bid, '✗ saved on another device — re-attach here, or redeploy Code.gs for Drive sync');
+  });
 }
 
 async function handleFiles(root, ctx, state, bid, files) {
@@ -128,13 +147,20 @@ async function handleFiles(root, ctx, state, bid, files) {
   for (const f of [...files]) {
     if (!/^(application\/pdf|image\/)/.test(f.type)) { cardMsg(root, bid, `✗ ${f.name}: PDFs or images only`); continue; }
     if (f.size > MAX_MB * 1024 * 1024) { cardMsg(root, bid, `✗ ${f.name}: over ${MAX_MB} MB`); continue; }
-    cardMsg(root, bid, `⏳ uploading ${f.name}…`);
+    if (!hasIDB) { cardMsg(root, bid, `✗ ${f.name}: this browser can't store attachments`); continue; }
+    cardMsg(root, bid, `⏳ saving ${f.name}…`);
+    const att = { id: `att-${Date.now()}-${attSeq++}`, name: f.name };
+    try {
+      await putFile(att.id, f);            // local-first: this alone makes the attachment usable
+    } catch (err) { cardMsg(root, bid, `✗ ${f.name}: ${err.message}`); continue; }
+    // Best-effort cross-device copy; only adopt a real Drive link (old backend returns ok w/o url).
     try {
       const d = await uploadAttachment(f.name, f.type, await fileB64(f));
-      ov.attachments = ov.attachments || {};
-      (ov.attachments[bid] = ov.attachments[bid] || []).push({ name: f.name, url: d.url, fileId: d.fileId });
-      added++;
-    } catch (err) { cardMsg(root, bid, `✗ ${err.message}`); }
+      if (d && d.url) { att.url = d.url; att.fileId = d.fileId; }
+    } catch { /* backend not redeployed — local copy still works */ }
+    ov.attachments = ov.attachments || {};
+    (ov.attachments[bid] = ov.attachments[bid] || []).push(att);
+    added++;
   }
   if (added) { ctx.save('bookings', ov); ctx.rerender(); }
 }
@@ -161,7 +187,8 @@ function wireFetch(root, ctx, state) {
       lastMail = await fetchMail();
       ctx.rerender();
     } catch (err) {
-      root.querySelector('#bkfetcherr').textContent = err.message;
+      root.querySelector('#bkfetcherr').textContent = 'Needs setup ↓ (' + err.message + ')';
+      root.querySelector('.bkhelp').open = true;
       btn.disabled = false; btn.textContent = '📥 Fetch from Gmail';
     }
   };
@@ -219,6 +246,13 @@ function suggestionsHtml(state) {
 
 function card(b, atts) { return `<div class="bkcard" data-bid="${esc(b.id)}">${cardBody(b, atts[b.id])}</div>`; }
 
+// Drive-backed attachments are links (cross-device); local-only ones are buttons that open from IndexedDB.
+function attChip(a) {
+  return a.url
+    ? `<a class="bkchip" target="_blank" rel="noopener" href="${esc(a.url)}">📎 ${esc(a.name)}</a>`
+    : `<button class="bkchip" data-openatt="${esc(a.id)}">📎 ${esc(a.name)}</button>`;
+}
+
 function cardBody(b, attachments) {
   const ll = b.location && b.location.lat != null ? [b.location.lat, b.location.lng] : null;
   return `
@@ -235,8 +269,8 @@ function cardBody(b, attachments) {
         ${b.pax ? `<div class="bkpax muted">${b.pax.map(esc).join(' · ')}</div>` : ''}
         ${b.notes ? `<div class="bkpax muted">${esc(b.notes)}</div>` : ''}
         <div class="bkatt">
-          ${(attachments || []).map(a => `<a class="bkchip" target="_blank" rel="noopener" href="${esc(a.url)}">📎 ${esc(a.name)}</a>`).join('')}
-          <button class="bkattach" data-attach="${esc(b.id)}" title="Attach PDF or image">📎</button>
+          ${(attachments || []).map(a => attChip(a)).join('')}
+          <button class="bkattach" data-attach="${esc(b.id)}">📎 Attach PDF</button>
         </div>
         <div class="bkmsg muted"></div>
       </div>
