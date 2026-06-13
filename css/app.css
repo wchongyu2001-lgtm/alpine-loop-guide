@@ -141,6 +141,16 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .bkmeta{font-size:.8em;color:var(--ink-soft)}
 .bkconf{font-family:'JetBrains Mono',monospace;font-size:.74em;color:var(--glacier)}
 .bkpax{font-size:.76em}
+.bk-warnings{background:#fdf2e9;border:1px solid var(--terra);border-radius:12px;padding:10px 14px;margin:12px 0}
+.bk-warnings h3{font-size:.86em;color:var(--terra);margin:0 0 6px}
+.bk-warn{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-top:1px solid rgba(185,83,26,.18)}
+.bk-warn:first-of-type{border-top:0}
+.bk-warn-main{flex:1;min-width:0}
+.bk-warn-kind{font-family:'JetBrains Mono',monospace;font-size:.64em;letter-spacing:.06em;text-transform:uppercase;
+  color:#fff;background:var(--terra);border-radius:999px;padding:1px 7px;margin-right:6px}
+.bk-warn-title{font-weight:600;font-size:.88em}
+.bk-warn-detail{font-size:.8em;color:var(--ink-soft);margin-top:2px}
+.bk-warn-x{border:0;background:none;color:var(--ink-soft);cursor:pointer;font-size:.9em;padding:0 2px;line-height:1}
 .bk-unassigned{margin-top:24px;border-top:2px dashed var(--line);padding-top:12px}
 .bkcard.dragover{border-color:var(--pine);background:var(--paper-2);border-style:dashed}
 .bkatt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px}

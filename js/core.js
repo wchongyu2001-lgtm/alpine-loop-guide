@@ -230,6 +230,58 @@ export function nextBooking(bookings, nowIso) {
     .sort((a, b) => String(a.start).localeCompare(String(b.start)))[0] || null;
 }
 
+// ---- B04: booking gap / conflict detection (pure) ----
+// Parse a flight title's route, e.g. "EK 353 · Singapore (SIN) → Dubai (DXB)"
+// → { from: 'SIN', to: 'DXB' }. Uses the (IATA) codes; null if not two-ended.
+export function flightRoute(title) {
+  const parts = String(title || '').split(/→|->/);
+  if (parts.length < 2) return null;
+  const code = seg => { const m = seg.match(/\(([A-Z]{3})\)/); return m ? m[1] : null; };
+  const from = code(parts[0]), to = code(parts[1]);
+  return from && to ? { from, to } : null;
+}
+
+// Surface booking problems for one trip: bookings outside the trip's date range,
+// time-overlapping point-bookings, and broken flight chains (arrive somewhere but
+// the next flight departs elsewhere — a missing connecting/return leg). Returns
+// [{ kind, id, title, detail, otherId? }]. Conservative: container bookings
+// (hotel/car) never count as time overlaps, and only adjacent flights are chained,
+// so clean multi-city itineraries raise nothing.
+export function bookingWarnings(bookings, trip) {
+  const out = [];
+  const start = trip && trip.start, end = trip && trip.end;
+
+  for (const b of bookings) {
+    const d = String(b.start || '').slice(0, 10);
+    if (!d) continue;
+    if ((start && d < start) || (end && d > end))
+      out.push({ kind: 'range', id: b.id, title: b.title,
+        detail: `Dated ${d}, outside the trip (${start} → ${end}).` });
+  }
+
+  const POINT = new Set(['flight', 'train', 'bus', 'activity']);
+  const timed = bookings.filter(b => POINT.has(b.type)
+    && /T\d/.test(String(b.start)) && /T\d/.test(String(b.end)));
+  for (let i = 0; i < timed.length; i++)
+    for (let j = i + 1; j < timed.length; j++) {
+      const a = timed[i], c = timed[j];
+      if (String(a.start) < String(c.end) && String(c.start) < String(a.end))
+        out.push({ kind: 'overlap', id: a.id, title: a.title, otherId: c.id,
+          detail: `Overlaps in time with “${c.title}”.` });
+    }
+
+  const flights = bookings.filter(b => b.type === 'flight' && flightRoute(b.title))
+    .sort((a, b) => String(a.start).localeCompare(String(b.start)));
+  for (let i = 0; i + 1 < flights.length; i++) {
+    const a = flightRoute(flights[i].title), n = flightRoute(flights[i + 1].title);
+    if (a.to !== n.from)
+      out.push({ kind: 'leg', id: flights[i + 1].id, title: flights[i + 1].title,
+        detail: `Arrive ${a.to} on ${flights[i].title.split('·')[0].trim() || 'the prior flight'}, but the next flight departs ${n.from} — missing connecting leg?` });
+  }
+
+  return out;
+}
+
 // Overlay day-plans replace base plans per day; base kept where overlay silent.
 export function effectivePlans(days, overlayPlans) {
   const out = {};

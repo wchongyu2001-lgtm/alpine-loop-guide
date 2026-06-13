@@ -3,7 +3,7 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, assignTrip, parseEmailStub, wlShareValid } from './core.js';
+import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, assignTrip, parseEmailStub, wlShareValid, bookingWarnings } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
@@ -53,6 +53,7 @@ export function render(root, ctx) {
       </details>
       <div id="bksuggest">${suggestionsHtml(state)}</div>
     </div>
+    ${warningsHtml(state, list)}
     ${Object.keys(byDate).sort().map(d => `
       <div class="bk-group">
         <div class="bk-date">${prettyDate(d)}</div>
@@ -85,6 +86,12 @@ export function render(root, ctx) {
       </form>
     </details>
     <input type="file" id="bkfile" accept="application/pdf,image/*" multiple hidden />`;
+
+  root.querySelectorAll('[data-dismwarn]').forEach(b => b.onclick = () => {
+    const ov = bkOv(state);
+    ov.warnSeen = [...new Set([...(ov.warnSeen || []), b.dataset.dismwarn])];
+    ctx.save('bookings', ov); ctx.rerender();
+  });
 
   root.querySelectorAll('[data-assign]').forEach(sel => sel.onchange = () => {
     if (!sel.value) return;
@@ -250,6 +257,29 @@ function visibleMail(state) {
   });
 }
 
+/* ---------- gap / conflict warnings ---------- */
+
+const WARN_LABEL = { range: 'Outside trip dates', overlap: 'Time conflict', leg: 'Missing leg' };
+const warnSig = w => `${w.kind}:${w.id}${w.otherId ? ':' + w.otherId : ''}`;
+
+function warningsHtml(state, list) {
+  const seen = new Set(bkOv(state).warnSeen || []);
+  const warnings = bookingWarnings(list, state.trip).filter(w => !seen.has(warnSig(w)));
+  if (!warnings.length) return '';
+  return `<div class="bk-warnings">
+    <h3>⚠ ${warnings.length} thing${warnings.length > 1 ? 's' : ''} to check</h3>
+    ${warnings.map(w => `
+      <div class="bk-warn">
+        <div class="bk-warn-main">
+          <span class="bk-warn-kind">${WARN_LABEL[w.kind] || 'Check'}</span>
+          <span class="bk-warn-title">${esc(w.title)}</span>
+          <div class="bk-warn-detail">${esc(w.detail)}</div>
+        </div>
+        <button class="bk-warn-x" data-dismwarn="${esc(warnSig(w))}" title="Dismiss">✕</button>
+      </div>`).join('')}
+  </div>`;
+}
+
 function suggestionsHtml(state) {
   if (!lastMail) return '';
   const vis = visibleMail(state);
@@ -321,4 +351,4 @@ function syncLabel(state) {
   return `Pipeline last sync: ${new Date(u).toLocaleString()}${ageH > 48 ? ' ⚠ stale' : ''}`;
 }
 
-const bkOv = state => ({ overrides: {}, manual: [], attachments: {}, emailSeen: [], ...(state.overlay.bookings || {}) });
+const bkOv = state => ({ overrides: {}, manual: [], attachments: {}, emailSeen: [], warnSeen: [], ...(state.overlay.bookings || {}) });
