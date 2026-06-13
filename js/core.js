@@ -392,6 +392,26 @@ export function computeBalances(expenses, travellers) {
   return { paid, owes, net };
 }
 
+// Budget vs actual per day. days: [{id, iso, label, estimate}], expenses: [{date, amount}].
+// Sums dated expenses onto their matching day iso; returns per-day rows with delta + totals.
+export function budgetVsActual(days, expenses) {
+  const byDate = {};
+  for (const e of expenses || []) {
+    if (!e || !e.date) continue;
+    byDate[e.date] = (byDate[e.date] || 0) + (Number(e.amount) || 0);
+  }
+  const rows = (days || []).map(d => {
+    const estimate = Math.round((Number(d.estimate) || 0) * 100) / 100;
+    const actual = Math.round((byDate[d.iso] || 0) * 100) / 100;
+    return { id: d.id, iso: d.iso, label: d.label, estimate, actual, delta: Math.round((actual - estimate) * 100) / 100 };
+  });
+  const totals = rows.reduce((s, r) => ({
+    estimate: s.estimate + r.estimate, actual: s.actual + r.actual,
+  }), { estimate: 0, actual: 0 });
+  totals.delta = Math.round((totals.actual - totals.estimate) * 100) / 100;
+  return { rows, totals };
+}
+
 export function fmtMoney(n, cur = '€') {
   if (n == null || isNaN(n)) return '—';
   const v = Math.round(Number(n));
