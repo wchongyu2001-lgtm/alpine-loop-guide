@@ -164,6 +164,7 @@ export const wlShareValid = url => /^https?:\/\/(www\.)?wanderlog\.com\/\S+/i.te
 /* ---- Weather (open-meteo), FX, settle-up ---- */
 export const weatherUrl = ll =>
   `https://api.open-meteo.com/v1/forecast?latitude=${ll[0]}&longitude=${ll[1]}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`;
+export const weatherCacheKey = ll => `wx:${ll ? ll.map(n => n.toFixed(2)).join(',') : ''}`;
 export function pickDaily(j, iso) {
   const t = j && j.daily && j.daily.time; if (!t) return null;
   const i = t.indexOf(iso); if (i < 0) return null;

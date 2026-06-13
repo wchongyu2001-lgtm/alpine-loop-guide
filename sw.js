@@ -3,6 +3,17 @@
    stale-while-revalidate for CDN assets (Leaflet, fonts, Sortable) so the app opens
    with no signal. Bump CACHE on any shell/data change to invalidate old caches. */
 const CACHE = 'tc-shell-v2';
+// Map tiles live in their own cache so they survive shell-cache version bumps
+// (a CACHE bump shouldn't wipe the offline map). Tiles are stale-while-revalidate.
+const TILES = 'tc-tiles-v1';
+// 1×1 transparent PNG — returned for an uncached tile when offline so the map
+// shows blank gaps instead of broken-image icons (degrade gracefully).
+const BLANK_TILE = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+const blankTile = () => {
+  const bin = atob(BLANK_TILE), arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Response(arr, { headers: { 'Content-Type': 'image/png' } });
+};
 
 // App shell — keep js/ list in sync with the modules index.html loads (test-core guards this).
 const SHELL = [
@@ -19,6 +30,7 @@ const DATA = [
 
 const isData = url => url.origin === location.origin && /\/data\/.*\.json$/.test(url.pathname);
 const sameOrigin = url => url.origin === location.origin;
+const isTile = url => /(^|\.)tile\.openstreetmap\.org$/.test(url.hostname);
 
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
@@ -32,7 +44,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)));
+    await Promise.all(keys.filter(k => k !== CACHE && k !== TILES).map(k => caches.delete(k)));
     await self.clients.claim();
   })());
 });
@@ -55,6 +67,22 @@ self.addEventListener('fetch', e => {
         if (hit) return hit;
         throw new Error('offline and no cached data');
       }
+    })());
+    return;
+  }
+
+  if (isTile(url)) {
+    // Map tiles: serve the cached tile if we have it, revalidate in the
+    // background, and persist freshly fetched tiles to the dedicated cache.
+    // Offline with no cached tile → transparent placeholder, not a broken image.
+    e.respondWith((async () => {
+      const cache = await caches.open(TILES);
+      const hit = await cache.match(req);
+      const fetching = fetch(req).then(res => {
+        if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone());
+        return res;
+      }).catch(() => null);
+      return hit || (await fetching) || blankTile();
     })());
     return;
   }
