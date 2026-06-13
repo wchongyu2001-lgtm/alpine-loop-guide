@@ -53,7 +53,7 @@ const ctx = {
 
 function renderAll() {
   const td = state.tripData;
-  document.title = td.meta.label + ' · Trips';
+  document.title = td.meta.label + ' · Travel Companion';
   document.getElementById('triptabs').innerHTML = base.registry.trips.map(t => `
     <a class="triptab ${t.id === state.trip.id ? 'on' : ''}" href="#${t.id}/${view}">${esc(t.label)}</a>`).join('');
   document.getElementById('hero').innerHTML = `
