@@ -8,7 +8,7 @@ If you think of a valuable new item mid-run, append it to the bottom as `todo`.
 
 ## P1 — Alpine-critical (offline + mobile, must survive the field)
 
-### B01 · status: todo · pillar: offline
+### B01 · status: wip · pillar: offline
 **Offline PWA shell.** Add a `manifest.webmanifest` + service worker that caches the app shell
 (index.html, all `js/*.js`, `css/app.css`) and the current trip JSON so the itinerary + today view
 load with no signal. Cache-first for shell, network-first-then-cache for trip data.
