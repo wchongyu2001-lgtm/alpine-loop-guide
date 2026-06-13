@@ -167,5 +167,6 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
   .budgrid{grid-template-columns:1fr}
   #hero{padding-top:14px}
   .dayactions{flex-direction:column;align-items:flex-end}
+  .pthumb{flex-basis:60px;width:60px;height:48px}
   #map{height:60vh}
 }

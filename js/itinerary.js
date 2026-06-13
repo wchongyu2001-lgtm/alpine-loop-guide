@@ -1,5 +1,5 @@
 /* Day-by-day editable itinerary: drag-drop plans, place search, route stats. */
-import { esc, gmapsUrl, amapsUrl, gmapsDirUrl, routeStats, optimizeOrder, effectivePlans } from './core.js';
+import { esc, gmapsUrl, amapsUrl, gmapsDirUrl, routeStats, optimizeOrder, effectivePlans, thumbAccent } from './core.js';
 import { tripBookings } from './data.js';
 
 const TYPE_ICON = { flight: '✈', hotel: '🛏', train: '🚆', bus: '🚌', car: '🚗', activity: '🎟', other: '📌' };
@@ -133,6 +133,9 @@ function dayCard(day, plan, bookings, state) {
           <button data-edit="${day.id}|${p.id}" title="Edit time/note">✎</button>
           <button data-del="${day.id}|${p.id}" title="Remove">✕</button>
         </span>
+        ${p.img
+          ? `<img class="pthumb" loading="lazy" alt="" src="${esc(p.img)}">`
+          : `<span class="pthumb ph" style="--acc:${thumbAccent(p.t)}">${tag[p.t] || '📍'}</span>`}
       </li>`).join('')}
     </ul>
     ${stats ? `<div class="routestats">~${stats.km} km · ~${stats.hours} h driving today</div>` : ''}
