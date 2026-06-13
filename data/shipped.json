@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B08",
+      "title": "Faster expense entry + budget vs actual per day",
+      "pillar": "money",
+      "date": "2026-06-14T05:30:00Z",
+      "what": "Logging a spend is now near-instant: the quick-add form needs only an amount — the note is optional and category, who-paid, and 50/50-vs-payer-only split all default sensibly, so it's type-the-number-and-Add (≤3 taps). Underneath, the settle-up summary still spells out exactly who owes whom. And a new \"Budget vs actual\" card breaks the trip down day by day — each day's guide estimate next to what you've actually logged, with the difference coloured (terra = over, pine = under) and a running total at the top — so you can see at a glance which Alpine days ran hot or came in under.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge 1cf8e9f on origin/main: new pure budgetVsActual(days,expenses) in core.js + Budget-vs-actual card wired in budget.js; the amount input is the only required field (title now optional). test-core exits 0 with 4 new budgetVsActual guards; pure-logic sanity check returned actual 120/delta 20/totals delta 20 as expected. Live core.js & budget.js served HTTP 200 with the budgetVsActual marker on first try (no Pages lag).",
+      "commit": "1cf8e9f",
+      "deploy": "live"
+    },
+    {
       "id": "B07",
       "title": "Nearby discovery into itinerary",
       "pillar": "discovery",
