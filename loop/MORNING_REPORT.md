@@ -100,3 +100,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 
 ### 2026-06-14T08:00:00Z · loop
 - backlog drained — B01–B10 all done, no `todo` remaining. No-op iteration, exiting.
+
+### 2026-06-14T08:35:00Z · B11 Today view — now/next/past progress
+- status: done
+- pillar: mobile/live
+- what: New pure planProgress(plan, nowHHMM) in core.js labels each timed stop now/next/past (untimed → neutral; an open-ended stop runs until the next start). The Today view renders it — gold highlight + NOW pill on the current stop, NEXT pill on the next, faded strike-through on finished stops — but only on the real current day. Seeded backlog item myself (B01–B10 were all done; Alpine trip starts tomorrow, so hardening the field today-view is high value).
+- verified: PASS — independent agent confirmed merge dc13fc2 on origin/main (planProgress in core.js, gated import + t-pill-now CSS in today.js, new guards in test-core), node tools/test-core.mjs exit 0 (7 planProgress assertions ok), agent's own throwaway logic assertions passed, local + live served checks 200 with markers; live propagated on first attempt.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: dc13fc2

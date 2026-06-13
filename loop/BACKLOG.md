@@ -71,7 +71,7 @@ for an offline paper backup. Accept: print stylesheet produces a readable per-da
 
 ## P2 — Mobile today-view live awareness (trip starts 2026-06-15)
 
-### B11 · status: wip · pillar: mobile/live — todo
+### B11 · status: done · dc13fc2 · pillar: mobile/live — pure `planProgress(plan, nowHHMM)` in core.js labels each stop now/next/past/'' (now = its window contains now; open-ended stop runs until the next start; untimed/unparseable → neutral); today.js renders a gold highlight + NOW/NEXT pills + faded strike-through past stops, gated on `rel==='today'` only. 7 new test-core guards. Verified live (merge dc13fc2).
 **"Where am I in the day?" — now/next progress on the Today plan.** On the Today view, when the
 open day is actually today, mark each timed stop as past / now / next so a traveler sees at a glance
 which stop is current and what's coming up — instead of a flat list where everything looks the same.
