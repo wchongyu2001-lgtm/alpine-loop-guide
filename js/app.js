@@ -3,6 +3,7 @@ import { loadRegistry, loadTrip, refreshOverlays, decorateDays } from './data.js
 import { save, retryQueue } from './sync.js';
 import { esc } from './core.js';
 import { icon } from './icons.js';
+import * as today from './today.js';
 import * as itinerary from './itinerary.js';
 import * as bookings from './bookings.js';
 import * as map from './map.js';
@@ -11,9 +12,9 @@ import * as checklists from './checklists.js';
 import * as ideas from './ideas.js';
 import * as shipped from './shipped.js';
 
-const VIEWS = { itinerary, bookings, map, budget, checklists, ideas, shipped };
+const VIEWS = { today, itinerary, bookings, map, budget, checklists, ideas, shipped };
 const VIEW_LABELS = {
-  itinerary: 'Itinerary', bookings: 'Bookings', map: 'Map',
+  today: 'Today', itinerary: 'Itinerary', bookings: 'Bookings', map: 'Map',
   budget: 'Budget', checklists: 'Checklists', ideas: 'Ideas', shipped: "What's new",
 };
 
@@ -21,8 +22,12 @@ let base, state, view = 'itinerary';
 
 function route() {
   const [t, v] = location.hash.replace('#', '').split('/');
-  return { tripId: t || localStorage.getItem('v2:active') || 'alpine', view: VIEWS[v] ? v : 'itinerary' };
+  return { tripId: t || localStorage.getItem('v2:active') || 'alpine',
+    view: VIEWS[v] ? v : 'itinerary', explicitView: !!VIEWS[v] };
 }
+
+const pad = n => String(n).padStart(2, '0');
+const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
 
 async function boot() {
   base = await loadRegistry();
@@ -39,6 +44,8 @@ async function go() {
     localStorage.setItem('v2:active', state.trip.id);
     refreshOverlays(state, renderAll); // background Sheet pull
   }
+  // No explicit view + the open trip's range contains today → open the Today view.
+  if (!r.explicitView && state.days.some(d => d._date === todayIso())) view = 'today';
   renderAll();
 }
 
