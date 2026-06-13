@@ -55,6 +55,27 @@ const TAG_ACCENT = {
 };
 export const thumbAccent = t => TAG_ACCENT[t] || '#5d564a';
 
+// Wikipedia photo lookup for place thumbnails — pure URL builders + response parsers.
+export const wikiSummaryUrl = name => name
+  ? `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}?redirect=true`
+  : null;
+
+export const wikiGeoUrl = ll => ll
+  ? `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages&piprop=thumbnail&pithumbsize=320&generator=geosearch&ggscoord=${encodeURIComponent(`${ll[0]}|${ll[1]}`)}&ggsradius=2000&ggslimit=3`
+  : null;
+
+export const pickSummaryThumb = j =>
+  (j && j.type !== 'disambiguation' && j.thumbnail && j.thumbnail.source) || null;
+
+export const pickGeoThumb = j => {
+  const pages = j && j.query && j.query.pages;
+  if (!pages) return null;
+  for (const p of Object.values(pages)) if (p.thumbnail && p.thumbnail.source) return p.thumbnail.source;
+  return null;
+};
+
+export const thumbCacheKey = name => 'thumb:' + name;
+
 // Assign a booking to the smallest-date-range trip containing its start date.
 export function assignTrip(trips, startISO) {
   if (!startISO) return 'unassigned';

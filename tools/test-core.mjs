@@ -1,4 +1,5 @@
-import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans, dayDate, parseEmailStub, thumbAccent } from '../js/core.js';
+import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans, dayDate, parseEmailStub, thumbAccent,
+  wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, thumbCacheKey } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -72,5 +73,31 @@ eq(thumbAccent('food'), '#b9531a', 'thumbAccent: food → terra');
 eq(thumbAccent('gem'), '#9c5a6a', 'thumbAccent: gem → rose');
 eq(thumbAccent('???'), '#5d564a', 'thumbAccent: unknown → ink-soft');
 eq(thumbAccent(undefined), '#5d564a', 'thumbAccent: missing → ink-soft');
+
+eq(wikiSummaryUrl('Sirmione'), 'https://en.wikipedia.org/api/rest_v1/page/summary/Sirmione?redirect=true',
+  'wikiSummaryUrl: encodes name');
+eq(wikiSummaryUrl("All'Antico Vinaio"), "https://en.wikipedia.org/api/rest_v1/page/summary/All'Antico%20Vinaio?redirect=true",
+  'wikiSummaryUrl: spaces + apostrophe encoded');
+eq(wikiSummaryUrl(''), null, 'wikiSummaryUrl: empty → null');
+
+eq(wikiGeoUrl([45.49, 10.6]),
+  'https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages&piprop=thumbnail&pithumbsize=320&generator=geosearch&ggscoord=45.49%7C10.6&ggsradius=2000&ggslimit=3',
+  'wikiGeoUrl: builds geosearch URL');
+eq(wikiGeoUrl(null), null, 'wikiGeoUrl: no coords → null');
+
+eq(pickSummaryThumb({ type: 'standard', thumbnail: { source: 'https://x/a.jpg' } }), 'https://x/a.jpg',
+  'pickSummaryThumb: returns source');
+eq(pickSummaryThumb({ type: 'disambiguation', thumbnail: { source: 'https://x/a.jpg' } }), null,
+  'pickSummaryThumb: disambiguation → null');
+eq(pickSummaryThumb({ type: 'standard' }), null, 'pickSummaryThumb: no thumbnail → null');
+
+eq(pickGeoThumb({ query: { pages: { '99': { thumbnail: { source: 'https://x/g.jpg' } } } } }), 'https://x/g.jpg',
+  'pickGeoThumb: first page thumbnail');
+eq(pickGeoThumb({ query: { pages: { '1': {}, '2': { thumbnail: { source: 'https://x/h.jpg' } } } } }), 'https://x/h.jpg',
+  'pickGeoThumb: skips pages without thumbnail');
+eq(pickGeoThumb({ query: { pages: {} } }), null, 'pickGeoThumb: no pages → null');
+eq(pickGeoThumb({}), null, 'pickGeoThumb: empty → null');
+
+eq(thumbCacheKey('Sirmione'), 'thumb:Sirmione', 'thumbCacheKey');
 
 process.exit(fails ? 1 : 0);

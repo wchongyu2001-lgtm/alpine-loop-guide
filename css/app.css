@@ -66,6 +66,8 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .pthumb.ph{display:flex;align-items:center;justify-content:center;font-size:1.5em;
   background:color-mix(in srgb,var(--acc) 16%,#fff);
   border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+.pthumb.ph.has-photo{background-size:cover;background-position:center;background-repeat:no-repeat;
+  background-color:transparent;border-color:var(--line)}
 .plinks a,.plinks button{border:1px solid var(--line);background:var(--paper-2);border-radius:6px;
   width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;
   font-size:.74em;cursor:pointer;text-decoration:none;color:var(--ink)}

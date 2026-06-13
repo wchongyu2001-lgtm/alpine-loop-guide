@@ -1,5 +1,6 @@
 /* Day-by-day editable itinerary: drag-drop plans, place search, route stats. */
-import { esc, gmapsUrl, amapsUrl, gmapsDirUrl, routeStats, optimizeOrder, effectivePlans, thumbAccent } from './core.js';
+import { esc, gmapsUrl, amapsUrl, gmapsDirUrl, routeStats, optimizeOrder, effectivePlans, thumbAccent,
+  wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, thumbCacheKey } from './core.js';
 import { tripBookings } from './data.js';
 
 const TYPE_ICON = { flight: '✈', hotel: '🛏', train: '🚆', bus: '🚌', car: '🚗', activity: '🎟', other: '📌' };
@@ -18,6 +19,8 @@ export function render(root, ctx) {
   root.innerHTML = `
     ${presetBar}
     <div class="days">${state.days.map(day => dayCard(day, plans[day.id], bookings, state)).join('')}</div>`;
+
+  hydrateThumbs(root);
 
   // preset switch
   root.querySelectorAll('[data-preset]').forEach(b => b.onclick = () => {
@@ -135,7 +138,7 @@ function dayCard(day, plan, bookings, state) {
         </span>
         ${p.img
           ? `<img class="pthumb" loading="lazy" alt="" src="${esc(p.img)}">`
-          : `<span class="pthumb ph" style="--acc:${thumbAccent(p.t)}">${tag[p.t] || '📍'}</span>`}
+          : `<span class="pthumb ph" data-thumb="${esc(p.n)}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''} style="--acc:${thumbAccent(p.t)}">${tag[p.t] || '📍'}</span>`}
       </li>`).join('')}
     </ul>
     ${stats ? `<div class="routestats">~${stats.km} km · ~${stats.hours} h driving today</div>` : ''}
@@ -147,6 +150,40 @@ function dayCard(day, plan, bookings, state) {
     </div>
     ${day.sleep ? `<div class="sleep">Sleep · ${esc(day.sleep)}</div>` : ''}
   </div>`;
+}
+
+// Progressive enhancement: swap a real Wikipedia photo into each emoji placeholder tile.
+// Cached in localStorage (incl. negative cache); failures stay as the emoji tile.
+async function resolveThumb(name, ll) {
+  const key = thumbCacheKey(name);
+  const cached = localStorage.getItem(key);
+  if (cached !== null) return cached || null;
+  let src = null;
+  try {
+    const r = await fetch(wikiSummaryUrl(name));
+    if (r.ok) src = pickSummaryThumb(await r.json());
+  } catch {}
+  if (!src && ll) {
+    try {
+      const r = await fetch(wikiGeoUrl(ll));
+      if (r.ok) src = pickGeoThumb(await r.json());
+    } catch {}
+  }
+  localStorage.setItem(key, src || '');
+  return src;
+}
+
+function hydrateThumbs(root) {
+  root.querySelectorAll('.pthumb.ph[data-thumb]').forEach(async el => {
+    const name = el.dataset.thumb;
+    const ll = el.dataset.ll ? el.dataset.ll.split(',').map(Number) : null;
+    const src = await resolveThumb(name, ll);
+    if (src) {
+      el.style.backgroundImage = `url("${src}")`;
+      el.classList.add('has-photo');
+      el.textContent = '';
+    }
+  });
 }
 
 const ovFull = state => ({ preset: state.preset, dayPlans: {}, ...(state.overlay.itinerary || {}) });
