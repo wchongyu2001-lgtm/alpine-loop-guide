@@ -1,0 +1,14 @@
+{
+  "name": "Travel Companion",
+  "short_name": "Companion",
+  "description": "Offline-first trip planner — itinerary, bookings, today view.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4ede1",
+  "theme_color": "#b9531a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
