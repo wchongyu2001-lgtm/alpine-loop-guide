@@ -65,6 +65,6 @@ budget-vs-actual per day. Accept: adding an expense updates balances and the set
 forward-to address in the bookings view so the user knows where to forward confirmations. Accept:
 address visible; no backend change required.
 
-### B10 · status: todo · pillar: polish
+### B10 · status: wip · pillar: polish
 **Itinerary print/share view** — a clean, printable one-page-per-day summary (places, times, bookings)
 for an offline paper backup. Accept: print stylesheet produces a readable per-day handout.
