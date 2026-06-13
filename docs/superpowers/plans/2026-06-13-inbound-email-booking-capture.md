@@ -10,6 +10,18 @@
 
 ---
 
+## REVISION 2026-06-13 (post-discovery): reuse the parallel session's `triphub.py`
+
+The parallel session's (committed) Telegram/Wanderlog hub already ships `server/triphub.py` with `assign_trip` and `parse_email_stub` (mirrors of `js/core.js`), and `app.py` already does `import triphub as TH`. To avoid duplicating that code:
+
+- **Drop the planned `server/parse.py`.** Email-specific *new* pure helpers (`strip_forward`, `extract_pdf_text`, `build_extraction_input`, `EXTRACTION_SYSTEM`, `normalize_booking`, `fallback_booking`, `merge_into_overlay`) go in **`server/mailparse.py`** (none of these exist in triphub).
+- **Reuse `triphub.assign_trip`** for trip assignment, and **`triphub.parse_email_stub`** as the no-API fallback parser inside `fallback_booking`.
+- `server/inbound.py` imports both `mailparse` and `triphub`.
+- Git discipline (shared working tree): `triphub.py`/`test_server.py` are the other session's UNTRACKED files — **never `git add -A`**; stage only my files. `app.py` is committed/clean, so the appended `include_router` is safe.
+- Task 4 (`assign_trip`) is therefore **skipped** (reused from triphub); everywhere the plan says `parse.py`, read `mailparse.py`.
+
+---
+
 ## File structure
 
 - **Create** `server/parse.py` — pure functions: `strip_forward`, `extract_pdf_text`, `assign_trip`, `build_extraction_input`, `normalize_booking`, `fallback_booking`, `merge_into_overlay`. No FastAPI, no network → fully unit-testable.
