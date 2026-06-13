@@ -189,4 +189,12 @@ eq(convert(100, 1.08), 108, 'convert'); eq(convert(null, 1.08), null, 'convert n
 eq(simplifyDebts({ Chongyu: 120, Yuanxin: -120 }), [{ from: 'Yuanxin', to: 'Chongyu', amount: 120 }], 'simplifyDebts 2-party');
 eq(simplifyDebts({ A: 0, B: 0 }), [], 'simplifyDebts settled → []');
 
+// ---- offline PWA shell: sw.js must precache every js/ module the app loads ----
+import { readdirSync, readFileSync } from 'fs';
+const sw = readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
+const jsFiles = readdirSync(new URL('../js/', import.meta.url)).filter(f => f.endsWith('.js')).sort();
+const missing = jsFiles.filter(f => !sw.includes(`js/${f}`));
+eq(missing, [], 'sw.js precaches every js/ module');
+eq(/data\/alpine\.json/.test(sw), true, 'sw.js precaches the Alpine trip data');
+
 process.exit(fails ? 1 : 0);
