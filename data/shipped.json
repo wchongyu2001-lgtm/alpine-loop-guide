@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B10",
+      "title": "Print / share — day-by-day itinerary handout",
+      "pillar": "polish",
+      "date": "2026-06-14T07:00:00Z",
+      "what": "A new “🖨 Print day-by-day” button at the top of the Itinerary view turns your trip into a clean paper backup. It opens your browser's print/save dialog with a dedicated print stylesheet: all the interactive chrome — the trip switcher, view tabs, add-a-place box, suggestion chips, drag handles, detail drawers and action buttons — drops away, and each day breaks onto its own page. What stays is exactly what you'd want on a printed handout or saved PDF: the day number and date, the day's places in order with their times and notes, the route summary, and that day's bookings. Print to paper or “Save as PDF” for an offline backup that works with zero signal.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge b5f243e on origin/main: @media print block in css/app.css (hides #viewtabs/.addplace/.suggs/.grab/.dayactions via display:none, forces per-day .daycard+.daycard break-before:page, keeps .planlist/.bkchip/.dayhead) and window.print() wired to the #itprint button in js/itinerary.js. node tools/test-core.mjs exits 0. Local + LIVE served checks of css/app.css (marker '@media print') and js/itinerary.js (marker 'window.print') all HTTP 200; live already propagated.",
+      "commit": "b5f243e",
+      "deploy": "live"
+    },
+    {
       "id": "B09",
       "title": "Forward-to address label in bookings",
       "pillar": "bookings",
