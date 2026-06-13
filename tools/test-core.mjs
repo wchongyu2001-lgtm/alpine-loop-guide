@@ -5,7 +5,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   modeProfile, osrmUrl, legFallback, fmtDuration, parseOsrm,
   iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl, wlShareValid,
   weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts,
-  pickTodayDay, nextBooking } from '../js/core.js';
+  pickTodayDay, nextBooking, flightRoute, bookingWarnings } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -212,6 +212,52 @@ eq(nextBooking(tbk, '2026-08-01T12:00').id, 'c', 'nextBooking: earliest start at
 eq(nextBooking(tbk, '2026-08-03T14:00').id, 'b', 'nextBooking: inclusive of exact now');
 eq(nextBooking(tbk, '2026-08-04T00:00'), null, 'nextBooking: nothing upcoming → null');
 eq(nextBooking([{ id: 'x' }], '2026-08-01'), null, 'nextBooking: skips bookings without start');
+
+// ---- B04: booking gap / conflict detector ----
+eq(flightRoute('EK 353 · Singapore (SIN) → Dubai (DXB)'), { from: 'SIN', to: 'DXB' }, 'flightRoute: parses IATA codes');
+eq(flightRoute('Trenitalia · Milan → Genova'), null, 'flightRoute: no codes → null');
+eq(flightRoute('Hotel night'), null, 'flightRoute: no arrow → null');
+
+const alpineTrip = { start: '2026-08-01', end: '2026-08-17' };
+// clean alpine-shaped data raises nothing
+const cleanAlpine = [
+  { id: 'camp', type: 'hotel', title: 'Butterfly Camping', start: '2026-08-01' },
+  { id: 'van', type: 'car', title: 'Indie Campers (Venice ↔ Venice)', start: '2026-08-01T14:30', end: '2026-08-17T11:00' },
+  { id: 'rialto', type: 'hotel', title: 'Rialto Venice', start: '2026-08-17' },
+];
+eq(bookingWarnings(cleanAlpine, alpineTrip), [], 'bookingWarnings: clean alpine → no warnings');
+
+// clean iceland open-jaw: chained flights (KEF==KEF) raise nothing
+const iceTrip = { start: '2026-08-20', end: '2026-08-29' };
+const cleanIce = [
+  { id: 'w6', type: 'flight', title: 'Wizz Air · Milan (MXP) → Reykjavik (KEF)', start: '2026-08-20T09:00', end: '2026-08-20T11:25' },
+  { id: 'fi', type: 'flight', title: 'FI 418 · Reykjavik (KEF) → Dublin (DUB)', start: '2026-08-29T09:40', end: '2026-08-29T13:15' },
+];
+eq(bookingWarnings(cleanIce, iceTrip), [], 'bookingWarnings: iceland open-jaw chains → no warnings');
+
+// out-of-range fires
+let w = bookingWarnings([{ id: 'x', type: 'hotel', title: 'Stray', start: '2026-09-01' }], alpineTrip);
+eq(w.map(x => x.kind), ['range'], 'bookingWarnings: out-of-range booking flagged');
+
+// time overlap fires (two flights overlapping the same window)
+w = bookingWarnings([
+  { id: 'f1', type: 'flight', title: 'A (AAA) → B (BBB)', start: '2026-08-05T09:00', end: '2026-08-05T12:00' },
+  { id: 'f2', type: 'flight', title: 'B (BBB) → A (AAA)', start: '2026-08-05T11:00', end: '2026-08-05T14:00' },
+], alpineTrip);
+eq(w.some(x => x.kind === 'overlap'), true, 'bookingWarnings: overlapping flights flagged');
+
+// missing connecting leg fires (arrive LHR, next departs CDG)
+w = bookingWarnings([
+  { id: 'g1', type: 'flight', title: 'X · New York (JFK) → London (LHR)', start: '2026-08-03T08:00', end: '2026-08-03T20:00' },
+  { id: 'g2', type: 'flight', title: 'Y · Paris (CDG) → Rome (FCO)', start: '2026-08-10T08:00', end: '2026-08-10T10:00' },
+], alpineTrip);
+eq(w.filter(x => x.kind === 'leg').length, 1, 'bookingWarnings: broken flight chain flagged');
+// a real return chain (LHR==LHR) raises no leg warning
+w = bookingWarnings([
+  { id: 'h1', type: 'flight', title: 'X · New York (JFK) → London (LHR)', start: '2026-08-03T08:00', end: '2026-08-03T20:00' },
+  { id: 'h2', type: 'flight', title: 'Y · London (LHR) → New York (JFK)', start: '2026-08-10T08:00', end: '2026-08-10T18:00' },
+], alpineTrip);
+eq(w.filter(x => x.kind === 'leg').length, 0, 'bookingWarnings: connected chain → no leg warning');
 
 // ---- offline PWA shell: sw.js must precache every js/ module the app loads ----
 import { readdirSync, readFileSync } from 'fs';
