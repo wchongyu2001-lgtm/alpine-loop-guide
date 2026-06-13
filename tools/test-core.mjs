@@ -7,7 +7,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
   legGapMins, legFeasibility, dayLoad,
-  overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual } from '../js/core.js';
+  overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -350,6 +350,28 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq([got[0].t, got[2].t], ['food', 'act'], 'parseOverpass: maps amenity→food, tourism→act');
   eq(got[0].cat, 'ice cream', 'parseOverpass: humanizes the OSM kind');
   eq(parseOverpass({}, sirmione), [], 'parseOverpass: empty response → []');
+}
+
+// ---- B11: planProgress (now/next/past on the Today plan) ----
+{
+  const plan = [
+    { n: 'Breakfast', time: '08:00–09:00' },
+    { n: 'Lake Como walk', time: '09:30–12:00' },
+    { n: 'Lunch', time: '13:00' },          // open-ended → ends at next start (15:00)
+    { n: 'Bellagio', time: '15:00–17:30' },
+    { n: 'Free time', time: '' },           // untimed → neutral
+  ];
+  eq(planProgress(plan, '10:30'), ['past', 'now', 'next', 'upcoming', ''],
+    'planProgress: mid-morning → walk is now, lunch is the next stop, later upcoming, untimed neutral');
+  eq(planProgress(plan, '13:30'), ['past', 'past', 'now', 'next', ''],
+    'planProgress: open-ended lunch is now (runs until 15:00), Bellagio is next');
+  eq(planProgress(plan, '07:00'), ['next', 'upcoming', 'upcoming', 'upcoming', ''],
+    'planProgress: before the day → first timed stop is next');
+  eq(planProgress(plan, '18:00'), ['past', 'past', 'past', 'past', ''],
+    'planProgress: after the day → all timed stops past');
+  eq(planProgress(plan, ''), ['', '', '', '', ''], 'planProgress: unparseable now → all neutral');
+  eq(planProgress([], '10:00'), [], 'planProgress: empty plan → []');
+  eq(planProgress(null, '10:00'), [], 'planProgress: null plan → []');
 }
 
 process.exit(fails ? 1 : 0);

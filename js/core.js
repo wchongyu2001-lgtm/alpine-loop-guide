@@ -412,6 +412,34 @@ export function budgetVsActual(days, expenses) {
   return { rows, totals };
 }
 
+// ---- B11: "where am I in the day?" — now/next progress on the Today plan (pure) ----
+// Given a day's ordered plan and the current "HH:MM", label each stop: 'now' while
+// its time window contains now, 'next' for the first not-yet-started timed stop,
+// 'past' once it has finished, '' for untimed stops (or when now can't be parsed).
+// A stop's effective end is its own end, else the next timed stop's start, else +60m.
+export function planProgress(plan, nowHHMM) {
+  const arr = Array.isArray(plan) ? plan : [];
+  const now = hhmm(nowHHMM);
+  const starts = arr.map(p => hhmm(splitTime(p && p.time)[0]));
+  const ends = arr.map((p, i) => {
+    const e = hhmm(splitTime(p && p.time)[1]);
+    if (e != null) return e;
+    if (starts[i] == null) return null;
+    for (let j = i + 1; j < arr.length; j++) if (starts[j] != null) return starts[j];
+    return starts[i] + 60;
+  });
+  if (now == null) return arr.map(() => '');
+  let nextIdx = -1;
+  for (let i = 0; i < arr.length; i++) if (starts[i] != null && starts[i] > now) { nextIdx = i; break; }
+  return arr.map((p, i) => {
+    if (starts[i] == null) return '';
+    if (starts[i] <= now && now < ends[i]) return 'now';
+    if (i === nextIdx) return 'next';
+    if (ends[i] <= now) return 'past';
+    return 'upcoming';
+  });
+}
+
 export function fmtMoney(n, cur = '€') {
   if (n == null || isNaN(n)) return '—';
   const v = Math.round(Number(n));
