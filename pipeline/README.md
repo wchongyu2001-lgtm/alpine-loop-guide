@@ -26,3 +26,19 @@ Script in `apps-script/Code.gs`:
 
 Until redeployed, edits still work — they save to localStorage per device and
 queue for the Sheet.
+
+# Place enrichment (optional — real Google ratings/photos/hours)
+
+Itinerary place cards show a live `★ rating · category · hours` line and a Google
+photo when the trips-sync backend (`server/app.py`) has a Places key. Without it,
+cards fall back to Wikipedia photos + a "Reviews ↗" link — the app works either way.
+
+To enable on the VPS:
+1. In Google Cloud, enable **Places API** (classic) + **billing** (personal use sits
+   in the free monthly credit). Create an API key; restrict it to the Places API.
+2. Set the key as an env var for the `trips-sync` service:
+   `PLACES_KEY=...` in the systemd unit (`server/trips-sync.service`) or its
+   EnvironmentFile, then `systemctl restart trips-sync`.
+3. The client (`js/places.js`) calls `…/trips-sync/place` and caches results 30 days.
+
+The key lives only on the server — never in this public repo.

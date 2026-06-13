@@ -102,6 +102,91 @@ export const pickSummaryExtract = j =>
   (j && j.type !== 'disambiguation' && j.extract) || null;
 export const factCacheKey = name => 'fact:' + name;
 
+/* ---- Place enrichment (Google Places via the trips-sync proxy) ---- */
+export const placeProxyUrl = (base, name, ll) =>
+  `${base}/place?q=${encodeURIComponent(name || '')}` + (ll ? `&lat=${ll[0]}&lng=${ll[1]}` : '');
+export const placePhotoUrl = (base, ref, w = 400) =>
+  `${base}/placephoto?ref=${encodeURIComponent(ref)}&w=${w}`;
+export const placeCacheKey = (name, ll) =>
+  `place:${name}@${ll ? ll.map(n => n.toFixed(3)).join(',') : ''}`;
+export const fmtRating = (rating, reviews = 0) =>
+  rating ? `★ ${Number(rating).toFixed(1)}` + (reviews ? ` (${Number(reviews).toLocaleString()})` : '') : '';
+export const priceTier = lvl => (lvl ? '€'.repeat(lvl) : '');
+const CAT_MAP = [['restaurant', 'restaurant'], ['cafe', 'café'], ['bar', 'bar'], ['lodging', 'lodging'],
+  ['museum', 'museum'], ['park', 'park'], ['tourist_attraction', 'attraction'], ['natural_feature', 'nature']];
+export function parsePlace(j) {
+  if (!j) return null;
+  const types = j.types || [];
+  const cat = (CAT_MAP.find(([k]) => types.includes(k)) || [])[1]
+    || (types[0] || '').replace(/_/g, ' ') || '';
+  const oh = j.opening_hours || {};
+  return {
+    rating: j.rating ?? null, reviews: j.user_ratings_total || 0, photoRef: j.photoRef || null,
+    category: cat, priceLevel: j.price_level ?? null,
+    openNow: oh.open_now ?? null, hoursToday: oh.today || null,
+    website: j.website || null, phone: j.formatted_phone_number || null,
+    placeId: j.place_id || null, gmapsUrl: j.gmapsUrl || null,
+  };
+}
+
+/* ---- Per-leg routing (OSRM driving, haversine fallback) ---- */
+const MODE = { drive: { p: 'driving', f: 1.3, kmh: 55 }, walk: { p: 'walking', f: 1.0, kmh: 4.8 }, cycle: { p: 'cycling', f: 1.1, kmh: 15 } };
+export const modeProfile = m => (MODE[m] || MODE.drive).p;
+export const osrmUrl = (a, b, m) =>
+  `https://router.project-osrm.org/route/v1/${modeProfile(m)}/${a[1]},${a[0]};${b[1]},${b[0]}?overview=false`;
+export function legFallback(a, b, m) {
+  const cfg = MODE[m] || MODE.drive;
+  const km = Math.round(haversineKm(a, b) * cfg.f * 10) / 10;
+  return { km, mins: Math.round(km / cfg.kmh * 60) };
+}
+export const fmtDuration = mins => mins < 60 ? `${mins} min` : `${Math.floor(mins / 60)} h ${mins % 60} min`;
+export function parseOsrm(j) {
+  const r = j && j.routes && j.routes[0]; if (!r) return null;
+  return { km: Math.round(r.distance / 100) / 10, mins: Math.round(r.duration / 60) };
+}
+
+/* ---- Brand logos (airlines by IATA, providers by domain) ---- */
+export const iataFromFlight = s => { const m = String(s || '').toUpperCase().match(/\b([A-Z0-9]{2})\s?\d/); return m ? m[1] : null; };
+export const airlineLogoUrl = (iata, w = 120, h = 40) => `https://pics.avs.io/${w}/${h}/${iata}.png`;
+const BRANDS = { 'booking.com': 'booking.com', 'emirates': 'emirates.com', 'wizz': 'wizzair.com',
+  'icelandair': 'icelandair.com', 'trenitalia': 'trenitalia.com', 'b&b hotel': 'hotelbb.com',
+  'una hotel': 'unahotels.it', 'airbnb': 'airbnb.com', 'expedia': 'expedia.com', 'hertz': 'hertz.com' };
+export function brandDomain(name) {
+  const n = String(name || '').toLowerCase();
+  for (const k in BRANDS) if (n.includes(k)) return BRANDS[k];
+  return null;
+}
+export const brandLogoUrl = domain => `https://logo.clearbit.com/${domain}`;
+
+/* ---- Weather (open-meteo), FX, settle-up ---- */
+export const weatherUrl = ll =>
+  `https://api.open-meteo.com/v1/forecast?latitude=${ll[0]}&longitude=${ll[1]}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`;
+export function pickDaily(j, iso) {
+  const t = j && j.daily && j.daily.time; if (!t) return null;
+  const i = t.indexOf(iso); if (i < 0) return null;
+  return { code: j.daily.weather_code[i], tmax: j.daily.temperature_2m_max[i],
+    tmin: j.daily.temperature_2m_min[i], precip: j.daily.precipitation_probability_max[i] };
+}
+export function wmoIcon(c) {
+  if (c === 0) return '☀️'; if (c <= 3) return '⛅'; if (c <= 48) return '🌫️';
+  if (c <= 67) return '🌧️'; if (c <= 77) return '❄️'; if (c <= 82) return '🌧️';
+  if (c <= 86) return '❄️'; return '⛈️';
+}
+export const convert = (amt, rate) => amt == null ? null : Math.round(amt * rate * 100) / 100;
+export function simplifyDebts(net) {
+  const cred = [], deb = [];
+  for (const k in net) { const v = Math.round(net[k] * 100) / 100; if (v > 0) cred.push([k, v]); else if (v < 0) deb.push([k, -v]); }
+  cred.sort((a, b) => b[1] - a[1]); deb.sort((a, b) => b[1] - a[1]);
+  const out = []; let i = 0, j = 0;
+  while (i < deb.length && j < cred.length) {
+    const amt = Math.round(Math.min(deb[i][1], cred[j][1]) * 100) / 100;
+    if (amt > 0) out.push({ from: deb[i][0], to: cred[j][0], amount: amt });
+    deb[i][1] -= amt; cred[j][1] -= amt;
+    if (deb[i][1] <= 0.001) i++; if (cred[j][1] <= 0.001) j++;
+  }
+  return out;
+}
+
 export const pickGeoThumb = j => {
   const pages = j && j.query && j.query.pages;
   if (!pages) return null;

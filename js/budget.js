@@ -1,11 +1,18 @@
-/* Budget: guide estimates (from v1 data) + actual expenses with splitting. */
-import { esc, fmtMoney, computeBalances } from './core.js';
+/* Budget: guide estimates (from v1 data) + actual expenses with splitting,
+   multi-currency roll-up (booked items converted to the trip base) + settle-up. */
+import { esc, fmtMoney, computeBalances, convert, simplifyDebts } from './core.js';
 import { tripBookings } from './data.js';
+import { rates } from './fx.js';
+
+let fxRates = null; // {CUR: units per 1 base}, loaded once per session
 
 export function render(root, ctx) {
   const { state } = ctx;
   const td = state.tripData;
   const cur = td.meta.curSymbol || '€';
+  const base = state.trip.currency || 'EUR';
+  if (!fxRates) rates(base).then(r => { fxRates = r; ctx.rerender(); });
+  const toBase = (amt, c) => (!c || c === base || !fxRates || !fxRates[c]) ? amt : convert(amt, 1 / fxRates[c]);
   const ov = exOv(state);
   const mode = ov.mode || 'bu';
 
@@ -24,13 +31,11 @@ export function render(root, ctx) {
   const manual = ov.items || [];
   const booked = tripBookings(state, state.trip.id)
     .filter(b => b.price && b.price.amount)
-    .map(b => ({ id: b.id, title: b.title, amount: b.price.amount, currency: b.price.currency, cat: b.type, paidBy: null, fromBooking: true }));
+    .map(b => ({ id: b.id, title: b.title, amount: toBase(b.price.amount, b.price.currency), origCur: b.price.currency, cat: b.type, paidBy: null, fromBooking: true }));
   const all = [...booked, ...manual];
   const actualTotal = all.reduce((s, e) => s + (+e.amount || 0), 0);
   const bal = computeBalances(manual, state.travellers);
-  const [A, B] = state.travellers;
-  const settle = bal.net[A] > 0 ? `${B} owes ${A} ${fmtMoney(bal.net[A], cur)}`
-    : bal.net[A] < 0 ? `${A} owes ${B} ${fmtMoney(-bal.net[A], cur)}` : 'All square ✓';
+  const transfers = simplifyDebts(bal.net);
 
   const byCat = {};
   all.forEach(e => { const c = e.cat || 'other'; byCat[c] = (byCat[c] || 0) + (+e.amount || 0); });
@@ -53,7 +58,9 @@ export function render(root, ctx) {
       <div class="budcard">
         <h3>Actually spent</h3>
         <div class="bignum">${fmtMoney(actualTotal, cur)}</div>
-        <div class="settle">${esc(settle)}</div>
+        <div class="settle">${transfers.length
+          ? transfers.map(t => `<div>${esc(t.from)} owes ${esc(t.to)} <b>${fmtMoney(t.amount, cur)}</b></div>`).join('')
+          : 'All square ✓'}</div>
         <div class="catbars">
           ${Object.entries(byCat).sort((a, b) => b[1] - a[1]).map(([c, v]) => `
             <div class="catbar"><span>${esc(c)}</span>

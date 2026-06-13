@@ -3,7 +3,7 @@
    so they follow you across devices. Saves cache locally first, then POST;
    failed sends queue and retry on next load. See server/ for the backend. */
 
-const BASE = 'https://markets-dashboard.duckdns.org/trips-sync';
+export const BASE = 'https://markets-dashboard.duckdns.org/trips-sync';
 // Soft guard against anonymous writes. Public by design (static client) — the
 // real protections are the CORS origin allow-list + accepted-public-data choice.
 const TOKEN = '7b96af2a24b67e9da2b95c1283460314a4fe5469014e593a';

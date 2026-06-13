@@ -11,9 +11,9 @@ Frontend protocol (js/sync.js):
   GET  /fetchmail                              -> {ok, messages}  (phase 2)
   GET  /health
 """
-import os, re, json, base64, uuid
+import os, re, json, base64, uuid, time, urllib.request, urllib.parse
 from pathlib import Path
-from fastapi import FastAPI, Request, Header, HTTPException
+from fastapi import FastAPI, Request, Header, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 BASE = Path(os.environ.get("TRIPS_DIR", "/opt/trips-sync"))
@@ -95,3 +95,66 @@ def fetchmail():
     # Wired in phase 2 once the Gmail pipeline runs on the box. Frontend shows
     # this message gracefully until then.
     return {"ok": False, "error": "On-demand Gmail fetch moves to the VPS pipeline (phase 2)."}
+
+
+# ---- Google Places proxy (key stays server-side in PLACES_KEY env) ----
+# Enrichment for itinerary place cards: rating, reviews, photo, hours, category.
+# The client (js/places.js) caches results 30d and degrades to free sources when
+# PLACES_KEY is unset, so this is optional infra — the app works without it.
+_PLACE_CACHE = {}  # ck -> (expires_epoch, dict)
+
+
+def _get_json(url):
+    with urllib.request.urlopen(url, timeout=10) as r:
+        return json.loads(r.read().decode())
+
+
+@app.get("/place")
+def place(q: str, lat: str = "", lng: str = ""):
+    key = os.environ.get("PLACES_KEY", "")
+    if not key:
+        return {"ok": False, "reason": "no-key"}
+    ck = f"{q}@{lat},{lng}"
+    hit = _PLACE_CACHE.get(ck)
+    if hit and hit[0] > time.time():
+        return hit[1]
+    find = ("https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
+            f"?input={urllib.parse.quote(q)}&inputtype=textquery&fields=place_id&key={key}"
+            + (f"&locationbias=point:{lat},{lng}" if lat and lng else ""))
+    try:
+        cand = (_get_json(find).get("candidates") or [])
+    except Exception:
+        return {"ok": False, "reason": "upstream-error"}
+    if not cand:
+        return {"ok": False, "reason": "not-found"}
+    pid = cand[0]["place_id"]
+    det = ("https://maps.googleapis.com/maps/api/place/details/json"
+           f"?place_id={pid}&fields=rating,user_ratings_total,photos,types,price_level,"
+           f"opening_hours,website,formatted_phone_number,url&key={key}")
+    d = (_get_json(det).get("result") or {})
+    oh = d.get("opening_hours") or {}
+    wt = oh.get("weekday_text") or []
+    out = {
+        "ok": True, "place_id": pid, "rating": d.get("rating"),
+        "user_ratings_total": d.get("user_ratings_total"),
+        "photoRef": (d.get("photos") or [{}])[0].get("photo_reference"),
+        "types": d.get("types"), "price_level": d.get("price_level"),
+        # Google weekday_text is Monday-first; Python tm_wday is Monday=0 too.
+        "opening_hours": {"open_now": oh.get("open_now"), "today": wt[time.localtime().tm_wday] if wt else None} if oh else None,
+        "website": d.get("website"), "formatted_phone_number": d.get("formatted_phone_number"),
+        "gmapsUrl": d.get("url"),
+    }
+    _PLACE_CACHE[ck] = (time.time() + 21600, out)
+    return out
+
+
+@app.get("/placephoto")
+def placephoto(ref: str, w: int = 400):
+    key = os.environ.get("PLACES_KEY", "")
+    if not key:
+        raise HTTPException(404, "no-key")
+    url = ("https://maps.googleapis.com/maps/api/place/photo"
+           f"?maxwidth={int(w)}&photo_reference={urllib.parse.quote(ref)}&key={key}")
+    with urllib.request.urlopen(url, timeout=10) as r:
+        data, ctype = r.read(), r.headers.get("Content-Type", "image/jpeg")
+    return Response(content=data, media_type=ctype, headers={"Cache-Control": "public, max-age=2592000"})

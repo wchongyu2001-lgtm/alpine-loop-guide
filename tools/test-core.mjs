@@ -1,6 +1,10 @@
 import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans, dayDate, parseEmailStub, thumbAccent,
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, thumbCacheKey,
-  gmapsPlaceUrl, amapsPlaceUrl, splitTime, joinTime, matchBooking, pickSummaryExtract, factCacheKey } from '../js/core.js';
+  gmapsPlaceUrl, amapsPlaceUrl, splitTime, joinTime, matchBooking, pickSummaryExtract, factCacheKey,
+  placeProxyUrl, placePhotoUrl, placeCacheKey, fmtRating, priceTier, parsePlace,
+  modeProfile, osrmUrl, legFallback, fmtDuration, parseOsrm,
+  iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl,
+  weatherUrl, pickDaily, wmoIcon, convert, simplifyDebts } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -128,5 +132,57 @@ eq(matchBooking({ n: 'Sirmione', ll: [45.49, 10.61] }, camp), false, 'matchBooki
 eq(pickSummaryExtract({ type: 'standard', extract: 'Sirmione is a town.' }), 'Sirmione is a town.', 'pickSummaryExtract: returns extract');
 eq(pickSummaryExtract({ type: 'disambiguation', extract: 'x' }), null, 'pickSummaryExtract: disambiguation → null');
 eq(factCacheKey('Sirmione'), 'fact:Sirmione', 'factCacheKey');
+
+// ---- place enrichment ----
+eq(placeProxyUrl('https://x/trips-sync', 'Sirmione', [45.49, 10.61]),
+  'https://x/trips-sync/place?q=Sirmione&lat=45.49&lng=10.61', 'placeProxyUrl: name+ll');
+eq(placeProxyUrl('https://x/trips-sync', 'Lake Como', null),
+  'https://x/trips-sync/place?q=Lake%20Como', 'placeProxyUrl: name only');
+eq(placePhotoUrl('https://x/trips-sync', 'AbC_ref', 400),
+  'https://x/trips-sync/placephoto?ref=AbC_ref&w=400', 'placePhotoUrl');
+eq(placeCacheKey('Sirmione', [45.491, 10.606]), 'place:Sirmione@45.491,10.606', 'placeCacheKey rounds 3dp');
+eq(fmtRating(4.6, 2134), '★ 4.6 (2,134)', 'fmtRating with reviews');
+eq(fmtRating(4.6, 0), '★ 4.6', 'fmtRating no reviews');
+eq(fmtRating(null, 0), '', 'fmtRating none → empty');
+eq(priceTier(2), '€€', 'priceTier 2'); eq(priceTier(0), '', 'priceTier 0'); eq(priceTier(null), '', 'priceTier null');
+eq(parsePlace({ rating: 4.6, user_ratings_total: 2134, photoRef: 'r', types: ['tourist_attraction'],
+  price_level: 2, opening_hours: { open_now: true, today: '9 AM–8 PM' }, website: 'https://w', formatted_phone_number: '+39 1', place_id: 'p', gmapsUrl: 'https://g' }),
+  { rating: 4.6, reviews: 2134, photoRef: 'r', category: 'attraction', priceLevel: 2,
+    openNow: true, hoursToday: '9 AM–8 PM', website: 'https://w', phone: '+39 1', placeId: 'p', gmapsUrl: 'https://g' },
+  'parsePlace normalizes proxy json');
+eq(parsePlace(null), null, 'parsePlace null → null');
+
+// ---- routing ----
+eq(modeProfile('drive'), 'driving', 'modeProfile drive');
+eq(osrmUrl([45.5, 10.6], [45.6, 10.7], 'drive'),
+  'https://router.project-osrm.org/route/v1/driving/10.6,45.5;10.7,45.6?overview=false', 'osrmUrl lng,lat order');
+let lf = legFallback([45.5, 10.6], [46.0, 10.6], 'drive');
+if (lf.km < 60 || lf.km > 90) { fails++; console.error('FAIL legFallback drive km ' + lf.km); } else console.log('ok   legFallback drive ~72km');
+eq(legFallback([45.5, 10.6], [45.5, 10.6], 'walk'), { km: 0, mins: 0 }, 'legFallback zero distance');
+eq(fmtDuration(12), '12 min', 'fmtDuration <60');
+eq(fmtDuration(65), '1 h 5 min', 'fmtDuration >60');
+eq(parseOsrm({ routes: [{ distance: 8400, duration: 720 }] }), { km: 8.4, mins: 12 }, 'parseOsrm m→km s→min');
+eq(parseOsrm({ routes: [] }), null, 'parseOsrm empty → null');
+
+// ---- logos ----
+eq(iataFromFlight('EK353'), 'EK', 'iata EK'); eq(iataFromFlight('W6 4551'), 'W6', 'iata W6');
+eq(iataFromFlight('FI418'), 'FI', 'iata FI'); eq(iataFromFlight(''), null, 'iata empty → null');
+eq(airlineLogoUrl('EK'), 'https://pics.avs.io/120/40/EK.png', 'airlineLogoUrl');
+eq(brandDomain('Booking.com'), 'booking.com', 'brandDomain booking');
+eq(brandDomain('Emirates'), 'emirates.com', 'brandDomain emirates');
+eq(brandDomain('Some Tiny Inn'), null, 'brandDomain unknown → null');
+eq(brandLogoUrl('booking.com'), 'https://logo.clearbit.com/booking.com', 'brandLogoUrl');
+
+// ---- weather / fx / settle-up ----
+eq(weatherUrl([45.49, 10.61]),
+  'https://api.open-meteo.com/v1/forecast?latitude=45.49&longitude=10.61&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16',
+  'weatherUrl');
+eq(pickDaily({ daily: { time: ['2026-08-01', '2026-08-02'], weather_code: [1, 61], temperature_2m_max: [28, 22], temperature_2m_min: [18, 15], precipitation_probability_max: [10, 80] } }, '2026-08-02'),
+  { code: 61, tmax: 22, tmin: 15, precip: 80 }, 'pickDaily finds date');
+eq(pickDaily({ daily: { time: ['2026-08-01'] } }, '2030-01-01'), null, 'pickDaily out of range → null');
+eq(wmoIcon(0), '☀️', 'wmo clear'); eq(wmoIcon(61), '🌧️', 'wmo rain'); eq(wmoIcon(71), '❄️', 'wmo snow');
+eq(convert(100, 1.08), 108, 'convert'); eq(convert(null, 1.08), null, 'convert null');
+eq(simplifyDebts({ Chongyu: 120, Yuanxin: -120 }), [{ from: 'Yuanxin', to: 'Chongyu', amount: 120 }], 'simplifyDebts 2-party');
+eq(simplifyDebts({ A: 0, B: 0 }), [], 'simplifyDebts settled → []');
 
 process.exit(fails ? 1 : 0);

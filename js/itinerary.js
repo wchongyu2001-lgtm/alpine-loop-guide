@@ -1,8 +1,17 @@
-/* Day-by-day editable itinerary: drag-drop plans, place search, route stats. */
+/* Day-by-day editable itinerary: drag-drop plans, place search, route stats,
+   live place enrichment (rating/category/hours/photo), per-leg travel times,
+   per-day weather. */
 import { esc, gmapsPlaceUrl, amapsPlaceUrl, gmapsDirUrl, routeStats, optimizeOrder, effectivePlans, thumbAccent,
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, pickSummaryExtract, thumbCacheKey, factCacheKey,
-  splitTime, joinTime, matchBooking } from './core.js';
+  splitTime, joinTime, matchBooking,
+  fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon } from './core.js';
 import { tripBookings } from './data.js';
+import { BASE } from './sync.js';
+import { enrich } from './places.js';
+import { leg } from './routing.js';
+import { dayWeather } from './weather.js';
+
+const MODES = [['drive', '🚗'], ['walk', '🚶'], ['cycle', '🚲']];
 
 const TYPE_ICON = { flight: '✈', hotel: '🛏', train: '🚆', bus: '🚌', car: '🚗', activity: '🎟', other: '📌' };
 
@@ -25,6 +34,15 @@ export function render(root, ctx) {
     <div class="days">${state.days.map(day => dayCard(day, plans[day.id], bookings, state)).join('')}</div>`;
 
   hydrateThumbs(root);
+  hydrateEnrich(root);
+  hydrateLegs(root);
+  hydrateWeather(root);
+
+  // per-day travel mode (drive/walk/cycle)
+  root.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => {
+    const [dayId, m] = b.dataset.mode.split('|');
+    setMode(ctx, dayId, m); ctx.rerender();
+  });
 
   // preset switch
   root.querySelectorAll('[data-preset]').forEach(b => b.onclick = () => {
@@ -128,15 +146,18 @@ function dayCard(day, plan, bookings, state) {
   const stats = pts.length > 1 ? routeStats(pts) : null;
   const tag = state.taxonomy.tags;
   const sugg = (day.stops || []).filter(st => !plan.some(p => p.n === st.n));
+  const mode = dayMode(state, day.id);
   return `
   <div class="daycard">
     <div class="dayhead">
       <span class="daynum">${day._n}</span>
       <div>
-        <div class="daydate">${esc(day._label || day.date)}${day.drive ? ` · 🚐 ~${day.drive}h leg` : ''}</div>
+        <div class="daydate">${esc(day._label || day.date)}${day.drive ? ` · 🚐 ~${day.drive}h leg` : ''}${day.ll && day._date ? `<span class="wx" data-ll="${day.ll[0]},${day.ll[1]}" data-date="${day._date}"></span>` : ''}</div>
         <h3>${esc(day.short)}</h3>
       </div>
       <div class="dayactions">
+        <span class="modes" data-day="${day.id}">${MODES.map(([m, ic]) =>
+          `<button class="modebtn ${m === mode ? 'on' : ''}" data-mode="${day.id}|${m}" title="${m}">${ic}</button>`).join('')}</span>
         ${plan.length > 2 ? `<button class="mini" data-opt="${day.id}" title="Reorder stops by nearest-neighbour">⚡ optimize</button>` : ''}
         ${pts.length > 1 ? `<a class="mini" target="_blank" rel="noopener" href="${gmapsDirUrl(pts.slice(0, 10))}">↗ route</a>` : ''}
       </div>
@@ -145,7 +166,7 @@ function dayCard(day, plan, bookings, state) {
     ${dayBk.length ? `<div class="bkchips">${dayBk.map(b =>
       `<span class="bkchip">${TYPE_ICON[b.type] || '📌'} ${esc(b.title.split('·')[0].trim())}</span>`).join('')}</div>` : ''}
     <ul class="planlist" data-day="${day.id}">
-      ${plan.map(p => placeRow(day, p, dayBk, tag)).join('')}
+      ${plan.map((p, i) => placeRow(day, p, plan[i + 1], mode, dayBk, tag)).join('')}
     </ul>
     ${stats ? `<div class="routestats">~${stats.km} km · ~${stats.hours} h driving today</div>` : ''}
     ${sugg.length ? `<div class="suggs">${sugg.slice(0, 6).map((st, i) =>
@@ -158,26 +179,30 @@ function dayCard(day, plan, bookings, state) {
   </div>`;
 }
 
-function placeRow(day, p, dayBk, tag) {
+function placeRow(day, p, next, mode, dayBk, tag) {
   const open = openId === p.id;
   const thumb = p.img
     ? `<img class="pthumb" loading="lazy" alt="" src="${esc(p.img)}">`
     : `<span class="pthumb ph" data-thumb="${esc(p.n)}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''} style="--acc:${thumbAccent(p.t)}">${tag[p.t] || '📍'}</span>`;
+  const legHtml = (next && p.ll && next.ll)
+    ? `<div class="pleg" data-from="${p.ll[0]},${p.ll[1]}" data-to="${next.ll[0]},${next.ll[1]}" data-mode="${mode}"></div>` : '';
   return `
   <li data-pid="${p.id}"${open ? ' class="open"' : ''}>
     <div class="prow">
       <span class="grab">⠿</span>
-      <div class="pbody" data-open="${day.id}|${p.id}" role="button" tabindex="0">
+      ${thumb}
+      <div class="pbody" data-open="${day.id}|${p.id}" data-enrich="${esc(p.n)}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''} role="button" tabindex="0">
         <div class="pname">${tag[p.t] || '•'} <b>${esc(p.n)}</b>${p.time ? ` <span class="ptime">${esc(p.time)}</span>` : ''}</div>
+        <div class="pmeta"></div>
         ${p.note || p.d ? `<div class="pdesc">${esc(p.note || p.d)}</div>` : ''}
       </div>
       <span class="plinks">
         <button class="pchev" data-open="${day.id}|${p.id}" title="Details" aria-expanded="${open}">${open ? '▾' : '▸'}</button>
         <button data-del="${day.id}|${p.id}" title="Remove">✕</button>
       </span>
-      ${thumb}
     </div>
     ${open ? placeDetail(day, p, dayBk, tag) : ''}
+    ${legHtml}
   </li>`;
 }
 
@@ -237,6 +262,48 @@ function hydrateThumbs(root) {
   });
 }
 
+// Live place enrichment: rating · category · price · hours into .pmeta, and a
+// Google Places photo into the tile (preloaded so a missing key never blanks it).
+function hydrateEnrich(root) {
+  root.querySelectorAll('.pbody[data-enrich]').forEach(async el => {
+    const name = el.dataset.enrich;
+    const ll = el.dataset.ll ? el.dataset.ll.split(',').map(Number) : null;
+    const v = await enrich(name, ll);
+    if (!v) return;
+    const meta = el.querySelector('.pmeta');
+    if (meta) {
+      const open = v.openNow == null ? '' : (v.openNow ? (v.hoursToday ? 'open · ' + v.hoursToday : 'open now') : 'closed');
+      meta.textContent = [fmtRating(v.rating, v.reviews), v.category, priceTier(v.priceLevel), open].filter(Boolean).join(' · ');
+    }
+    if (v.photoRef) {
+      const ph = el.closest('li').querySelector('.pthumb.ph');
+      if (ph) {
+        const im = new Image();
+        im.onload = () => { ph.style.backgroundImage = `url("${im.src}")`; ph.classList.add('has-photo'); ph.textContent = ''; };
+        im.src = placePhotoUrl(BASE, v.photoRef, 160);
+      }
+    }
+  });
+}
+
+// Per-leg travel time/distance connector between consecutive stops.
+function hydrateLegs(root) {
+  root.querySelectorAll('.pleg[data-from]').forEach(async el => {
+    const a = el.dataset.from.split(',').map(Number), b = el.dataset.to.split(',').map(Number);
+    const v = await leg(a, b, el.dataset.mode);
+    if (v) el.textContent = `⌄ ${fmtDuration(v.mins)} · ${v.km} km`;
+  });
+}
+
+// Per-day weather chip (open-meteo); silent off-range or offline.
+function hydrateWeather(root) {
+  root.querySelectorAll('.wx[data-ll]').forEach(async el => {
+    const ll = el.dataset.ll.split(',').map(Number);
+    const w = await dayWeather(ll, el.dataset.date);
+    if (w) el.textContent = ` · ${wmoIcon(w.code)} ${Math.round(w.tmax)}°/${Math.round(w.tmin)}°${w.precip ? ' · ' + w.precip + '%' : ''}`;
+  });
+}
+
 // Wikipedia summary extract as a "fun fact" in the open detail drawer (cached, incl. misses).
 async function resolveFact(name) {
   const key = factCacheKey(name);
@@ -265,5 +332,13 @@ const ovPlans = state => (state.overlay.itinerary || {}).dayPlans || null;
 function setPlan(ctx, dayId, list) {
   const ov = ovFull(ctx.state);
   ov.dayPlans = { ...(ov.dayPlans || {}), [dayId]: list };
+  ctx.save('itinerary', ov);
+}
+
+const dayMode = (state, dayId) => ((state.overlay.itinerary || {}).dayModes || {})[dayId] || 'drive';
+
+function setMode(ctx, dayId, mode) {
+  const ov = ovFull(ctx.state);
+  ov.dayModes = { ...(ov.dayModes || {}), [dayId]: mode };
   ctx.save('itinerary', ov);
 }

@@ -8,6 +8,7 @@ import { tripBookings, allBookings } from './data.js';
 import { uploadAttachment, fetchMail } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
 import { icon } from './icons.js';
+import { logoImg } from './logos.js';
 
 let attSeq = 0; // unique-per-call suffix; Date.now alone collides in a loop
 
@@ -259,7 +260,7 @@ function cardBody(b, attachments) {
     <div class="bkrow">
       <span class="bkicon">${icon(b.type, 22)}</span>
       <div class="bkmain">
-        <div class="bktitle">${esc(b.title)}</div>
+        <div class="bktitle">${esc(b.title)}${logoImg(b)}</div>
         <div class="bkmeta">
           ${time(b.start)}${b.end ? ' → ' + time(b.end) : ''}
           ${b.provider ? ` · ${esc(b.provider)}` : ''}
