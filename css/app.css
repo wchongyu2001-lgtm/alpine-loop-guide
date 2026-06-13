@@ -132,6 +132,11 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 
 /* bookings */
 .bk-intro p{font-size:.92em}
+.bk-forward{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0;font-size:.88em}
+.bk-forward-lead{font-weight:600}
+.bk-forward-addr{font-family:'JetBrains Mono',monospace;background:var(--paper-2);padding:2px 7px;border-radius:5px;user-select:all}
+.bk-copy{font-size:.82em;padding:2px 9px;cursor:pointer}
+.bk-forward-note{font-size:.92em}
 .lastsync{font-family:'JetBrains Mono',monospace;font-size:.7em;color:var(--ink-soft)}
 .bk-group{margin:16px 0}
 .bk-date{font-family:'JetBrains Mono',monospace;font-size:.74em;letter-spacing:.08em;

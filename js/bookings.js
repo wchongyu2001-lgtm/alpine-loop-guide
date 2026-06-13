@@ -14,6 +14,8 @@ let attSeq = 0; // unique-per-call suffix; Date.now alone collides in a loop
 
 const TYPES = ['flight', 'hotel', 'train', 'bus', 'car', 'activity', 'other'];
 const MAX_MB = 10;
+// Forward booking confirmations here; the daily pipeline sync imports them into this timeline.
+const INBOUND_ADDR = 'wchongyu2001@gmail.com';
 
 let lastMail = null;       // fetched suggestions survive rerenders
 let pendingEmail = null;   // suggestion being added via the manual form
@@ -31,7 +33,13 @@ export function render(root, ctx) {
 
   root.innerHTML = `
     <div class="bk-intro">
-      <p>Everything booked for <b>${esc(state.trip.label)}</b> — imported from Gmail by the pipeline (or seeded from Wanderlog). Forward any confirmation email to <b>wchongyu2001@gmail.com</b> and it appears here after the daily sync. <b>Drop a PDF (or image) on any booking, or tap “📎 Attach PDF”</b> — it's saved on this device right away.</p>
+      <p>Everything booked for <b>${esc(state.trip.label)}</b> — imported from Gmail by the pipeline (or seeded from Wanderlog). <b>Drop a PDF (or image) on any booking, or tap “📎 Attach PDF”</b> — it's saved on this device right away.</p>
+      <div class="bk-forward">
+        <span class="bk-forward-lead">📨 Forward booking confirmations to</span>
+        <code class="bk-forward-addr">${esc(INBOUND_ADDR)}</code>
+        <button type="button" id="bkcopyaddr" class="bk-copy" data-addr="${esc(INBOUND_ADDR)}">Copy</button>
+        <span class="bk-forward-note muted">— they appear here after the daily sync.</span>
+      </div>
       <div class="lastsync">${esc(syncLabel(state))}</div>
       <div class="bkfetchbar">
         <button id="bkfetch">📥 Fetch from Gmail</button>
@@ -121,6 +129,12 @@ export function render(root, ctx) {
       pendingEmail = null;
     }
     ctx.save('bookings', ov); ctx.rerender();
+  };
+
+  const copyBtn = root.querySelector('#bkcopyaddr');
+  if (copyBtn) copyBtn.onclick = () => {
+    navigator.clipboard?.writeText(copyBtn.dataset.addr)
+      .then(() => { copyBtn.textContent = '✓ Copied'; }, () => {});
   };
 
   wireAttachments(root, ctx, state);
