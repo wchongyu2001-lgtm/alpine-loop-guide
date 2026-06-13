@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B05",
+      "title": "Unassigned-booking triage",
+      "pillar": "bookings",
+      "date": "2026-06-14T03:30:00Z",
+      "what": "No booking can silently fall through the cracks anymore. The 📥 Unassigned inbox in the bookings view now catches every booking that belongs to no trip — ones with no trip set, ones tagged 'unassigned', and ones still pointing at a trip you've since removed. Each gets a clear \"→ assign to…\" dropdown; pick a trip and it's filed instantly and remembered (saved to your bookings overlay).",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge bb862dc on origin/main (new pure orphanBookings in core.js, wired into bookings.js inbox); test-core exits 0 with 2 new B05 guards (flags unassigned/no-trip/unknown-trip, clean booking → none); live js/core.js serves HTTP 200 with the orphanBookings marker.",
+      "commit": "bb862dc",
+      "deploy": "live"
+    },
+    {
       "id": "B04",
       "title": "Booking gap & conflict detector",
       "pillar": "bookings",
