@@ -246,3 +246,31 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
   .pthumb{flex-basis:60px;width:60px;height:48px}
   #map{height:60vh}
 }
+
+/* B10 · Print / share — a clean one-page-per-day itinerary handout for an
+   offline paper backup. Strips interactive chrome; keeps places, times,
+   notes and bookings; breaks each day onto its own page. */
+.ittools{margin:0 0 12px}
+.printbtn{border:1px solid var(--line);background:var(--paper-2);border-radius:8px;
+  padding:7px 12px;cursor:pointer;font:inherit;font-size:.86em;color:var(--ink)}
+.printbtn:hover{border-color:var(--terra);color:var(--terra)}
+@media print{
+  @page{margin:1.4cm}
+  html,body{background:#fff;color:#000}
+  header.top,#viewtabs,.ittools,.dayactions,.addplace,.suggs,.nearby,.presetbar,
+  .grab,.plinks,.pthumb,.pdetail,.dayload-warn,.wx{display:none !important}
+  #hero{padding:0 0 6px;border:0}
+  #hero .kicker,#hero .sub{display:none}
+  #hero h1{font-size:1.5em}
+  main{padding:0}
+  .days{gap:0;display:block}
+  .daycard{border:0;border-radius:0;box-shadow:none;padding:0;background:#fff;
+    break-inside:avoid;page-break-inside:avoid}
+  .daycard+.daycard{break-before:page;page-break-before:always;padding-top:6px}
+  .dayhead{border-bottom:1.5px solid #000;padding-bottom:6px;margin-bottom:8px}
+  .daynum{background:#000;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .planlist li{border:0;border-bottom:1px solid #ccc;border-radius:0;padding:5px 0;background:#fff}
+  .bkchip,.chip{border:1px solid #000 !important;background:#fff !important;color:#000 !important}
+  .pname b{font-weight:700}
+  a[href]{color:#000;text-decoration:none}
+}
