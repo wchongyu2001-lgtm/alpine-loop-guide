@@ -1,8 +1,12 @@
-/* Apps Script + localStorage sync.
-   Base data lives in repo JSON; user edits live in the Sheet, mirrored locally.
-   POSTs are fire-and-forget (no-cors); failed sends queue and retry on load. */
+/* VPS sync backend (FastAPI on Hetzner) + localStorage cache.
+   Base data lives in repo JSON; user edits sync through the trips-sync service
+   so they follow you across devices. Saves cache locally first, then POST;
+   failed sends queue and retry on next load. See server/ for the backend. */
 
-const SAVE_URL = 'https://script.google.com/macros/s/AKfycbzNFRxTK7BrEqpV_-ImugOUgaiqoKDLYbhjwN8JJ7UspF26n5saVPCrIhuCHRCjUhyMFg/exec';
+const BASE = 'https://markets-dashboard.duckdns.org/trips-sync';
+// Soft guard against anonymous writes. Public by design (static client) — the
+// real protections are the CORS origin allow-list + accepted-public-data choice.
+const TOKEN = '7b96af2a24b67e9da2b95c1283460314a4fe5469014e593a';
 const LS = (trip, kind) => `v2:${trip}:${kind}`;
 const QUEUE_KEY = 'v2:queue';
 
@@ -15,13 +19,13 @@ function cacheSet(trip, kind, payload) {
   localStorage.setItem(LS(trip, kind), JSON.stringify(payload));
 }
 
-// Remote pull; falls back to local cache. v2 protocol: ?trip=&kind= → {ok, payload}.
+// Remote pull; falls back to local cache. Protocol: ?trip=&kind= → {ok, payload}.
 export async function pull(trip, kind) {
   try {
-    const r = await fetch(`${SAVE_URL}?trip=${encodeURIComponent(trip)}&kind=${encodeURIComponent(kind)}&t=${Date.now()}`);
+    const r = await fetch(`${BASE}/load?trip=${encodeURIComponent(trip)}&kind=${encodeURIComponent(kind)}&t=${Date.now()}`);
     const d = await r.json();
     if (d && d.ok && d.payload != null) { cacheSet(trip, kind, d.payload); return d.payload; }
-  } catch { /* offline or old deployment — fall through */ }
+  } catch { /* offline — fall through to cache */ }
   return cached(trip, kind);
 }
 
@@ -32,11 +36,11 @@ export function save(trip, kind, payload) {
 
 function send(msg) {
   try {
-    fetch(SAVE_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    fetch(`${BASE}/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Trips-Token': TOKEN },
       body: JSON.stringify(msg),
-    }).catch(() => queuePush(msg));
+    }).then(r => { if (!r.ok) queuePush(msg); }).catch(() => queuePush(msg));
   } catch { queuePush(msg); }
 }
 
@@ -46,25 +50,24 @@ function queuePush(msg) {
   localStorage.setItem(QUEUE_KEY, JSON.stringify(q.slice(-50)));
 }
 
-// Upload a file (base64) to the Drive folder via Apps Script. Needs the
-// redeployed backend; throws with a readable message otherwise.
+// Upload a booking attachment; backend stores it and returns a public URL.
 export async function uploadAttachment(filename, mimeType, dataB64) {
-  const r = await fetch(SAVE_URL, {
+  const r = await fetch(`${BASE}/upload`, {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ action: 'upload', filename, mimeType, dataB64 }),
+    headers: { 'Content-Type': 'application/json', 'X-Trips-Token': TOKEN },
+    body: JSON.stringify({ filename, mimeType, dataB64 }),
   });
   const d = await r.json().catch(() => null);
-  if (!d || !d.ok) throw new Error((d && d.error) || 'upload failed — redeploy apps-script/Code.gs');
+  if (!d || !d.ok) throw new Error((d && d.error) || 'upload failed');
   return d; // {ok, fileId, url}
 }
 
-// Recent confirmation-looking Gmail messages (backend searches as the user).
+// Recent confirmation-looking Gmail messages (wired in phase 2 on the VPS).
 export async function fetchMail() {
-  const r = await fetch(`${SAVE_URL}?action=fetchmail&t=${Date.now()}`);
+  const r = await fetch(`${BASE}/fetchmail?t=${Date.now()}`);
   const d = await r.json().catch(() => null);
   if (!d || !d.ok || !Array.isArray(d.messages)) {
-    throw new Error((d && d.error) || 'fetch failed — redeploy apps-script/Code.gs');
+    throw new Error((d && d.error) || 'fetch failed');
   }
   return d.messages;
 }
