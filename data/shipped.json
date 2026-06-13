@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B03",
+      "title": "Mobile \"Today\" view",
+      "pillar": "offline",
+      "date": "2026-06-14T01:30:00Z",
+      "what": "A single, thumb-friendly screen for the road: today's date and weather, the day's ordered plan with times, and the next upcoming booking. It auto-opens when the trip's dates contain today, and is always reachable from the new Today tab (previewing day 1 before the trip starts).",
+      "verified": true,
+      "verify_note": "Independent agent confirmed: js/today.js + 'today' view registration + auto-select on origin/main, sw.js precaches it; test-core exits 0 with new pickTodayDay/nextBooking guards; live js/today.js serves HTTP 200 with the Today-view marker.",
+      "commit": "666333f",
+      "deploy": "live"
+    },
+    {
       "id": "B02",
       "title": "Offline map tiles + last-known weather",
       "pillar": "offline",
