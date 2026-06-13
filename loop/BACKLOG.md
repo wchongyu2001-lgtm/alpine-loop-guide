@@ -60,7 +60,7 @@ budget-vs-actual per day. Accept: adding an expense updates balances and the set
 
 ## P3 — Safe roadmap (no new secrets)
 
-### B09 · status: todo · pillar: bookings
+### B09 · status: wip · pillar: bookings
 **Frontend label for the inbound booking-forward address** (per INBOUND_TODO.md item 4) — show the
 forward-to address in the bookings view so the user knows where to forward confirmations. Accept:
 address visible; no backend change required.
