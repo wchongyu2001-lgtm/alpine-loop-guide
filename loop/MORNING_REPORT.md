@@ -57,3 +57,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: f0bff42
+
+### 2026-06-14T04:50:00Z · B07 Nearby discovery into itinerary
+- status: done
+- pillar: discovery
+- what: Open-place drawer now shows a "Nearby eat & do" panel — keyless OpenStreetMap Overpass POIs (restaurants/cafés/bars/viewpoints/museums) ranked nearest-first; one-tap chip adds the spot to that day's plan. 7d cache, fail-soft to [].
+- verified: PASS — independent agent confirmed merge b19bf3d on origin/main (overpassUrl/parseOverpass/nearbyCacheKey + .pd-nearby/data-near→setPlan), test-core exits 0 with 7 new guards, live core.js & itinerary.js serve 200 with parseOverpass/pd-nearby markers after Pages propagation.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: b19bf3d
