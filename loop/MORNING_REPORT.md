@@ -48,3 +48,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: bb862dc
+
+### 2026-06-14T04:15Z · B06 "Can I make it?" timing warnings
+- status: done
+- pillar: logistics
+- what: Per-leg feasibility (legGapMins/legFeasibility) flags hops where computed travel time exceeds the scheduled gap (connector turns terra + "⚠ tight by N"); dayLoad flags over-packed days (dwell + travel > waking budget) with a banner. Inline on the itinerary; 3 new pure-logic guards.
+- verified: PASS — independent agent confirmed merge f0bff42 on origin/main (exports legFeasibility/dayLoad; itinerary references leg-tight), test-core exits 0 with B06 guards, an independent import check confirmed tight leg → {tight:true} & comfortable → {tight:false}, live core.js/itinerary.js serve 200 with markers.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: f0bff42

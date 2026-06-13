@@ -40,7 +40,7 @@ be assigned and persists.
 
 ## P2 — Day logistics, timing & discovery
 
-### B06 · status: wip · pillar: logistics
+### B06 · status: done · f0bff42 · pillar: logistics — pure `legGapMins`/`legFeasibility`/`dayLoad` in core.js; itinerary leg connectors turn `.leg-tight` (terra + "⚠ tight by N") when travel > scheduled gap, plus a per-day "⚠ Packed day" banner; 3 new test-core guards. Seeded Alpine: Sirmione→Jamaica (0 buffer) flags, relaxed afternoon stays quiet.
 **"Can I make it?" timing warnings.** For each day, compare consecutive places' scheduled time gap
 against the computed leg travel time (routing.js / haversine fallback). Flag legs where travel time
 > gap, and flag over-packed days (sum of legs + dwell > waking hours). Inline on the itinerary.
