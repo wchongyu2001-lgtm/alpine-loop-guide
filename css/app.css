@@ -90,6 +90,19 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .bkconf{font-family:'JetBrains Mono',monospace;font-size:.74em;color:var(--glacier)}
 .bkpax{font-size:.76em}
 .bk-unassigned{margin-top:24px;border-top:2px dashed var(--line);padding-top:12px}
+.bkcard.dragover{border-color:var(--pine);background:var(--paper-2);border-style:dashed}
+.bkatt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px}
+.bkchip{font-family:'JetBrains Mono',monospace;font-size:.7em;border:1px solid var(--line);
+  background:var(--paper-2);border-radius:999px;padding:2px 8px;text-decoration:none;color:var(--pine)}
+.bkattach{border:1px dashed var(--line);background:none;border-radius:999px;padding:1px 7px;
+  font-size:.75em;cursor:pointer;color:var(--ink-soft)}
+.bkmsg{font-size:.72em;min-height:0}
+.bkmsg:empty{display:none}
+.bkfetchbar{display:flex;gap:10px;align-items:center;margin-top:8px}
+.bk-suggest{background:var(--paper-2);border:1px dashed var(--line);border-radius:12px;
+  padding:10px 14px;margin:8px 0}
+.bk-suggest-act{display:flex;gap:8px;margin-top:6px}
+.bk-suggest-act .ghost{background:none;border:1px solid var(--line);color:var(--ink-soft)}
 .bk-add{margin-top:20px}
 .bk-add form,#exform{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .bk-add input,.bk-add select{flex:1;min-width:120px}

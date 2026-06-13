@@ -46,6 +46,29 @@ function queuePush(msg) {
   localStorage.setItem(QUEUE_KEY, JSON.stringify(q.slice(-50)));
 }
 
+// Upload a file (base64) to the Drive folder via Apps Script. Needs the
+// redeployed backend; throws with a readable message otherwise.
+export async function uploadAttachment(filename, mimeType, dataB64) {
+  const r = await fetch(SAVE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'upload', filename, mimeType, dataB64 }),
+  });
+  const d = await r.json().catch(() => null);
+  if (!d || !d.ok) throw new Error((d && d.error) || 'upload failed — redeploy apps-script/Code.gs');
+  return d; // {ok, fileId, url}
+}
+
+// Recent confirmation-looking Gmail messages (backend searches as the user).
+export async function fetchMail() {
+  const r = await fetch(`${SAVE_URL}?action=fetchmail&t=${Date.now()}`);
+  const d = await r.json().catch(() => null);
+  if (!d || !d.ok || !Array.isArray(d.messages)) {
+    throw new Error((d && d.error) || 'fetch failed — redeploy apps-script/Code.gs');
+  }
+  return d.messages;
+}
+
 export function retryQueue() {
   const q = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
   if (!q.length) return;

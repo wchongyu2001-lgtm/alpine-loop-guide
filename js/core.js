@@ -45,6 +45,16 @@ export const gmapsDirUrl = (points) =>
 export const flightStatusUrl = code =>
   `https://www.google.com/search?q=${encodeURIComponent(code + ' flight status')}`;
 
+// Editorial accent per place tag — drives the thumbnail placeholder wash.
+const TAG_ACCENT = {
+  view: '#2a5a5a', swim: '#2a5a5a',     // glacier
+  hike: '#5a6342', van: '#5a6342',      // pine
+  act: '#b9531a', food: '#b9531a',      // terra
+  town: '#b8860b',                      // gold
+  gem: '#9c5a6a',                       // rose
+};
+export const thumbAccent = t => TAG_ACCENT[t] || '#5d564a';
+
 // Assign a booking to the smallest-date-range trip containing its start date.
 export function assignTrip(trips, startISO) {
   if (!startISO) return 'unassigned';
@@ -95,6 +105,41 @@ export function dayDate(start, i) {
   const M = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
   const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   return { label: `${W[d.getDay()]} ${d.getDate()} ${M[d.getMonth()]}`, iso };
+}
+
+// Heuristic stub from a confirmation email; user reviews before it becomes a booking.
+const TYPE_RULES = [
+  ['flight', /flight|airline|airways|boarding pass|e-?ticket .*air|wizz|ryanair|easyjet|emirates|icelandair/i],
+  ['train', /train|trenitalia|rail|öbb|sbb/i],
+  ['bus', /\bbus\b|flixbus/i],
+  ['car', /car rental|rental car|hertz|sixt|europcar|campervan|camper/i],
+  ['hotel', /hotel|hostel|apartment|booking\.com|airbnb|your stay|check-in.*(?:room|night)|room|night/i],
+  ['activity', /tour|admission|getyourguide|tiqets|museum|ticket/i],
+];
+const MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+
+export function parseEmailStub(subject, body) {
+  const title = String(subject || '').replace(/^(\s*(fwd|fw|re)\s*:)+\s*/i, '').trim();
+  const all = title + '\n' + String(body || '');
+
+  let type = 'other';
+  for (const [t, re] of TYPE_RULES) if (re.test(all)) { type = t; break; }
+
+  // Labelled code: case-insensitive label, then an UPPERCASE/digit token nearby.
+  let confirmation = null;
+  const labRe = /(?:confirmation|booking|reservation|reference|pnr|conf)(?:\s+(?:number|code|id))?[:#\s-]{0,4}(.{0,24})/gi;
+  for (let m; !confirmation && (m = labRe.exec(all));) {
+    const tok = m[1].match(/\b([A-Z0-9][A-Z0-9-]{4,13})\b/);
+    if (tok) confirmation = tok[1];
+  }
+
+  let start = null;
+  const iso = all.match(/\b(\d{4})-(\d{2})-(\d{2})\b/);
+  const txt = all.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{4})\b/i);
+  if (iso && (!txt || iso.index < txt.index)) start = iso[0];
+  else if (txt) start = `${txt[3]}-${String(MONTHS[txt[2].toLowerCase().slice(0, 3)]).padStart(2, '0')}-${String(+txt[1]).padStart(2, '0')}`;
+
+  return { type, title, confirmation, start };
 }
 
 export const esc = s => String(s ?? '').replace(/[&<>"']/g,

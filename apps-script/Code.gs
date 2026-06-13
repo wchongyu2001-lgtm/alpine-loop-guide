@@ -27,6 +27,7 @@ function rowFor_(sh, trip, kind) {
 }
 
 function doGet(e) {
+  if ((e.parameter.action || '') === 'fetchmail') return fetchMail_();
   var trip = (e.parameter.trip || '').trim();
   var kind = (e.parameter.kind || '').trim();
   var out;
@@ -54,6 +55,7 @@ function read_(trip, kind) {
 function doPost(e) {
   var msg;
   try { msg = JSON.parse(e.postData.contents); } catch (err) { return ok_(false, 'bad json'); }
+  if (msg.action === 'upload') return upload_(msg);
   if (!msg.trip || !msg.kind) return ok_(false, 'trip+kind required');
 
   var sh = sheet_();
@@ -77,4 +79,61 @@ function doPost(e) {
 function ok_(ok, error) {
   return ContentService.createTextOutput(JSON.stringify({ ok: ok, error: error || undefined }))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function json_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// --- attachments: private Drive folder, metadata lives in the bookings overlay ---
+
+function folder_() {
+  var it = DriveApp.getFoldersByName('Trips Attachments');
+  return it.hasNext() ? it.next() : DriveApp.createFolder('Trips Attachments');
+}
+
+// {action:'upload', filename, mimeType, dataB64} → {ok, fileId, url}
+function upload_(msg) {
+  if (!msg.filename || !msg.dataB64) return ok_(false, 'filename+dataB64 required');
+  try {
+    var blob = Utilities.newBlob(Utilities.base64Decode(msg.dataB64),
+      msg.mimeType || 'application/pdf', msg.filename);
+    var file = folder_().createFile(blob);
+    return json_({ ok: true, fileId: file.getId(), url: file.getUrl() });
+  } catch (err) {
+    return ok_(false, String(err));
+  }
+}
+
+// ?action=fetchmail → recent confirmation-looking mail, PDFs saved to Drive.
+function fetchMail_() {
+  try {
+    var threads = GmailApp.search(
+      'newer_than:30d (booking OR confirmation OR reservation OR itinerary OR "e-ticket")', 0, 20);
+    var folder = folder_();
+    var out = [];
+    threads.forEach(function (th) {
+      var m = th.getMessages()[0];
+      var atts = [];
+      m.getAttachments().forEach(function (a) {
+        if (a.getContentType() !== 'application/pdf') return;
+        var name = m.getId() + '-' + a.getName();
+        var existing = folder.getFilesByName(name);
+        var file = existing.hasNext() ? existing.next() : folder.createFile(a.copyBlob().setName(name));
+        atts.push({ name: a.getName(), url: file.getUrl(), fileId: file.getId() });
+      });
+      out.push({
+        id: m.getId(),
+        subject: m.getSubject(),
+        from: m.getFrom(),
+        date: m.getDate().toISOString(),
+        body: m.getPlainBody().slice(0, 1500),
+        attachments: atts,
+      });
+    });
+    return json_({ ok: true, messages: out });
+  } catch (err) {
+    return json_({ ok: false, error: String(err) });
+  }
 }

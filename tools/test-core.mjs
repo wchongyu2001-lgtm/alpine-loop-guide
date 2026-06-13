@@ -1,4 +1,4 @@
-import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans, dayDate } from '../js/core.js';
+import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans, dayDate, parseEmailStub, thumbAccent } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -44,5 +44,33 @@ eq(effectivePlans(days, null), { a: [{ id: 'p1' }], b: [] }, 'no overlay → bas
 
 eq(dayDate([2026, 7, 1], 0).label, 'SAT 1 AUG', 'alpine day 1 date');
 eq(dayDate([2026, 7, 1], 16).iso.slice(5), '08-17', 'alpine day 17 iso');
+
+let s = parseEmailStub('Fwd: Your Wizz Air booking confirmation NP7QJQ',
+  'Flight W6 4551 departs 20 Aug 2026 at 09:00.');
+eq(s, { type: 'flight', title: 'Your Wizz Air booking confirmation NP7QJQ', confirmation: 'NP7QJQ', start: '2026-08-20' },
+  'parseEmailStub: flight w/ PNR + body date');
+
+s = parseEmailStub('Reservation confirmed - Hotel Internazionale Bologna',
+  'Check-in: 30 July 2026. Booking number: 308663-2026. We look forward to your stay.');
+eq(s, { type: 'hotel', title: 'Reservation confirmed - Hotel Internazionale Bologna', confirmation: '308663-2026', start: '2026-07-30' },
+  'parseEmailStub: hotel w/ dashed conf + long month');
+
+s = parseEmailStub('Your Trenitalia train ticket', 'Departure 2026-08-03 from Milano Centrale.');
+eq(s, { type: 'train', title: 'Your Trenitalia train ticket', confirmation: null, start: '2026-08-03' },
+  'parseEmailStub: train w/ ISO date, ticket does not mean activity');
+
+s = parseEmailStub('Fwd: Re: hello', 'nothing useful here');
+eq(s, { type: 'other', title: 'hello', confirmation: null, start: null },
+  'parseEmailStub: strips Fwd:/Re:, nulls when nothing found');
+
+s = parseEmailStub('GetYourGuide ticket: Vatican tour', 'Reference: ABC123XY. Date: 5 Aug 2026.');
+eq(s, { type: 'activity', title: 'GetYourGuide ticket: Vatican tour', confirmation: 'ABC123XY', start: '2026-08-05' },
+  'parseEmailStub: activity w/ labelled reference');
+
+eq(thumbAccent('hike'), '#5a6342', 'thumbAccent: hike → pine');
+eq(thumbAccent('food'), '#b9531a', 'thumbAccent: food → terra');
+eq(thumbAccent('gem'), '#9c5a6a', 'thumbAccent: gem → rose');
+eq(thumbAccent('???'), '#5d564a', 'thumbAccent: unknown → ink-soft');
+eq(thumbAccent(undefined), '#5d564a', 'thumbAccent: missing → ink-soft');
 
 process.exit(fails ? 1 : 0);
