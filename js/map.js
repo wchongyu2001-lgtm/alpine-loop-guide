@@ -1,5 +1,5 @@
 /* Leaflet map: whole-trip / per-day / per-category views, deep links in popups. */
-import { esc, gmapsUrl, amapsUrl, effectivePlans } from './core.js';
+import { esc, gmapsUrl, amapsUrl, gmapsPlaceUrl, amapsPlaceUrl, effectivePlans } from './core.js';
 import { tripBookings } from './data.js';
 
 let map, layer;
@@ -41,12 +41,16 @@ function pin(ll, html, opts = {}) {
   return L.marker(ll, { icon }).bindPopup(html, { maxWidth: 260 });
 }
 
-const popup = (name, desc, ll) => `
+// Generic pins (day base, whole-trip days, bookings) link by coords.
+const popup = (name, desc, ll) => popupWith(name, desc, gmapsUrl(ll, name), amapsUrl(ll, name));
+// Named places link to the actual place card (reviews), not a bare pin.
+const placePopup = (name, desc, ll) => popupWith(name, desc, gmapsPlaceUrl(name, ll), amapsPlaceUrl(name, ll));
+const popupWith = (name, desc, g, a) => `
   <b>${esc(name)}</b>
   ${desc ? `<div class="popdesc">${esc(desc)}</div>` : ''}
   <div class="poplinks">
-    <a target="_blank" rel="noopener" href="${gmapsUrl(ll, name)}">Google Maps ↗</a> ·
-    <a target="_blank" rel="noopener" href="${amapsUrl(ll, name)}">Apple Maps ↗</a>
+    <a target="_blank" rel="noopener" href="${g}">Google Maps ↗</a> ·
+    <a target="_blank" rel="noopener" href="${a}">Apple Maps ↗</a>
   </div>`;
 
 function draw(state, view) {
@@ -73,12 +77,12 @@ function draw(state, view) {
     (plans[d.id] || []).forEach((p, i) => {
       if (!p.ll) return;
       pts.push(p.ll); bounds.push(p.ll);
-      pin(p.ll, popup(p.n, p.note || p.d, p.ll), { label: i + 1, color: catColors[p.t] || '#b9531a' }).addTo(layer);
+      pin(p.ll, placePopup(p.n, p.note || p.d, p.ll), { label: i + 1, color: catColors[p.t] || '#b9531a' }).addTo(layer);
     });
     (d.stops || []).forEach(st => {
       if (!st.ll || (plans[d.id] || []).some(p => p.n === st.n)) return;
       bounds.push(st.ll);
-      pin(st.ll, popup(st.n, st.d, st.ll), { label: '+', color: '#9b9484', cls: 'ghost' }).addTo(layer);
+      pin(st.ll, placePopup(st.n, st.d, st.ll), { label: '+', color: '#9b9484', cls: 'ghost' }).addTo(layer);
     });
     if (pts.length > 1) L.polyline(pts, { color: '#b9531a', weight: 3, opacity: .7 }).addTo(layer);
   } else if (view.startsWith('cat:')) {
@@ -87,7 +91,7 @@ function draw(state, view) {
       [...(plans[d.id] || []), ...(d.stops || [])].forEach(p => {
         if (p.t !== cat || !p.ll) return;
         bounds.push(p.ll);
-        pin(p.ll, popup(p.n, (p.note || p.d || '') + ` — day ${d._n}`, p.ll), { label: '•', color: catColors[cat] || '#b9531a' }).addTo(layer);
+        pin(p.ll, placePopup(p.n, (p.note || p.d || '') + ` — day ${d._n}`, p.ll), { label: '•', color: catColors[cat] || '#b9531a' }).addTo(layer);
       });
     });
   }

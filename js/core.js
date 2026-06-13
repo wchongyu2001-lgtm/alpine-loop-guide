@@ -39,6 +39,36 @@ export const amapsUrl = (ll, name) => ll
   ? `https://maps.apple.com/?ll=${ll[0]},${ll[1]}&q=${encodeURIComponent(name || 'Pin')}`
   : `https://maps.apple.com/?q=${encodeURIComponent(name)}`;
 
+// Place-first map links: resolve to the actual place card (with reviews), not a bare pin.
+// Name wins so Google/Apple show the named place; coords only bias/center the search.
+export const gmapsPlaceUrl = (name, ll) => name
+  ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`
+  : gmapsUrl(ll, name);
+
+export const amapsPlaceUrl = (name, ll) => name
+  ? `https://maps.apple.com/?q=${encodeURIComponent(name)}${ll ? `&ll=${ll[0]},${ll[1]}` : ''}`
+  : amapsUrl(ll, name);
+
+// Time stored as one string ("09:00–11:00"); split/join for two <input type=time> fields.
+export const splitTime = s => {
+  const m = String(s || '').split(/[–-]/);
+  return [(m[0] || '').trim(), (m[1] || '').trim()];
+};
+export const joinTime = (a, b) => {
+  a = (a || '').trim(); b = (b || '').trim();
+  return a && b ? `${a}–${b}` : (a || b || '');
+};
+
+// Does a booking belong to this itinerary place? Name substring or close proximity.
+export function matchBooking(place, b, maxKm = 0.6) {
+  const pn = (place.n || '').toLowerCase();
+  const bn = (((b.location && b.location.name) || '') + ' ' + (b.title || '')).toLowerCase();
+  if (pn.length >= 4 && bn.includes(pn)) return true;
+  if (place.ll && b.location && b.location.lat != null)
+    return haversineKm(place.ll, [b.location.lat, b.location.lng]) <= maxKm;
+  return false;
+}
+
 export const gmapsDirUrl = (points) =>
   `https://www.google.com/maps/dir/${points.map(p => `${p[0]},${p[1]}`).join('/')}`;
 
@@ -66,6 +96,11 @@ export const wikiGeoUrl = ll => ll
 
 export const pickSummaryThumb = j =>
   (j && j.type !== 'disambiguation' && j.thumbnail && j.thumbnail.source) || null;
+
+// Fun-fact text from the same Wikipedia summary response.
+export const pickSummaryExtract = j =>
+  (j && j.type !== 'disambiguation' && j.extract) || null;
+export const factCacheKey = name => 'fact:' + name;
 
 export const pickGeoThumb = j => {
   const pages = j && j.query && j.query.pages;

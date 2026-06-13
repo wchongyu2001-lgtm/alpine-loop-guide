@@ -1,5 +1,6 @@
 import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans, dayDate, parseEmailStub, thumbAccent,
-  wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, thumbCacheKey } from '../js/core.js';
+  wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, thumbCacheKey,
+  gmapsPlaceUrl, amapsPlaceUrl, splitTime, joinTime, matchBooking, pickSummaryExtract, factCacheKey } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -99,5 +100,33 @@ eq(pickGeoThumb({ query: { pages: {} } }), null, 'pickGeoThumb: no pages → nul
 eq(pickGeoThumb({}), null, 'pickGeoThumb: empty → null');
 
 eq(thumbCacheKey('Sirmione'), 'thumb:Sirmione', 'thumbCacheKey');
+
+// place-first map links — name wins so the place card (reviews) shows
+eq(gmapsPlaceUrl('Sirmione', [45.49, 10.61]), 'https://www.google.com/maps/search/?api=1&query=Sirmione',
+  'gmapsPlaceUrl: links by name, not coords');
+eq(gmapsPlaceUrl('', [45.49, 10.61]), 'https://www.google.com/maps/search/?api=1&query=45.49,10.61',
+  'gmapsPlaceUrl: falls back to coords when no name');
+eq(amapsPlaceUrl('Grotte di Catullo', [45.49, 10.61]), 'https://maps.apple.com/?q=Grotte%20di%20Catullo&ll=45.49,10.61',
+  'amapsPlaceUrl: name query biased by coords');
+eq(amapsPlaceUrl('Sirmione', null), 'https://maps.apple.com/?q=Sirmione', 'amapsPlaceUrl: name only when no coords');
+
+eq(splitTime('09:00–11:00'), ['09:00', '11:00'], 'splitTime: en-dash range');
+eq(splitTime('09:00-11:00'), ['09:00', '11:00'], 'splitTime: hyphen range');
+eq(splitTime('09:00'), ['09:00', ''], 'splitTime: single time');
+eq(splitTime(''), ['', ''], 'splitTime: empty');
+eq(joinTime('09:00', '11:00'), '09:00–11:00', 'joinTime: both → range');
+eq(joinTime('09:00', ''), '09:00', 'joinTime: start only');
+eq(joinTime('', ''), '', 'joinTime: empty');
+
+const camp = { id: 'wl-butterfly', type: 'hotel', title: 'Butterfly Camping Village · Peschiera del Garda',
+  location: { name: 'Lungolago Garibaldi 11, Peschiera del Garda', lat: 45.4406, lng: 10.6869 } };
+eq(matchBooking({ n: 'Butterfly Camping Village', ll: [45.6, 10.9] }, camp), true, 'matchBooking: name substring');
+eq(matchBooking({ n: 'Peschiera del Garda', ll: null }, camp), true, 'matchBooking: name found in location.name');
+eq(matchBooking({ n: 'Somewhere', ll: [45.4407, 10.6870] }, camp), true, 'matchBooking: within 0.6km');
+eq(matchBooking({ n: 'Sirmione', ll: [45.49, 10.61] }, camp), false, 'matchBooking: 8km away, different name → no');
+
+eq(pickSummaryExtract({ type: 'standard', extract: 'Sirmione is a town.' }), 'Sirmione is a town.', 'pickSummaryExtract: returns extract');
+eq(pickSummaryExtract({ type: 'disambiguation', extract: 'x' }), null, 'pickSummaryExtract: disambiguation → null');
+eq(factCacheKey('Sirmione'), 'fact:Sirmione', 'factCacheKey');
 
 process.exit(fails ? 1 : 0);
