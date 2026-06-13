@@ -292,6 +292,42 @@ export function bookingWarnings(bookings, trip) {
   return out;
 }
 
+// ---- B06: "Can I make it?" timing feasibility (pure) ----
+const hhmm = s => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(s || '').trim()); return m ? +m[1] * 60 + +m[2] : null; };
+
+// Minutes available to travel from place A to place B: from A's end time (or its
+// start if open-ended) to B's start time. null when either side has no usable time.
+export function legGapMins(fromTime, toTime) {
+  const [fa, fb] = splitTime(fromTime), [ta] = splitTime(toTime);
+  const dep = hhmm(fb) ?? hhmm(fa), arr = hhmm(ta);
+  return dep == null || arr == null ? null : arr - dep;
+}
+
+// Is the scheduled hop A→B too tight for the computed travel time? Returns null
+// when it can't be judged (missing times or travel), else { tight, gapMins,
+// shortBy }. tight ⇔ travel time exceeds the scheduled gap between the stops.
+export function legFeasibility(fromTime, toTime, travelMins) {
+  if (travelMins == null) return null;
+  const gap = legGapMins(fromTime, toTime);
+  if (gap == null) return null;
+  return { tight: travelMins > gap, gapMins: gap, shortBy: travelMins - gap };
+}
+
+// Rough day load: committed minutes = dwell at each timed stop + straight-line
+// travel estimates between consecutive stops. overpacked ⇔ it exceeds the waking
+// budget. Pure — uses the haversine fallback, never the network.
+export function dayLoad(places, mode = 'drive', wakingHours = 14) {
+  let dwell = 0, travel = 0;
+  for (const p of places || []) {
+    const [a, b] = splitTime(p.time), s = hhmm(a), e = hhmm(b);
+    if (s != null && e != null && e > s) dwell += e - s;
+  }
+  for (let i = 1; i < (places || []).length; i++)
+    if (places[i - 1].ll && places[i].ll) travel += legFallback(places[i - 1].ll, places[i].ll, mode).mins;
+  const totalMins = dwell + travel;
+  return { dwellMins: dwell, travelMins: travel, totalMins, overpacked: totalMins > wakingHours * 60 };
+}
+
 // Overlay day-plans replace base plans per day; base kept where overlay silent.
 export function effectivePlans(days, overlayPlans) {
   const out = {};

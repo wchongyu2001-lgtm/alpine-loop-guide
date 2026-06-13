@@ -3,7 +3,7 @@
    per-day weather. */
 import { esc, gmapsPlaceUrl, amapsPlaceUrl, gmapsDirUrl, routeStats, optimizeOrder, effectivePlans, thumbAccent,
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, pickSummaryExtract, thumbCacheKey, factCacheKey,
-  splitTime, joinTime, matchBooking,
+  splitTime, joinTime, matchBooking, legFeasibility, dayLoad,
   fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon } from './core.js';
 import { tripBookings } from './data.js';
 import { BASE } from './sync.js';
@@ -147,6 +147,7 @@ function dayCard(day, plan, bookings, state) {
   const tag = state.taxonomy.tags;
   const sugg = (day.stops || []).filter(st => !plan.some(p => p.n === st.n));
   const mode = dayMode(state, day.id);
+  const load = dayLoad(plan, mode);
   return `
   <div class="daycard">
     <div class="dayhead">
@@ -169,6 +170,7 @@ function dayCard(day, plan, bookings, state) {
       ${plan.map((p, i) => placeRow(day, p, plan[i + 1], mode, dayBk, tag)).join('')}
     </ul>
     ${stats ? `<div class="routestats">~${stats.km} km · ~${stats.hours} h driving today</div>` : ''}
+    ${load.overpacked ? `<div class="dayload-warn">⚠ Packed day — ~${fmtDuration(load.totalMins)} of stops + travel</div>` : ''}
     ${sugg.length ? `<div class="suggs">${sugg.slice(0, 6).map((st, i) =>
       `<button class="chip" data-sug="${day.id}|${(day.stops || []).indexOf(st)}" title="${esc(st.d || '')}">+ ${tag[st.t] || '•'} ${esc(st.n)}</button>`).join('')}</div>` : ''}
     <div class="addplace" data-day="${day.id}">
@@ -185,7 +187,7 @@ function placeRow(day, p, next, mode, dayBk, tag) {
     ? `<img class="pthumb" loading="lazy" alt="" src="${esc(p.img)}">`
     : `<span class="pthumb ph" data-thumb="${esc(p.n)}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''} style="--acc:${thumbAccent(p.t)}">${tag[p.t] || '📍'}</span>`;
   const legHtml = (next && p.ll && next.ll)
-    ? `<div class="pleg" data-from="${p.ll[0]},${p.ll[1]}" data-to="${next.ll[0]},${next.ll[1]}" data-mode="${mode}"></div>` : '';
+    ? `<div class="pleg" data-from="${p.ll[0]},${p.ll[1]}" data-to="${next.ll[0]},${next.ll[1]}" data-mode="${mode}" data-ft="${esc(p.time || '')}" data-tt="${esc(next.time || '')}"></div>` : '';
   return `
   <li data-pid="${p.id}"${open ? ' class="open"' : ''}>
     <div class="prow">
@@ -291,7 +293,11 @@ function hydrateLegs(root) {
   root.querySelectorAll('.pleg[data-from]').forEach(async el => {
     const a = el.dataset.from.split(',').map(Number), b = el.dataset.to.split(',').map(Number);
     const v = await leg(a, b, el.dataset.mode);
-    if (v) el.textContent = `⌄ ${fmtDuration(v.mins)} · ${v.km} km`;
+    if (!v) return;
+    const feas = legFeasibility(el.dataset.ft, el.dataset.tt, v.mins);
+    let txt = `⌄ ${fmtDuration(v.mins)} · ${v.km} km`;
+    if (feas && feas.tight) { txt += ` · ⚠ tight by ${fmtDuration(feas.shortBy)}`; el.classList.add('leg-tight'); }
+    el.textContent = txt;
   });
 }
 
