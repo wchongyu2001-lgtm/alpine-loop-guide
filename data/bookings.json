@@ -1,5 +1,5 @@
 {
- "updated": "2026-06-12T15:30:00+08:00",
+ "updated": "2026-06-13T16:10:00+08:00",
  "source_note": "Seeded from Wanderlog trips via MCP on 2026-06-12; pipeline appends from Gmail.",
  "bookings": [
   {
@@ -190,6 +190,38 @@
    "pax": ["Chongyu Wang"],
    "gmail_link": null,
    "source": "wanderlog-seed"
+  },
+  {
+   "id": "gm-19d3db821ebadbf3",
+   "trip": "alpine",
+   "type": "car",
+   "title": "Indie Campers · 'Active Long' campervan (Venice ↔ Venice)",
+   "provider": "Indie Campers",
+   "start": "2026-08-01T14:30",
+   "end": "2026-08-17T11:00",
+   "location": { "name": "Indie Campers — Venice depot", "lat": null, "lng": null },
+   "price": { "amount": 3263.19, "currency": "EUR" },
+   "confirmation": "V43VXZ",
+   "pax": ["Chongyu Wang"],
+   "notes": "16 nights, automatic. Pickup 14:30, return 11:00. Upload ID/passport + driver licence in the Indie Campers client area to get verified before pickup.",
+   "gmail_link": "https://mail.google.com/mail/u/0/#all/19d3db821ebadbf3",
+   "source": "gmail"
+  },
+  {
+   "id": "gm-19d181a8999ec1df",
+   "trip": "iceland",
+   "type": "car",
+   "title": "Campervan Reykjavik · Iceland road-trip rental",
+   "provider": "Campervan Reykjavik",
+   "start": "2026-08-20",
+   "end": "2026-08-29",
+   "location": { "name": "Campervan Reykjavik (Reykjavík)", "lat": null, "lng": null },
+   "price": null,
+   "confirmation": "ICE00283",
+   "pax": ["Chongyu Wang"],
+   "notes": "Pickup/return dates, vehicle and price are in the email's booking.pdf — start/end shown here are the Iceland trip span as placeholders; open the email to confirm exact times.",
+   "gmail_link": "https://mail.google.com/mail/u/0/#all/19d181a8999ec1df",
+   "source": "gmail"
   }
  ]
 }

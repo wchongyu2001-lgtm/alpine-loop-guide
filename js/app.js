@@ -2,6 +2,7 @@
 import { loadRegistry, loadTrip, refreshOverlays, decorateDays } from './data.js';
 import { save, retryQueue } from './sync.js';
 import { esc } from './core.js';
+import { icon } from './icons.js';
 import * as itinerary from './itinerary.js';
 import * as bookings from './bookings.js';
 import * as map from './map.js';
@@ -11,8 +12,8 @@ import * as ideas from './ideas.js';
 
 const VIEWS = { itinerary, bookings, map, budget, checklists, ideas };
 const VIEW_LABELS = {
-  itinerary: '🧭 Itinerary', bookings: '🧳 Bookings', map: '🗺 Map',
-  budget: '💶 Budget', checklists: '✅ Checklists', ideas: '✨ Ideas',
+  itinerary: 'Itinerary', bookings: 'Bookings', map: 'Map',
+  budget: 'Budget', checklists: 'Checklists', ideas: 'Ideas',
 };
 
 let base, state, view = 'itinerary';
@@ -60,7 +61,7 @@ function renderAll() {
     <h1>${td.meta.h1Html || esc(state.trip.title)}</h1>
     <div class="sub">${esc(td.meta.sub || '')}</div>`;
   document.getElementById('viewtabs').innerHTML = Object.keys(VIEWS).map(v => `
-    <a class="viewtab ${v === view ? 'on' : ''}" href="#${state.trip.id}/${v}">${VIEW_LABELS[v]}</a>`).join('');
+    <a class="viewtab ${v === view ? 'on' : ''}" href="#${state.trip.id}/${v}">${icon(v)}<span>${VIEW_LABELS[v]}</span></a>`).join('');
   VIEWS[view].render(document.getElementById('view'), ctx);
 }
 

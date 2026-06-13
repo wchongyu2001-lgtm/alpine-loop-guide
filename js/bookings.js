@@ -7,11 +7,11 @@ import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, assignTrip, parseEm
 import { tripBookings, allBookings } from './data.js';
 import { uploadAttachment, fetchMail } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
+import { icon } from './icons.js';
 
 let attSeq = 0; // unique-per-call suffix; Date.now alone collides in a loop
 
-const TYPE_ICON = { flight: '✈', hotel: '🛏', train: '🚆', bus: '🚌', car: '🚗', activity: '🎟', other: '📌' };
-const TYPES = Object.keys(TYPE_ICON);
+const TYPES = ['flight', 'hotel', 'train', 'bus', 'car', 'activity', 'other'];
 const MAX_MB = 10;
 
 let lastMail = null;       // fetched suggestions survive rerenders
@@ -257,7 +257,7 @@ function cardBody(b, attachments) {
   const ll = b.location && b.location.lat != null ? [b.location.lat, b.location.lng] : null;
   return `
     <div class="bkrow">
-      <span class="bkicon">${TYPE_ICON[b.type] || '📌'}</span>
+      <span class="bkicon">${icon(b.type, 22)}</span>
       <div class="bkmain">
         <div class="bktitle">${esc(b.title)}</div>
         <div class="bkmeta">
