@@ -4,7 +4,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   placeProxyUrl, placePhotoUrl, placeCacheKey, fmtRating, priceTier, parsePlace,
   modeProfile, osrmUrl, legFallback, fmtDuration, parseOsrm,
   iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl, wlShareValid,
-  weatherUrl, pickDaily, wmoIcon, convert, simplifyDebts } from '../js/core.js';
+  weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -184,6 +184,8 @@ eq(weatherUrl([45.49, 10.61]),
 eq(pickDaily({ daily: { time: ['2026-08-01', '2026-08-02'], weather_code: [1, 61], temperature_2m_max: [28, 22], temperature_2m_min: [18, 15], precipitation_probability_max: [10, 80] } }, '2026-08-02'),
   { code: 61, tmax: 22, tmin: 15, precip: 80 }, 'pickDaily finds date');
 eq(pickDaily({ daily: { time: ['2026-08-01'] } }, '2030-01-01'), null, 'pickDaily out of range → null');
+eq(weatherCacheKey([45.494, 10.606]), 'wx:45.49,10.61', 'weatherCacheKey rounds 2dp');
+eq(weatherCacheKey(null), 'wx:', 'weatherCacheKey no coords');
 eq(wmoIcon(0), '☀️', 'wmo clear'); eq(wmoIcon(61), '🌧️', 'wmo rain'); eq(wmoIcon(71), '❄️', 'wmo snow');
 eq(convert(100, 1.08), 108, 'convert'); eq(convert(null, 1.08), null, 'convert null');
 eq(simplifyDebts({ Chongyu: 120, Yuanxin: -120 }), [{ from: 'Yuanxin', to: 'Chongyu', amount: 120 }], 'simplifyDebts 2-party');
@@ -196,5 +198,9 @@ const jsFiles = readdirSync(new URL('../js/', import.meta.url)).filter(f => f.en
 const missing = jsFiles.filter(f => !sw.includes(`js/${f}`));
 eq(missing, [], 'sw.js precaches every js/ module');
 eq(/data\/alpine\.json/.test(sw), true, 'sw.js precaches the Alpine trip data');
+// ---- B02: offline map tiles ----
+eq(/tc-tiles/.test(sw), true, 'sw.js keeps a dedicated map-tile cache');
+eq(/openstreetmap/.test(sw), true, 'sw.js recognises OSM tile requests');
+eq(/k !== CACHE && k !== TILES/.test(sw), true, 'sw.js preserves the tile cache across shell-cache bumps');
 
 process.exit(fails ? 1 : 0);
