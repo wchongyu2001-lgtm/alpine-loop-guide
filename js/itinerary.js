@@ -32,7 +32,12 @@ export function render(root, ctx) {
 
   root.innerHTML = `
     ${presetBar}
+    <div class="ittools"><button class="printbtn" id="itprint" title="Open the print dialog — one clean page per day for an offline paper backup">🖨 Print day-by-day</button></div>
     <div class="days">${state.days.map(day => dayCard(day, plans[day.id], bookings, state)).join('')}</div>`;
+
+  // B10: print/share — a clean per-day handout via the print stylesheet.
+  const printBtn = root.querySelector('#itprint');
+  if (printBtn) printBtn.onclick = () => window.print();
 
   hydrateThumbs(root);
   hydrateEnrich(root);
