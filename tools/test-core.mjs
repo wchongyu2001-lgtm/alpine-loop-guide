@@ -7,7 +7,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
   legGapMins, legFeasibility, dayLoad,
-  overpassUrl, parseOverpass, nearbyCacheKey } from '../js/core.js';
+  overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -39,6 +39,25 @@ b = computeBalances([
 eq(b.net, { Chongyu: 20, Yuanxin: -20 }, 'two expenses net out');
 b = computeBalances([{ amount: 90, paidBy: 'Chongyu', split: { type: 'shares', shares: { Chongyu: 2 / 3, Yuanxin: 1 / 3 } } }], T);
 eq(b.net, { Chongyu: 30, Yuanxin: -30 }, 'custom shares');
+
+// budget vs actual per day: dated expenses summed onto each day's estimate
+{
+  const days = [
+    { id: 'd1', iso: '2026-08-01', label: 'Bardolino', estimate: 100 },
+    { id: 'd2', iso: '2026-08-02', label: 'Sirmione', estimate: 80 },
+  ];
+  const exp = [
+    { date: '2026-08-01', amount: 120 },
+    { date: '2026-08-01', amount: 5 },
+    { date: '2026-08-02', amount: 60 },
+    { date: null, amount: 999 },     // undated → ignored
+  ];
+  const bva = budgetVsActual(days, exp);
+  eq(bva.rows[0], { id: 'd1', iso: '2026-08-01', label: 'Bardolino', estimate: 100, actual: 125, delta: 25 }, 'budgetVsActual: day1 over by 25');
+  eq(bva.rows[1], { id: 'd2', iso: '2026-08-02', label: 'Sirmione', estimate: 80, actual: 60, delta: -20 }, 'budgetVsActual: day2 under by 20');
+  eq(bva.totals, { estimate: 180, actual: 185, delta: 5 }, 'budgetVsActual: totals net +5, undated excluded');
+  eq(budgetVsActual([], []).totals, { estimate: 0, actual: 0, delta: 0 }, 'budgetVsActual: empty → zero totals');
+}
 
 const r = routeStats([[45.5, 10.6], [46.0, 10.6]]);
 if (r.km < 60 || r.km > 90) { fails++; console.error(`FAIL routeStats km=${r.km} expected ~72`); }

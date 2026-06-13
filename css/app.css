@@ -195,6 +195,11 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .budtable{width:100%;font-size:.82em;border-collapse:collapse;margin-top:8px}
 .budtable td{padding:3px 0;border-bottom:1px dotted var(--line)}
 .budtable td:last-child{text-align:right;font-family:'JetBrains Mono',monospace}
+.bvatable td:nth-child(2),.bvatable td:nth-child(3),.bvatable td:nth-child(4){text-align:right;font-family:'JetBrains Mono',monospace}
+.over{color:var(--terra)}
+.under{color:var(--pine)}
+.bignum.over{color:var(--terra)}
+.bignum.under{color:var(--pine)}
 .catbars{margin:10px 0}
 .catbar{display:grid;grid-template-columns:80px 1fr 70px;gap:8px;align-items:center;font-size:.8em;margin:3px 0}
 .catbar i{display:block;height:8px;border-radius:4px;background:var(--pine)}

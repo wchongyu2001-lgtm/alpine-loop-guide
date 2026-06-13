@@ -1,6 +1,6 @@
 /* Budget: guide estimates (from v1 data) + actual expenses with splitting,
    multi-currency roll-up (booked items converted to the trip base) + settle-up. */
-import { esc, fmtMoney, computeBalances, convert, simplifyDebts } from './core.js';
+import { esc, fmtMoney, computeBalances, convert, simplifyDebts, budgetVsActual } from './core.js';
 import { tripBookings } from './data.js';
 import { rates } from './fx.js';
 
@@ -40,6 +40,12 @@ export function render(root, ctx) {
   const byCat = {};
   all.forEach(e => { const c = e.cat || 'other'; byCat[c] = (byCat[c] || 0) + (+e.amount || 0); });
 
+  // budget vs actual per day (dated expenses mapped onto each day's estimate)
+  const bva = budgetVsActual(
+    est.map(e => ({ id: e.d.id, iso: e.d._date, label: e.d.short, estimate: e.total })),
+    all);
+  const bvaRows = bva.rows.filter(r => r.estimate || r.actual);
+
   root.innerHTML = `
     <div class="budgrid">
       <div class="budcard">
@@ -76,8 +82,8 @@ export function render(root, ctx) {
             </li>`).join('')}
         </ul>
         <form id="exform">
-          <input name="title" placeholder="Expense — e.g. groceries Bardolino" required />
-          <input name="amount" type="number" step="0.01" placeholder="${cur}" required />
+          <input name="amount" type="number" step="0.01" inputmode="decimal" placeholder="${cur} amount" required autofocus />
+          <input name="title" placeholder="note (optional)" />
           <select name="cat"><option>food</option><option>camp</option><option>activity</option><option>fuel</option><option>transport</option><option>other</option></select>
           <select name="paidBy">${state.travellers.map(t => `<option>${esc(t)}</option>`).join('')}</select>
           <select name="split">
@@ -86,6 +92,20 @@ export function render(root, ctx) {
           </select>
           <button>Add</button>
         </form>
+      </div>
+
+      <div class="budcard">
+        <h3>Budget vs actual</h3>
+        <div class="bignum ${bva.totals.delta > 0 ? 'over' : 'under'}">${bva.totals.delta > 0 ? '+' : ''}${fmtMoney(bva.totals.delta, cur)}</div>
+        <div class="muted">${bva.totals.delta > 0 ? 'over' : 'under'} the guide estimate · per day below</div>
+        <table class="budtable bvatable">
+          ${bvaRows.map(r => `<tr>
+            <td>${esc(r.label)}</td>
+            <td>${fmtMoney(r.estimate, cur)}</td>
+            <td><b>${fmtMoney(r.actual, cur)}</b></td>
+            <td class="${r.delta > 0 ? 'over' : 'under'}">${r.delta > 0 ? '+' : ''}${fmtMoney(r.delta, cur)}</td>
+          </tr>`).join('') || '<tr><td class="muted" colspan="4">No dated expenses yet — add one to compare against the day budget.</td></tr>'}
+        </table>
       </div>
     </div>`;
 
@@ -105,7 +125,7 @@ export function render(root, ctx) {
     const f = new FormData(e.target);
     const o = exOv(state);
     o.items = [...(o.items || []), {
-      id: 'ex' + Date.now(), title: f.get('title'), amount: +f.get('amount'),
+      id: 'ex' + Date.now(), title: (f.get('title') || '').trim() || f.get('cat'), amount: +f.get('amount'),
       cat: f.get('cat'), paidBy: f.get('paidBy'), split: { type: f.get('split') },
       date: new Date().toISOString().slice(0, 10),
     }];
