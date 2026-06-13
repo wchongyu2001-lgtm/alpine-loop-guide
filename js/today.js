@@ -1,7 +1,7 @@
 /* Mobile "Today" view — a single, thumb-friendly screen: today's date, the day's
    ordered plan with times, the next upcoming booking, and today's weather.
    Auto-selected when the open trip's date range contains today (see app.js). */
-import { esc, splitTime, wmoIcon, pickTodayDay, nextBooking, effectivePlans, gmapsPlaceUrl } from './core.js';
+import { esc, splitTime, wmoIcon, pickTodayDay, nextBooking, effectivePlans, gmapsPlaceUrl, planProgress } from './core.js';
 import { tripBookings } from './data.js';
 import { dayWeather } from './weather.js';
 
@@ -33,6 +33,13 @@ const STYLE = `
   .t-desc{color:#5d564a;font-size:.86rem;margin-top:3px}
   .t-go{flex:0 0 auto;text-decoration:none;font-size:1.1rem;opacity:.7;padding:2px 4px}
   .t-empty{color:#5d564a}
+  .t-plan li.t-past{opacity:.5}
+  .t-plan li.t-past .t-name{text-decoration:line-through;text-decoration-color:rgba(128,128,128,.5)}
+  .t-plan li.t-now{border-color:rgba(184,134,11,.6);background:rgba(184,134,11,.1);box-shadow:0 0 0 1px rgba(184,134,11,.35)}
+  .t-plan li.t-next{border-color:rgba(184,134,11,.35)}
+  .t-pill{display:inline-block;margin-left:8px;vertical-align:middle;font-size:.62rem;font-weight:700;letter-spacing:.06em;padding:1px 6px;border-radius:999px;line-height:1.5}
+  .t-pill-now{background:#b8860b;color:#fff}
+  .t-pill-next{background:rgba(184,134,11,.16);color:#b8860b;border:1px solid rgba(184,134,11,.4)}
   @media (max-width:430px){.t-date{font-size:1.3rem}.t-plan li{padding:11px 12px}.t-time{flex-basis:46px}}`;
 
 export function render(root, ctx) {
@@ -54,13 +61,17 @@ export function render(root, ctx) {
   const wx = day && day.ll && day._date
     ? `<span class="t-wx" data-ll="${day.ll[0]},${day.ll[1]}" data-date="${day._date}"></span>` : '';
 
+  // Only mark live progress when the open day is actually today.
+  const prog = rel === 'today' ? planProgress(plan, nowIso().slice(11, 16)) : plan.map(() => '');
+  const PILL = { now: 'NOW', next: 'NEXT' };
   const planHtml = plan.length
-    ? `<ul class="t-plan">${plan.map(p => {
+    ? `<ul class="t-plan">${plan.map((p, i) => {
         const [t0] = splitTime(p.time);
-        return `<li>
+        const st = prog[i] || '';
+        return `<li class="${st ? 't-' + st : ''}">
           <span class="t-time${t0 ? '' : ' none'}">${esc(t0 || '—')}</span>
           <div class="t-body">
-            <div class="t-name"><b>${esc(p.n)}</b></div>
+            <div class="t-name"><b>${esc(p.n)}</b>${PILL[st] ? `<span class="t-pill t-pill-${st}">${PILL[st]}</span>` : ''}</div>
             ${p.note || p.d ? `<div class="t-desc">${esc(p.note || p.d)}</div>` : ''}
           </div>
           <a class="t-go" target="_blank" rel="noopener" href="${gmapsPlaceUrl(p.n, p.ll)}" title="Open in Maps">↗</a>
