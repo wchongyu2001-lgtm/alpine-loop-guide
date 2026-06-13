@@ -53,7 +53,7 @@ appear for an Alpine place and one can be added to the day plan.
 
 ## P2 — Money & splitting
 
-### B08 · status: todo · pillar: money
+### B08 · status: wip · pillar: money
 **Faster expense entry + settle-up clarity.** Quick-add expense (amount, who paid, split, category)
 in ≤3 taps; a clear "who owes whom" settle-up summary using existing `computeBalances`/`simplifyDebts`;
 budget-vs-actual per day. Accept: adding an expense updates balances and the settle-up summary correctly.
