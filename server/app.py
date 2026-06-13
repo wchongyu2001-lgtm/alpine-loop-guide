@@ -366,3 +366,8 @@ async def wl_import_endpoint(request: Request, x_trips_token: str = Header(defau
     require_token(x_trips_token)
     body = await request.json()
     return wl_import(body.get("url", ""), body.get("trip") or current_trip_id())
+
+
+# ---- Inbound-email booking capture (server/inbound.py) ----
+import inbound  # noqa: E402
+app.include_router(inbound.router)
