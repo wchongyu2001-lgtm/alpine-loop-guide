@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B02",
+      "title": "Offline map tiles + last-known weather",
+      "pillar": "offline",
+      "date": "2026-06-14T00:00:00Z",
+      "what": "Map tiles you've already viewed are kept in a dedicated cache (surviving app updates) and re-served with no signal — blank gaps instead of broken images where uncached. The day forecast is persisted per location, so weather still renders offline from the last-known copy.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed: tc-tiles tile cache + OSM handling + weatherCacheKey present on origin/main; test-core exits 0 with new B02 guards; live sw.js serves HTTP 200 with the tc-tiles marker.",
+      "commit": "1cf5fd3",
+      "deploy": "live"
+    },
+    {
       "id": "B01",
       "title": "Offline PWA shell",
       "pillar": "offline",
