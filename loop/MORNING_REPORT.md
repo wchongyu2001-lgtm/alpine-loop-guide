@@ -66,3 +66,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: b19bf3d
+
+### 2026-06-14T05:30Z · B08 Faster expense entry + budget-vs-actual per day
+- status: done
+- pillar: money
+- what: Quick-add expense now needs only an amount (note optional; cat/payer/split default → ≤3 taps). New pure `budgetVsActual` in core.js powers a per-day "Budget vs actual" card (estimate vs logged, coloured delta + total) beside the existing settle-up summary.
+- verified: PASS — independent agent confirmed merge 1cf8e9f on origin/main; test-core exits 0 with 4 new budgetVsActual guards; pure-logic sanity (actual 120/delta 20); live core.js & budget.js HTTP 200 with marker on first try (no Pages lag).
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 1cf8e9f

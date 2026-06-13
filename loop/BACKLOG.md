@@ -53,7 +53,7 @@ appear for an Alpine place and one can be added to the day plan.
 
 ## P2 — Money & splitting
 
-### B08 · status: wip · pillar: money
+### B08 · status: done · 1cf8e9f · pillar: money — quick-add now needs only an amount (optional note; cat/payer/split default → ≤3 taps); new pure `budgetVsActual(days,expenses)` in core.js powers a per-day "Budget vs actual" card (est vs logged, coloured delta + total) beside the existing simplifyDebts settle-up. 4 new test-core guards.
 **Faster expense entry + settle-up clarity.** Quick-add expense (amount, who paid, split, category)
 in ≤3 taps; a clear "who owes whom" settle-up summary using existing `computeBalances`/`simplifyDebts`;
 budget-vs-actual per day. Accept: adding an expense updates balances and the settle-up summary correctly.
