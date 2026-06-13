@@ -6,7 +6,8 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl, wlShareValid,
   weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
-  legGapMins, legFeasibility, dayLoad } from '../js/core.js';
+  legGapMins, legFeasibility, dayLoad,
+  overpassUrl, parseOverpass, nearbyCacheKey } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -309,5 +310,27 @@ const relaxed = [
 ];
 eq(dayLoad(relaxed).overpacked, false, 'dayLoad: light day → not overpacked');
 eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
+
+// ---- B07: nearby discovery (Overpass POI parse) ----
+{
+  const sirmione = [45.4936, 10.6058];
+  const u = overpassUrl(sirmione, 700);
+  eq(/overpass-api\.de\/api\/interpreter\?data=/.test(u), true, 'overpassUrl: hits the Overpass endpoint');
+  eq(decodeURIComponent(u).includes('around:700,45.4936,10.6058'), true, 'overpassUrl: encodes radius + coords');
+  eq(nearbyCacheKey(sirmione), 'nearby:45.494,10.606', 'nearbyCacheKey: rounds to 3 dp');
+  const resp = { elements: [
+    { type: 'node', lat: 45.4940, lon: 10.6060, tags: { name: 'Trattoria Vittoria', amenity: 'restaurant' } },
+    { type: 'node', lat: 45.4937, lon: 10.6059, tags: { name: 'Gelateria', amenity: 'ice_cream' } },
+    { type: 'node', lat: 45.5100, lon: 10.6300, tags: { name: 'Castello Scaligero', tourism: 'attraction' } },
+    { type: 'node', lat: 45.4941, lon: 10.6061, tags: { name: 'Trattoria Vittoria', amenity: 'restaurant' } }, // dup name
+    { type: 'node', lat: 45.4939, lon: 10.6058, tags: { amenity: 'bar' } },                                    // no name → skip
+  ] };
+  const got = parseOverpass(resp, sirmione);
+  eq(got.map(g => g.n), ['Gelateria', 'Trattoria Vittoria', 'Castello Scaligero'],
+    'parseOverpass: named only, deduped, nearest-first');
+  eq([got[0].t, got[2].t], ['food', 'act'], 'parseOverpass: maps amenity→food, tourism→act');
+  eq(got[0].cat, 'ice cream', 'parseOverpass: humanizes the OSM kind');
+  eq(parseOverpass({}, sirmione), [], 'parseOverpass: empty response → []');
+}
 
 process.exit(fails ? 1 : 0);

@@ -328,6 +328,43 @@ export function dayLoad(places, mode = 'drive', wakingHours = 14) {
   return { dwellMins: dwell, travelMins: travel, totalMins, overpacked: totalMins > wakingHours * 60 };
 }
 
+// ---- B07: nearby discovery (OpenStreetMap Overpass — free, keyless) ----
+// Build an Overpass query URL for eat/do POIs within `radius` m of ll.
+export const overpassUrl = (ll, radius = 700) => {
+  const at = `(around:${radius},${ll[0]},${ll[1]})`;
+  const q = `[out:json][timeout:12];(`
+    + `node${at}["amenity"~"^(restaurant|cafe|bar|fast_food|pub|ice_cream)$"];`
+    + `node${at}["tourism"~"^(attraction|museum|viewpoint|artwork|gallery|zoo|theme_park)$"];`
+    + `);out body 40;`;
+  return `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`;
+};
+export const nearbyCacheKey = ll => `nearby:${ll ? ll.map(n => n.toFixed(3)).join(',') : ''}`;
+
+// Map an OSM amenity/tourism tag to the app's place-tag vocabulary.
+const OSM_TAG = { restaurant: 'food', cafe: 'food', bar: 'food', fast_food: 'food', pub: 'food',
+  ice_cream: 'food', viewpoint: 'view', museum: 'act', attraction: 'act', artwork: 'act',
+  gallery: 'act', zoo: 'act', theme_park: 'act' };
+
+// Parse an Overpass response into ranked nearby suggestions: named POIs only,
+// deduped by name, sorted nearest-first. Returns [{ n, t, ll, cat, km }].
+export function parseOverpass(j, origin) {
+  const els = (j && j.elements) || [];
+  const seen = new Set(), out = [];
+  for (const e of els) {
+    const name = e.tags && e.tags.name;
+    if (!name || e.lat == null || e.lon == null) continue;
+    const key = name.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const kind = e.tags.amenity || e.tags.tourism || '';
+    const ll = [e.lat, e.lon];
+    out.push({ n: name, t: OSM_TAG[kind] || 'act', ll, cat: kind.replace(/_/g, ' '),
+      km: origin ? Math.round(haversineKm(origin, ll) * 100) / 100 : null });
+  }
+  out.sort((a, b) => (a.km ?? 0) - (b.km ?? 0));
+  return out;
+}
+
 // Overlay day-plans replace base plans per day; base kept where overlay silent.
 export function effectivePlans(days, overlayPlans) {
   const out = {};

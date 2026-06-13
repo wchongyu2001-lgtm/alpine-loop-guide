@@ -57,7 +57,7 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .dayhead h3{font-size:1.15em}
 .dayactions{margin-left:auto;display:flex;gap:6px}
 .note{color:var(--ink-soft);font-size:.9em;margin:6px 0}
-.bkchips,.suggs{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.bkchips,.suggs,.nearby{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
 .bkchip{background:var(--paper-2);border:1px solid var(--line);border-radius:999px;
   font-size:.74em;padding:2px 9px}
 .planlist{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:6px}
