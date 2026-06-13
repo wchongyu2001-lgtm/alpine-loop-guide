@@ -109,3 +109,6 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: dc13fc2
+
+### 2026-06-14T09:00:00Z · loop
+- backlog drained — B01–B11 all `done`, no `todo` remaining. No-op iteration, exiting. App covers all four pillars; Alpine trip starts 2026-06-15. Not self-seeding to avoid gold-plating the day before the trip.
