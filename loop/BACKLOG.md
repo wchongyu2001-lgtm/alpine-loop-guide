@@ -14,7 +14,7 @@ If you think of a valuable new item mid-run, append it to the bottom as `todo`.
 load with no signal. Cache-first for shell, network-first-then-cache for trip data.
 Accept: app opens and shows the Alpine itinerary with network disabled (verify via served check).
 
-### B02 · status: wip · pillar: offline
+### B02 · status: done · 1cf5fd3 · pillar: offline — dedicated `tc-tiles` SW cache (SWR, survives shell-cache bumps, transparent fallback offline) + per-coord last-known weather persisted to localStorage
 **Cache map tiles + last-known place/weather data** for offline. Persist the most recently fetched
 Leaflet tiles + enrichment/weather to localStorage/Cache API; on offline, render from cache instead
 of blank. Accept: map + weather show cached content when offline, degrade gracefully.
