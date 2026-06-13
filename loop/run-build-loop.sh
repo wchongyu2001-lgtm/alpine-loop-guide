@@ -63,11 +63,16 @@ else
   fi
 fi
 
-# --- One iteration -----------------------------------------------------------
+# --- One iteration (portable 25-min watchdog; macOS has no `timeout`) ---------
 say "running claude iteration"
-timeout 1500 "$CLAUDE" -p "$(cat "$LOOP/ITERATION_PROMPT.md")" \
+"$CLAUDE" -p "$(cat "$LOOP/ITERATION_PROMPT.md")" \
   --permission-mode bypassPermissions \
-  --max-turns 120 >> "$LOG" 2>&1 || say "claude exited $?"
+  --max-turns 120 >> "$LOG" 2>&1 &
+CPID=$!
+( sleep 1500; kill "$CPID" 2>/dev/null ) & WPID=$!
+wait "$CPID" 2>/dev/null; RC=$?
+kill "$WPID" 2>/dev/null
+say "claude exited $RC"
 
 say "=== iteration done ==="
 exit 0
