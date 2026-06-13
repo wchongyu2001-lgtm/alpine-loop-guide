@@ -33,7 +33,7 @@ day cleanly at 390px width.
 date falls outside the trip range. Show as a dismissible banner/list in the bookings view.
 Accept: with the seeded Alpine/Iceland data, correct warnings render; none are false positives on clean data.
 
-### B05 · status: wip · pillar: bookings
+### B05 · status: done · bb862dc · pillar: bookings — pure `orphanBookings` in core.js (flags empty/null trip, 'unassigned', and stale-unknown trip ids) wired into the 📥 Unassigned inbox + per-booking "assign to…" select writing to `ov.overrides`; 2 new guards in test-core
 **Unassigned-booking triage.** Any booking with no trip / unknown trip gets a clear "assign to trip"
 affordance in the bookings view, writing to the bookings overlay. Accept: an unassigned booking can
 be assigned and persists.

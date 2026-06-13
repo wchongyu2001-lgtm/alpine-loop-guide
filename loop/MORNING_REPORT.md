@@ -39,3 +39,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 66f686f
+
+### 2026-06-14T03:30:00Z · B05 Unassigned-booking triage
+- status: done
+- pillar: bookings
+- what: Broadened the 📥 Unassigned inbox to catch every orphan booking — empty/null trip, the literal 'unassigned' tag, AND stale trip ids no longer in the registry — via a new pure `orphanBookings(bookings, trips)` in core.js; each gets the existing persistent "assign to…" select.
+- verified: PASS (independent agent) — orphanBookings on origin/main in core.js+bookings.js; test-core exits 0 with 2 new B05 guards; live js/core.js serves 200 with the orphanBookings marker (retry 2).
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: bb862dc
