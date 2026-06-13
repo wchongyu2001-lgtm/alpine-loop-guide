@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B11",
+      "title": "Today view shows where you are in the day",
+      "pillar": "mobile/live",
+      "date": "2026-06-14T08:35:00Z",
+      "what": "On the day of travel, the Today view no longer shows a flat list where every stop looks the same. Each timed stop is now marked by where you are in the day: the stop you're in right now is highlighted with a gold border and a NOW pill, your next stop carries a NEXT pill, and stops you've already finished fade out with a strike-through. A stop with only a start time counts as ‘now’ until the next one begins. At a glance — without reading every time — you can see what's happening now and what's coming up. This only kicks in on the real current day; previewing a future or past day shows the plain plan.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge dc13fc2 on origin/main: pure planProgress(plan, nowHHMM) in js/core.js (now/next/past/'' per stop), today.js imports it and renders NOW/NEXT pills + highlight gated on rel==='today', new B11 guards in tools/test-core.mjs. node tools/test-core.mjs exits 0 (7 planProgress assertions ok); agent's own independent logic assertions passed. Local + LIVE served checks 200 with markers (core.js 'function planProgress', today.js 't-pill-now'); live propagated on first attempt.",
+      "commit": "dc13fc2",
+      "deploy": "live"
+    },
+    {
       "id": "B10",
       "title": "Print / share — day-by-day itinerary handout",
       "pillar": "polish",
