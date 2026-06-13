@@ -27,7 +27,7 @@ day cleanly at 390px width.
 
 ## P1 — Bookings = single source of truth
 
-### B04 · status: wip · pillar: bookings
+### B04 · status: done · 66f686f · pillar: bookings — pure `bookingWarnings`/`flightRoute` in core.js (out-of-range + timed-overlap + broken-flight-chain) + dismissible `bk-warnings` banner in bookings view; 0 false positives on seeded preexchange/alpine/iceland
 **Booking gap/conflict detector.** Scan a trip's bookings + days and surface: missing return leg
 (outbound flight/train with no return), overlapping bookings (same time window), and bookings whose
 date falls outside the trip range. Show as a dismissible banner/list in the bookings view.

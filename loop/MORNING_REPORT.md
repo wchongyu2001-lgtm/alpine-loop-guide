@@ -30,3 +30,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 666333f
+
+### 2026-06-14T02:30:00Z · B04 Booking gap/conflict detector
+- status: done
+- pillar: bookings
+- what: New pure helpers `bookingWarnings`/`flightRoute` in core.js scan a trip's bookings for three problems — out-of-range dates, time-overlapping point-bookings, and broken flight chains (arrive one airport, next flight departs another → missing connecting/return leg). Surfaced as a dismissible `bk-warnings` banner atop the bookings view (per-warning ✕ persists to the bookings overlay). Conservative: hotels/cars never count as time clashes, only adjacent flights chain.
+- verified: PASS (independent agent) — merge 66f686f on origin/main (bookingWarnings in core.js, bk-warnings banner in bookings.js); node tools/test-core.mjs exits 0 with 6 new B04 guards; 0 warnings on real preexchange/alpine/iceland, 1 on a deliberately broken booking; live core.js serves 200 with the marker.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 66f686f
