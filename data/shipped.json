@@ -1,0 +1,15 @@
+{
+  "features": [
+    {
+      "id": "B01",
+      "title": "Offline PWA shell",
+      "pillar": "offline",
+      "date": "2026-06-13T16:42:13Z",
+      "what": "Service worker + manifest cache the whole app shell and every trip's JSON, so the Alpine itinerary, map and Today view open with no signal.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed live: homepage, sw.js and manifest all serve HTTP 200; service worker registered; test-core green with new precache guards.",
+      "commit": "1499985",
+      "deploy": "live"
+    }
+  ]
+}

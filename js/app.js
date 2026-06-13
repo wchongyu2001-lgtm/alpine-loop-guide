@@ -9,11 +9,12 @@ import * as map from './map.js';
 import * as budget from './budget.js';
 import * as checklists from './checklists.js';
 import * as ideas from './ideas.js';
+import * as shipped from './shipped.js';
 
-const VIEWS = { itinerary, bookings, map, budget, checklists, ideas };
+const VIEWS = { itinerary, bookings, map, budget, checklists, ideas, shipped };
 const VIEW_LABELS = {
   itinerary: 'Itinerary', bookings: 'Bookings', map: 'Map',
-  budget: 'Budget', checklists: 'Checklists', ideas: 'Ideas',
+  budget: 'Budget', checklists: 'Checklists', ideas: 'Ideas', shipped: "What's new",
 };
 
 let base, state, view = 'itinerary';
