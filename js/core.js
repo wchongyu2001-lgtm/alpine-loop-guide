@@ -210,6 +210,16 @@ export function assignTrip(trips, startISO) {
   return hits[0].id;
 }
 
+// Bookings that belong to no known trip — empty/null trip, the literal
+// 'unassigned' tag, or a stale trip id no longer in the registry. These would
+// otherwise be invisible (in no trip's list and not the inbox), so they need a
+// triage affordance. Pass bookings with their effective trip already resolved
+// (e.g. allBookings()), plus the registry's trips. Returns the orphan subset.
+export function orphanBookings(bookings, trips) {
+  const known = new Set((trips || []).map(t => t.id));
+  return (bookings || []).filter(b => !known.has(b.trip));
+}
+
 // Pick the trip day for the mobile "Today" view. Returns { day, rel } where rel
 // is 'today' (a day's date is today), 'before' (trip not started yet — previews
 // the first day), 'after' (trip is over — previews the last day), or 'none'.
