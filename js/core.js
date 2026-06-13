@@ -210,6 +210,26 @@ export function assignTrip(trips, startISO) {
   return hits[0].id;
 }
 
+// Pick the trip day for the mobile "Today" view. Returns { day, rel } where rel
+// is 'today' (a day's date is today), 'before' (trip not started yet — previews
+// the first day), 'after' (trip is over — previews the last day), or 'none'.
+export function pickTodayDay(days, todayIso) {
+  if (!days || !days.length) return { day: null, rel: 'none' };
+  const hit = days.find(d => d._date === todayIso);
+  if (hit) return { day: hit, rel: 'today' };
+  const dated = days.filter(d => d._date);
+  if (!dated.length) return { day: days[0], rel: 'before' };
+  if (todayIso < dated[0]._date) return { day: dated[0], rel: 'before' };
+  return { day: dated[dated.length - 1], rel: 'after' };
+}
+
+// The next booking at or after `nowIso` (ISO datetime), from a trip's bookings. null if none.
+export function nextBooking(bookings, nowIso) {
+  return (bookings || [])
+    .filter(b => b.start && String(b.start) >= nowIso)
+    .sort((a, b) => String(a.start).localeCompare(String(b.start)))[0] || null;
+}
+
 // Overlay day-plans replace base plans per day; base kept where overlay silent.
 export function effectivePlans(days, overlayPlans) {
   const out = {};

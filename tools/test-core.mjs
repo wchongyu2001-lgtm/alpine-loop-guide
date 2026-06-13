@@ -4,7 +4,8 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   placeProxyUrl, placePhotoUrl, placeCacheKey, fmtRating, priceTier, parsePlace,
   modeProfile, osrmUrl, legFallback, fmtDuration, parseOsrm,
   iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl, wlShareValid,
-  weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts } from '../js/core.js';
+  weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts,
+  pickTodayDay, nextBooking } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -190,6 +191,27 @@ eq(wmoIcon(0), '☀️', 'wmo clear'); eq(wmoIcon(61), '🌧️', 'wmo rain'); e
 eq(convert(100, 1.08), 108, 'convert'); eq(convert(null, 1.08), null, 'convert null');
 eq(simplifyDebts({ Chongyu: 120, Yuanxin: -120 }), [{ from: 'Yuanxin', to: 'Chongyu', amount: 120 }], 'simplifyDebts 2-party');
 eq(simplifyDebts({ A: 0, B: 0 }), [], 'simplifyDebts settled → []');
+
+// ---- B03: mobile Today view (pure day/booking selection) ----
+const tdays = [
+  { id: 'd1', _date: '2026-08-01', _n: 1 },
+  { id: 'd2', _date: '2026-08-02', _n: 2 },
+  { id: 'd3', _date: '2026-08-03', _n: 3 },
+];
+eq(pickTodayDay(tdays, '2026-08-02'), { day: tdays[1], rel: 'today' }, 'pickTodayDay: date in range → today');
+eq(pickTodayDay(tdays, '2026-07-20'), { day: tdays[0], rel: 'before' }, 'pickTodayDay: before trip → first day');
+eq(pickTodayDay(tdays, '2026-09-01'), { day: tdays[2], rel: 'after' }, 'pickTodayDay: after trip → last day');
+eq(pickTodayDay([], '2026-08-02'), { day: null, rel: 'none' }, 'pickTodayDay: no days → none');
+
+const tbk = [
+  { id: 'a', start: '2026-08-01T09:00' },
+  { id: 'b', start: '2026-08-03T14:00' },
+  { id: 'c', start: '2026-08-02T08:00' },
+];
+eq(nextBooking(tbk, '2026-08-01T12:00').id, 'c', 'nextBooking: earliest start at/after now');
+eq(nextBooking(tbk, '2026-08-03T14:00').id, 'b', 'nextBooking: inclusive of exact now');
+eq(nextBooking(tbk, '2026-08-04T00:00'), null, 'nextBooking: nothing upcoming → null');
+eq(nextBooking([{ id: 'x' }], '2026-08-01'), null, 'nextBooking: skips bookings without start');
 
 // ---- offline PWA shell: sw.js must precache every js/ module the app loads ----
 import { readdirSync, readFileSync } from 'fs';
