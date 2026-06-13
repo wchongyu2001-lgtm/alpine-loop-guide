@@ -109,6 +109,9 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .pleg{font-family:'JetBrains Mono',monospace;font-size:.72em;color:var(--glacier);
   margin:5px 0 1px 40px;opacity:.9}
 .pleg:empty{display:none}
+.pleg.leg-tight{color:var(--terra);font-weight:600}
+.dayload-warn{font-family:'JetBrains Mono',monospace;font-size:.72em;color:var(--terra);
+  background:#fdf2e9;border:1px solid var(--terra);border-radius:8px;padding:4px 8px;margin:4px 0}
 .modes{display:inline-flex;gap:2px;margin-right:4px}
 .modebtn{border:1px solid var(--line);background:var(--card);border-radius:6px;
   width:24px;height:24px;font-size:.82em;cursor:pointer;line-height:1;padding:0}

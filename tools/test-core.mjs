@@ -5,7 +5,8 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   modeProfile, osrmUrl, legFallback, fmtDuration, parseOsrm,
   iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl, wlShareValid,
   weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts,
-  pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings } from '../js/core.js';
+  pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
+  legGapMins, legFeasibility, dayLoad } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -280,5 +281,33 @@ const ob = orphanBookings([
 ], trips);
 eq(ob.map(b => b.id), ['u', 'n', 'g'], 'orphanBookings: flags unassigned, no-trip, and unknown-trip; not real trips');
 eq(orphanBookings([{ id: 'a', trip: 'alpine' }], trips), [], 'orphanBookings: clean booking → no orphans');
+
+// ---- B06: "Can I make it?" timing warnings (pure) ----
+eq(legGapMins('09:00–11:00', '11:00–12:30'), 0, 'legGapMins: back-to-back → 0 buffer');
+eq(legGapMins('15:00–16:30', '19:30–21:00'), 180, 'legGapMins: leave 16:30, arrive 19:30 → 180 min');
+eq(legGapMins('09:00', '10:00'), 60, 'legGapMins: open-ended A uses its start');
+eq(legGapMins('09:00–11:00', ''), null, 'legGapMins: missing arrival time → null');
+// a deliberately tight Alpine leg (0 buffer, a real drive) warns
+eq(legFeasibility('09:00–11:00', '11:00–12:30', 5), { tight: true, gapMins: 0, shortBy: 5 },
+  'legFeasibility: 5-min hop with 0 buffer → tight');
+// a comfortable leg does not
+eq(legFeasibility('15:00–16:30', '19:30–21:00', 30), { tight: false, gapMins: 180, shortBy: -150 },
+  'legFeasibility: 30-min hop with 180-min gap → fine');
+eq(legFeasibility('09:00–11:00', '11:00', null), null, 'legFeasibility: no travel time → null');
+eq(legFeasibility('09:00', '', 10), null, 'legFeasibility: missing time → null');
+
+// overpacked day: lots of dwell + a long inter-city drive blows the 14h budget
+const packed = [
+  { time: '07:00–12:00', ll: [45.49, 10.61] },   // 5h
+  { time: '13:00–19:00', ll: [46.62, 8.04] },    // 6h, ~140km drive between
+];
+eq(dayLoad(packed).overpacked, true, 'dayLoad: 11h dwell + long alpine drive → overpacked');
+// a relaxed day stays under budget
+const relaxed = [
+  { time: '09:00–11:00', ll: [45.49, 10.61] },
+  { time: '15:00–16:30', ll: [45.47, 10.74] },
+];
+eq(dayLoad(relaxed).overpacked, false, 'dayLoad: light day → not overpacked');
+eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
 
 process.exit(fails ? 1 : 0);
