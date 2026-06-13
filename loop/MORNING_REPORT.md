@@ -21,3 +21,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 1cf5fd3
+
+### 2026-06-14T01:30:00Z · B03 Mobile Today view
+- status: done
+- pillar: offline/mobile
+- what: New `js/today.js` view + "Today" tab — a single thumb-friendly screen with today's date & weather, the day's ordered plan with times, and the next upcoming booking. Auto-selects when the open trip's date range contains today (app.js), else reachable from the tab and previews day 1 with a banner. Pure helpers `pickTodayDay`/`nextBooking` added to core.js; sw.js precaches the new module (CACHE bumped to v3).
+- verified: PASS (independent agent) — js/today.js + 'today' view registration + auto-select on origin/main, sw.js precaches it; node tools/test-core.mjs exits 0 with new pickTodayDay/nextBooking guards; live js/today.js serves HTTP 200 with the Today-view marker (propagated on retry).
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 666333f

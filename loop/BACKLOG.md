@@ -19,7 +19,7 @@ Accept: app opens and shows the Alpine itinerary with network disabled (verify v
 Leaflet tiles + enrichment/weather to localStorage/Cache API; on offline, render from cache instead
 of blank. Accept: map + weather show cached content when offline, degrade gracefully.
 
-### B03 · status: wip · pillar: offline/mobile
+### B03 · status: done · 666333f · pillar: offline/mobile — new `today.js` view + Today tab (today's plan/times, next booking, weather), auto-selected when trip range contains today; pure `pickTodayDay`/`nextBooking` in core.js
 **Mobile "Today" view.** A single-screen, thumb-friendly view: today's date, the day's ordered
 plan with times, the next upcoming booking, today's weather. Auto-select when the open trip's date
 range contains today; reachable from a clear tab/button otherwise. Accept: renders today's Alpine
