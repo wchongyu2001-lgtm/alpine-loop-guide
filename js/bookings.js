@@ -14,6 +14,7 @@ let pendingEmail = null;   // suggestion being added via the manual form
 let pendingAttach = null;  // booking id awaiting file-picker result
 
 export function render(root, ctx) {
+  pendingEmail = null; // prefilled form dies with each rerender; don't leak into a later manual add
   const { state } = ctx;
   const list = tripBookings(state, state.trip.id);
   const unassigned = allBookings(state).filter(b => b.trip === 'unassigned');
@@ -109,6 +110,7 @@ function wireAttachments(root, ctx, state) {
   });
   input.onchange = () => {
     if (pendingAttach && input.files.length) handleFiles(root, ctx, state, pendingAttach, input.files);
+    input.value = '';
   };
   root.querySelectorAll('.bkcard[data-bid]').forEach(el => {
     el.ondragover = e => { e.preventDefault(); el.classList.add('dragover'); };
