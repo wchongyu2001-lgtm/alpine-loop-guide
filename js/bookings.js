@@ -3,7 +3,7 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, assignTrip, parseEmailStub, wlShareValid, bookingWarnings } from './core.js';
+import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, assignTrip, parseEmailStub, wlShareValid, bookingWarnings, orphanBookings } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
@@ -23,7 +23,7 @@ export function render(root, ctx) {
   pendingEmail = null; // prefilled form dies with each rerender; don't leak into a later manual add
   const { state } = ctx;
   const list = tripBookings(state, state.trip.id);
-  const unassigned = allBookings(state).filter(b => b.trip === 'unassigned');
+  const unassigned = orphanBookings(allBookings(state), state.registry.trips);
   const atts = bkOv(state).attachments || {};
 
   const byDate = {};
@@ -63,7 +63,7 @@ export function render(root, ctx) {
     ${unassigned.length ? `
     <div class="bk-unassigned">
       <h3>📥 Unassigned (${unassigned.length})</h3>
-      <p class="muted">Bookings that didn't match a trip's dates — file them:</p>
+      <p class="muted">Bookings not filed to any of your trips (no match, or a trip that no longer exists) — assign them:</p>
       ${unassigned.map(b => `
         <div class="bkcard" data-bid="${esc(b.id)}">
           ${cardBody(b, atts[b.id])}

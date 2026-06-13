@@ -5,7 +5,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   modeProfile, osrmUrl, legFallback, fmtDuration, parseOsrm,
   iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl, wlShareValid,
   weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts,
-  pickTodayDay, nextBooking, flightRoute, bookingWarnings } from '../js/core.js';
+  pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -270,5 +270,15 @@ eq(/data\/alpine\.json/.test(sw), true, 'sw.js precaches the Alpine trip data');
 eq(/tc-tiles/.test(sw), true, 'sw.js keeps a dedicated map-tile cache');
 eq(/openstreetmap/.test(sw), true, 'sw.js recognises OSM tile requests');
 eq(/k !== CACHE && k !== TILES/.test(sw), true, 'sw.js preserves the tile cache across shell-cache bumps');
+
+// ---- B05: unassigned/orphan booking triage (pure) ----
+const ob = orphanBookings([
+  { id: 'a', trip: 'alpine' },
+  { id: 'u', trip: 'unassigned' },
+  { id: 'n', trip: null },
+  { id: 'g', trip: 'ghost-trip' },   // stale id no longer in registry
+], trips);
+eq(ob.map(b => b.id), ['u', 'n', 'g'], 'orphanBookings: flags unassigned, no-trip, and unknown-trip; not real trips');
+eq(orphanBookings([{ id: 'a', trip: 'alpine' }], trips), [], 'orphanBookings: clean booking → no orphans');
 
 process.exit(fails ? 1 : 0);
