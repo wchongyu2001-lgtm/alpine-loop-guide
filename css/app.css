@@ -22,7 +22,10 @@ input,select,button,textarea{font:inherit}
 input,select{border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fff}
 
 header.top{position:sticky;top:0;z-index:500;background:var(--paper);
-  border-bottom:1px solid var(--line);padding:8px 14px}
+  border-bottom:1px solid var(--line);padding:8px 14px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-family:'Fraunces',serif;font-weight:600;font-size:1.05em;letter-spacing:.01em;white-space:nowrap}
+.brand em{font-style:italic;color:var(--terra)}
 #triptabs{display:flex;gap:6px;flex-wrap:wrap}
 .triptab{padding:5px 14px;border-radius:999px;border:1px solid var(--line);
   text-decoration:none;color:var(--ink);font-size:.88em;background:var(--card)}
