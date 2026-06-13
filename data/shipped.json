@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B09",
+      "title": "Forward-to address label in bookings",
+      "pillar": "bookings",
+      "date": "2026-06-14T06:15:00Z",
+      "what": "The bookings view now shows a clear, dedicated line — “📨 Forward booking confirmations to wchongyu2001@gmail.com” — with a one-tap Copy button, so you always know exactly where to forward a flight/hotel/train confirmation. Forwarded mail flows in through the existing daily pipeline sync and lands in this timeline automatically; no app setup needed. The address lives in a single INBOUND_ADDR constant, ready to swap to a dedicated inbound-parse address later.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge c8c0c83 on origin/main: INBOUND_ADDR + .bk-forward-addr/#bkcopyaddr in js/bookings.js and .bk-forward* rules in css/app.css. node tools/test-core.mjs exits 0 (no failures). Live homepage HTTP 200 (marker Travel Companion) and live js/bookings.js HTTP 200 with the bk-forward-addr marker after Pages propagation.",
+      "commit": "c8c0c83",
+      "deploy": "live"
+    },
+    {
       "id": "B08",
       "title": "Faster expense entry + budget vs actual per day",
       "pillar": "money",
