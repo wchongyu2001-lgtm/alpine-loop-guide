@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B07",
+      "title": "Nearby discovery into itinerary",
+      "pillar": "discovery",
+      "date": "2026-06-14T04:50:00Z",
+      "what": "Open any place in the itinerary and a new \"Nearby eat & do\" panel now suggests real spots around it — restaurants, cafés, bars, gelaterias, viewpoints, museums and attractions — pulled live from OpenStreetMap (free, no API key, cached for offline). They're ranked nearest-first, and one tap on a chip drops it straight into that day's plan with its category as a note. So when you're standing in an Alpine town wondering where to eat or what's worth a look, the options are one tap away instead of a separate map search.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge b19bf3d on origin/main (pure overpassUrl/parseOverpass/nearbyCacheKey in core.js; .pd-nearby drawer + data-near chips pushing via setPlan in itinerary.js); test-core exits 0 with 7 new B07 guards (named-only, deduped, nearest-first, amenity→food/tourism→act mapping); live core.js & itinerary.js serve HTTP 200 with the parseOverpass and pd-nearby markers after Pages propagation.",
+      "commit": "b19bf3d",
+      "deploy": "live"
+    },
+    {
       "id": "B06",
       "title": "\"Can I make it?\" timing warnings",
       "pillar": "logistics",
