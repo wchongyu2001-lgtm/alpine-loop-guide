@@ -1,4 +1,4 @@
-# Handoff — Trips dashboard goes self-hosted on Hetzner (24/7)
+Al l# Handoff — Trips dashboard goes self-hosted on Hetzner (24/7)
 
 **Date:** 2026-06-13 · **Status:** shipped + verified. One user action remains (Gmail app password). This session moved the dashboard's backend off Google Apps Script onto the user's own Hetzner box so it runs 24/7 with cross-device edit sync, a backup mirror, nightly backups, and an auto-importer for booking emails.
 
