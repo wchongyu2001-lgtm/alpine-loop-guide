@@ -3,7 +3,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   gmapsPlaceUrl, amapsPlaceUrl, splitTime, joinTime, matchBooking, pickSummaryExtract, factCacheKey,
   placeProxyUrl, placePhotoUrl, placeCacheKey, fmtRating, priceTier, parsePlace,
   modeProfile, osrmUrl, legFallback, fmtDuration, parseOsrm,
-  iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl,
+  iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl, wlShareValid,
   weatherUrl, pickDaily, wmoIcon, convert, simplifyDebts } from '../js/core.js';
 
 let fails = 0;
@@ -172,6 +172,10 @@ eq(brandDomain('Booking.com'), 'booking.com', 'brandDomain booking');
 eq(brandDomain('Emirates'), 'emirates.com', 'brandDomain emirates');
 eq(brandDomain('Some Tiny Inn'), null, 'brandDomain unknown → null');
 eq(brandLogoUrl('booking.com'), 'https://logo.clearbit.com/booking.com', 'brandLogoUrl');
+eq(wlShareValid('https://wanderlog.com/view/abc/my-trip'), true, 'wlShareValid: wanderlog url');
+eq(wlShareValid('https://www.wanderlog.com/p/xyz'), true, 'wlShareValid: www wanderlog');
+eq(wlShareValid('https://example.com/trip'), false, 'wlShareValid: non-wanderlog → false');
+eq(wlShareValid(''), false, 'wlShareValid: empty → false');
 
 // ---- weather / fx / settle-up ----
 eq(weatherUrl([45.49, 10.61]),

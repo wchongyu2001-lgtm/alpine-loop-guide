@@ -11,10 +11,12 @@ Frontend protocol (js/sync.js):
   GET  /fetchmail                              -> {ok, messages}  (phase 2)
   GET  /health
 """
-import os, re, json, base64, uuid, time, urllib.request, urllib.parse
+import os, re, json, base64, uuid, time, datetime, urllib.request, urllib.parse
 from pathlib import Path
 from fastapi import FastAPI, Request, Header, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
+
+import triphub as TH
 
 BASE = Path(os.environ.get("TRIPS_DIR", "/opt/trips-sync"))
 OVERLAYS = BASE / "overlays"
@@ -158,3 +160,209 @@ def placephoto(ref: str, w: int = 400):
     with urllib.request.urlopen(url, timeout=10) as r:
         data, ctype = r.read(), r.headers.get("Content-Type", "image/jpeg")
     return Response(content=data, media_type=ctype, headers={"Cache-Control": "public, max-age=2592000"})
+
+
+# ============================================================================
+# Three-way hub: Telegram bot (capture + briefings) + Wanderlog share-link import
+# Secrets come only from env: TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, TG_WEBHOOK_SECRET.
+# Trip base data is read from the dashboard mirror clone (TRIPS_APP_DIR); edits
+# are written to the same overlays the dashboard syncs. Everything degrades when
+# unconfigured — endpoints just refuse politely.
+# ============================================================================
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
+TG_SECRET = os.environ.get("TG_WEBHOOK_SECRET", "")
+TRIPS_APP_DIR = Path(os.environ.get("TRIPS_APP_DIR", "/opt/trips/app"))
+
+
+def _now():
+    return datetime.datetime.utcnow().isoformat() + "Z"
+
+
+def _today():
+    return datetime.date.today().isoformat()
+
+
+def _read_json(p, default=None):
+    try:
+        return json.loads(Path(p).read_text())
+    except Exception:
+        return default
+
+
+def load_trips():
+    return (_read_json(TRIPS_APP_DIR / "data" / "trips.json", {}) or {}).get("trips", [])
+
+
+def load_bookings():
+    return (_read_json(TRIPS_APP_DIR / "data" / "bookings.json", {}) or {}).get("bookings", [])
+
+
+def overlay_read(trip, kind):
+    p = ov_path(trip, kind)
+    return json.loads(p.read_text()).get("payload") if p.exists() else None
+
+
+def overlay_write(trip, kind, payload):
+    ov_path(trip, kind).write_text(json.dumps({"payload": payload, "updated": _now()}))
+
+
+def tg_send(text, chat_id=None):
+    cid = chat_id or TELEGRAM_CHAT_ID
+    if not (TELEGRAM_TOKEN and cid):
+        return False
+    try:
+        data = urllib.parse.urlencode({"chat_id": cid, "text": text}).encode()
+        urllib.request.urlopen(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", data=data, timeout=10)
+        return True
+    except Exception:
+        return False
+
+
+def current_trip_id():
+    trips = load_trips()
+    t = TH.active_trip(trips, _today())
+    return t["id"] if t else (trips[0]["id"] if trips else "alpine")
+
+
+def fetch_weather(ll, iso):
+    try:
+        j = _get_json(f"https://api.open-meteo.com/v1/forecast?latitude={ll[0]}&longitude={ll[1]}"
+                      "&daily=weather_code,temperature_2m_max,temperature_2m_min,"
+                      "precipitation_probability_max&timezone=auto&forecast_days=16")
+        t = j["daily"]["time"]
+        if iso in t:
+            i = t.index(iso)
+            return {"icon": TH.wmo_icon(j["daily"]["weather_code"][i]),
+                    "tmax": j["daily"]["temperature_2m_max"][i],
+                    "tmin": j["daily"]["temperature_2m_min"][i],
+                    "precip": j["daily"]["precipitation_probability_max"][i]}
+    except Exception:
+        pass
+    return None
+
+
+def build_brief():
+    trips = load_trips()
+    today = _today()
+    trip = TH.active_trip(trips, today)
+    if not trip:
+        return "No trips configured."
+    td = _read_json(TRIPS_APP_DIR / "data" / trip["file"], {}) or {}
+    ov_itin = overlay_read(trip["id"], "itinerary") or {}
+    days = TH.decorate_days(td, ov_itin)
+    bookings = [b for b in load_bookings() if b.get("trip") == trip["id"]]
+    bookings += (overlay_read(trip["id"], "bookings") or {}).get("manual", [])
+    day = next((d for d in days if d.get("_date") == today), None)
+    weather = fetch_weather(day["ll"], today) if day and day.get("ll") else None
+    return TH.compose_brief(trips, today, trip, days, ov_itin.get("dayPlans"), bookings, weather)
+
+
+def capture_and_store(text):
+    trips = load_trips()
+    c = TH.classify_capture(text, trips)
+    if c["kind"] == "bucket":
+        trip = current_trip_id()
+        ov = overlay_read(trip, "bucket") or {"items": []}
+        items = ov.get("items", [])
+        items.append({"id": "tg-" + uuid.uuid4().hex[:8], "title": c["item"]["title"], "source": "telegram"})
+        overlay_write(trip, "bucket", {"items": items})
+    else:
+        target = c["trip"] if c["trip"] != "unassigned" else current_trip_id()
+        ov = overlay_read(target, "bookings") or {}
+        bk = dict(c["booking"]); bk["id"] = "tg-" + uuid.uuid4().hex[:8]
+        ov["manual"] = (ov.get("manual") or []) + [bk]
+        overlay_write(target, "bookings", ov)
+    return c["summary"]
+
+
+def wl_import(url, trip):
+    if not str(url).startswith("http"):
+        return {"ok": False, "summary": "Give a Wanderlog share URL (https://wanderlog.com/view/…)."}
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (TravelCompanion)"})
+        html = urllib.request.urlopen(req, timeout=15).read().decode("utf-8", "replace")
+    except Exception as e:
+        return {"ok": False, "summary": f"Couldn't fetch that Wanderlog page ({e})."}
+    ex = TH.extract_trip(html)
+    if not ex["places"] and not ex["reservations"]:
+        return {"ok": False, "summary": "No trip data found there — is the Wanderlog trip public?"}
+    # places → bucket overlay
+    bov = overlay_read(trip, "bucket") or {"items": []}
+    items = bov.get("items", [])
+    have = {str(i.get("title", "")).lower() for i in items}
+    addp = 0
+    for p in ex["places"]:
+        if p["name"].lower() not in have:
+            items.append({"id": "wl-" + uuid.uuid4().hex[:8], "title": p["name"],
+                          "area": p.get("note", ""), "source": "wanderlog"})
+            have.add(p["name"].lower()); addp += 1
+    overlay_write(trip, "bucket", {"items": items})
+    # reservations → bookings.manual overlay (into the chosen trip)
+    bkov = overlay_read(trip, "bookings") or {}
+    manual = bkov.get("manual", [])
+    havc = {str(b.get("confirmation") or b.get("title", "")).lower() for b in manual}
+    addr = 0
+    for r in ex["reservations"]:
+        kc = str(r.get("confirmation") or r.get("title", "")).lower()
+        if kc in havc:
+            continue
+        manual.append({"id": "wl-" + uuid.uuid4().hex[:8], "type": r["type"], "title": r["title"],
+                       "start": r.get("start"), "confirmation": r.get("confirmation"),
+                       "trip": trip, "source": "wanderlog"})
+        havc.add(kc); addr += 1
+    bkov["manual"] = manual
+    overlay_write(trip, "bookings", bkov)
+    summary = f"✓ Wanderlog import → {trip}: +{addp} places, +{addr} reservations"
+    tg_send(summary)
+    return {"ok": True, "places": addp, "reservations": addr, "summary": summary}
+
+
+def handle_text(text, chat):
+    cmd, arg = TH.parse_cmd(text)
+    if cmd == "start":
+        return (f"👋 Travel Companion bot is live.\nYour chat id: {chat}\n"
+                "Commands: /today · /next · /add <text> · /wl <share-url> · /help")
+    if cmd == "help":
+        return ("Commands:\n/today – today's plan, weather, next booking\n/next – same\n"
+                "/add <text> – capture a place, idea (\"idea: …\"), or forwarded booking\n"
+                "/wl <url> – import a public Wanderlog trip into the dashboard")
+    if cmd in ("today", "next"):
+        return build_brief()
+    if cmd == "wl":
+        return wl_import(arg.strip(), current_trip_id())["summary"]
+    payload = arg if cmd == "add" else text
+    return capture_and_store(payload) if payload.strip() else None
+
+
+@app.post("/tg/webhook")
+async def tg_webhook(request: Request, x_telegram_bot_api_secret_token: str = Header(default="")):
+    if TG_SECRET and x_telegram_bot_api_secret_token != TG_SECRET:
+        raise HTTPException(401, "bad secret")
+    upd = await request.json()
+    msg = upd.get("message") or upd.get("edited_message") or {}
+    chat = (msg.get("chat") or {}).get("id")
+    text = msg.get("text") or msg.get("caption") or ""
+    try:
+        reply = handle_text(text, chat)
+        if reply:
+            tg_send(reply, chat)
+    except Exception as e:
+        tg_send(f"⚠ couldn't handle that: {e}", chat)
+    return {"ok": True}  # always 200 so Telegram doesn't retry-storm
+
+
+@app.get("/tg/brief")
+def tg_brief(key: str = ""):
+    if not TG_SECRET or key != TG_SECRET:
+        raise HTTPException(401, "bad key")
+    text = build_brief()
+    tg_send(text)
+    return {"ok": True, "sent": bool(TELEGRAM_TOKEN and TELEGRAM_CHAT_ID)}
+
+
+@app.post("/wl-import")
+async def wl_import_endpoint(request: Request, x_trips_token: str = Header(default="")):
+    require_token(x_trips_token)
+    body = await request.json()
+    return wl_import(body.get("url", ""), body.get("trip") or current_trip_id())

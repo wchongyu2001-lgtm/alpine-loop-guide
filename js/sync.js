@@ -72,6 +72,18 @@ export async function fetchMail() {
   return d.messages;
 }
 
+// Import a public Wanderlog trip on the backend → writes overlays this dashboard reads.
+export async function wlImport(url, trip) {
+  const r = await fetch(`${BASE}/wl-import`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Trips-Token': TOKEN },
+    body: JSON.stringify({ url, trip }),
+  });
+  const d = await r.json().catch(() => null);
+  if (!d) throw new Error('import failed');
+  return d; // {ok, places, reservations, summary}
+}
+
 export function retryQueue() {
   const q = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
   if (!q.length) return;

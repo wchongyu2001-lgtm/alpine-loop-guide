@@ -158,6 +158,9 @@ export function brandDomain(name) {
 }
 export const brandLogoUrl = domain => `https://logo.clearbit.com/${domain}`;
 
+// Validate a Wanderlog public trip share link before importing.
+export const wlShareValid = url => /^https?:\/\/(www\.)?wanderlog\.com\/\S+/i.test(String(url || '').trim());
+
 /* ---- Weather (open-meteo), FX, settle-up ---- */
 export const weatherUrl = ll =>
   `https://api.open-meteo.com/v1/forecast?latitude=${ll[0]}&longitude=${ll[1]}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`;

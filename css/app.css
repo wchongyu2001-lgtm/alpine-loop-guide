@@ -115,6 +115,8 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .modebtn.on{background:var(--pine);border-color:var(--pine)}
 .wx{font-size:.92em;color:var(--ink-soft);margin-left:2px;letter-spacing:0}
 .brandlogo{height:16px;width:auto;max-width:64px;border-radius:3px;vertical-align:middle;margin-left:8px;object-fit:contain}
+.bkwlbar{display:flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap}
+.bkwlbar input{flex:1;min-width:180px}
 .routestats{font-family:'JetBrains Mono',monospace;font-size:.72em;color:var(--glacier);margin:4px 0}
 .addplace{position:relative;margin-top:6px}
 .addplace input{width:100%}

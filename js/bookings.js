@@ -3,9 +3,9 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, assignTrip, parseEmailStub } from './core.js';
-import { tripBookings, allBookings } from './data.js';
-import { uploadAttachment, fetchMail } from './sync.js';
+import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, assignTrip, parseEmailStub, wlShareValid } from './core.js';
+import { tripBookings, allBookings, refreshOverlays } from './data.js';
+import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
 import { icon } from './icons.js';
 import { logoImg } from './logos.js';
@@ -36,6 +36,11 @@ export function render(root, ctx) {
       <div class="bkfetchbar">
         <button id="bkfetch">📥 Fetch from Gmail</button>
         <span id="bkfetcherr" class="muted"></span>
+      </div>
+      <div class="bkfetchbar bkwlbar">
+        <input id="bkwlurl" placeholder="Paste a Wanderlog trip share link…" />
+        <button id="bkwl">↧ Import from Wanderlog</button>
+        <span id="bkwlmsg" class="muted"></span>
       </div>
       <details class="bkhelp"><summary>Gmail fetch &amp; cross-device sync need a one-time setup</summary>
         <p class="muted">Your dashboard is a static site — it can't read Gmail or sync edits on its own. Both run through a Google Apps Script that hasn't been redeployed yet:</p>
@@ -113,6 +118,24 @@ export function render(root, ctx) {
 
   wireAttachments(root, ctx, state);
   wireFetch(root, ctx, state);
+  wireWanderlog(root, ctx, state);
+}
+
+function wireWanderlog(root, ctx, state) {
+  const btn = root.querySelector('#bkwl');
+  if (!btn) return;
+  const inp = root.querySelector('#bkwlurl'), msg = root.querySelector('#bkwlmsg');
+  btn.onclick = async () => {
+    const url = inp.value.trim();
+    if (!wlShareValid(url)) { msg.textContent = 'Enter a wanderlog.com share link.'; return; }
+    btn.disabled = true; msg.textContent = '⏳ importing…';
+    try {
+      const d = await wlImport(url, state.trip.id);
+      msg.textContent = d.summary || (d.ok ? `✓ +${d.places} places, +${d.reservations} reservations` : 'Import failed');
+      if (d.ok) { await refreshOverlays(state, () => {}); ctx.rerender(); }
+    } catch (e) { msg.textContent = 'Import failed: ' + e.message; }
+    btn.disabled = false;
+  };
 }
 
 /* ---------- attachments ---------- */
