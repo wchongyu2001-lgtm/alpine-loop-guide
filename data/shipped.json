@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B06",
+      "title": "\"Can I make it?\" timing warnings",
+      "pillar": "logistics",
+      "date": "2026-06-14T04:15:00Z",
+      "what": "Your itinerary now sanity-checks the clock. Between consecutive stops, the travel-time connector compares the real driving/walking time against the gap you've actually scheduled — if the hop won't fit, it turns red and warns \"⚠ tight by N min\" so you know before you're standing there late. Whole days get checked too: if your stops plus travel blow past a sensible waking budget, a \"⚠ Packed day\" banner appears. On the seeded Alpine trip, the zero-buffer Sirmione → Jamaica Beach hop flags as tight while the relaxed afternoon stops stay quiet.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge f0bff42 on origin/main (pure legGapMins/legFeasibility/dayLoad in core.js, leg-tight + packed-day banner in itinerary.js); test-core exits 0 with new B06 guards; an independent import check confirmed a tight leg (90m travel vs 30m gap) → {tight:true} and a comfortable leg → {tight:false}; live core.js & itinerary.js serve HTTP 200 with the feature markers.",
+      "commit": "f0bff42",
+      "deploy": "live"
+    },
+    {
       "id": "B05",
       "title": "Unassigned-booking triage",
       "pillar": "bookings",
