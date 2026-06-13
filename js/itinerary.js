@@ -4,6 +4,7 @@
 import { esc, gmapsPlaceUrl, amapsPlaceUrl, gmapsDirUrl, routeStats, optimizeOrder, effectivePlans, thumbAccent,
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, pickSummaryExtract, thumbCacheKey, factCacheKey,
   splitTime, joinTime, matchBooking, legFeasibility, dayLoad,
+  overpassUrl, parseOverpass, nearbyCacheKey,
   fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon } from './core.js';
 import { tripBookings } from './data.js';
 import { BASE } from './sync.js';
@@ -99,6 +100,25 @@ export function render(root, ctx) {
   });
 
   hydrateFacts(root);
+
+  // B07: nearby eat/do discovery in the open place drawer — one-tap add to the day.
+  const tagOf = state.taxonomy.tags;
+  root.querySelectorAll('.pd-nearby[data-nearby]').forEach(async el => {
+    const ll = el.dataset.nearby.split(',').map(Number);
+    const dayId = el.dataset.day;
+    const sugg = await nearbyEat(ll);
+    const list = el.querySelector('.muted') || el;
+    if (!sugg.length) { list.textContent = 'No nearby spots found.'; return; }
+    el.innerHTML = `<div class="pd-h">Nearby eat &amp; do</div>
+      <div class="nearby">${sugg.slice(0, 8).map((s, i) =>
+        `<button class="chip" data-near="${i}" title="${esc(s.cat)}${s.km != null ? ` · ${s.km} km` : ''}">+ ${tagOf[s.t] || '📍'} ${esc(s.n)}</button>`).join('')}</div>`;
+    el.querySelectorAll('[data-near]').forEach(btn => btn.onclick = () => {
+      const s = sugg[+btn.dataset.near];
+      const cur = plans[dayId];
+      cur.push({ id: 'p' + Math.random().toString(36).slice(2, 8), n: s.n, t: s.t, ll: s.ll, d: s.cat });
+      setPlan(ctx, dayId, cur); ctx.rerender();
+    });
+  });
 
   // optimize order (keeps first stop)
   root.querySelectorAll('[data-opt]').forEach(b => b.onclick = () => {
@@ -222,6 +242,7 @@ function placeDetail(day, p, dayBk, tag) {
     ${res.length ? `<div class="pd-res"><div class="pd-h">Reservations</div>${res.map(b => `
       <div class="pd-resitem">${TYPE_ICON[b.type] || '📌'} <b>${esc(b.title)}</b>${b.confirmation ? ` <span class="pd-conf">${esc(b.confirmation)}</span>` : ''}</div>`).join('')}</div>` : ''}
     <div class="pd-fact" data-fact="${esc(p.n)}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''}>${p.ll || p.n ? 'Loading fun fact…' : ''}</div>
+    ${p.ll ? `<div class="pd-nearby" data-nearby="${p.ll[0]},${p.ll[1]}" data-day="${day.id}"><div class="pd-h">Nearby eat &amp; do</div><div class="muted">Finding nearby spots…</div></div>` : ''}
     <div class="pd-links">
       <a target="_blank" rel="noopener" href="${place}">📍 Google Maps</a>
       <a target="_blank" rel="noopener" href="${amapsPlaceUrl(p.n, p.ll)}"> Apple Maps</a>
@@ -322,6 +343,22 @@ async function resolveFact(name) {
   } catch {}
   localStorage.setItem(key, text || '');
   return text;
+}
+
+// Nearby eat/do POIs via Overpass (free OSM), cached 7 days; [] on failure/offline.
+async function nearbyEat(ll) {
+  const key = nearbyCacheKey(ll);
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) { const o = JSON.parse(raw); if (Date.now() - o._t < 7 * 864e5) return o.v; }
+  } catch {}
+  let v = [];
+  try {
+    const r = await fetch(overpassUrl(ll));
+    if (r.ok) v = parseOverpass(await r.json(), ll);
+  } catch {}
+  try { localStorage.setItem(key, JSON.stringify({ _t: Date.now(), v })); } catch {}
+  return v;
 }
 
 function hydrateFacts(root) {
