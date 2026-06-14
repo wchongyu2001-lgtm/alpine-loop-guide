@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B33",
+      "title": "Free-form day notes",
+      "pillar": "polish",
+      "date": "2026-06-15T03:00:00.000Z",
+      "what": "Every day card in the Itinerary now has a plain-text notes box so you can jot day-specific reminders right where you'll see them — \"fill water at the aire before the pass\", \"ZTL zone, don't drive into the centre\", \"market closes 13:00\". Type a note, tap away, and it's saved instantly to the trip's itinerary overlay (the same place your re-ordered plans, modes and per-place notes live), so it survives a reload and works fully offline. Leaving the box empty clears the note. A new pure dayNote(overlay, dayId) helper in core.js reads it back trimmed (degrading to empty for missing/blank), seeding the textarea on every render so the round-trip is genuine, and is covered by guarded tests.",
+      "verified": true,
+      "verify_note": "Independent agent: origin/main merge 1dbf735 has dayNote() in core.js and data-daynote textarea + setDayNote (writes ov.dayNotes via ctx.save) in itinerary.js; render seeds the box from dayNote(state.overlay.itinerary, day.id) so it survives reload. node tools/test-core.mjs exits 0 with all 5 new dayNote guards ok. Live GitHub Pages served-checks 200 with markers 'data-daynote' (itinerary.js) and 'function dayNote' (core.js).",
+      "commit": "1dbf735",
+      "deploy": "live"
+    },
+    {
       "id": "B32",
       "title": "Daylight per day",
       "pillar": "mobile/live",
