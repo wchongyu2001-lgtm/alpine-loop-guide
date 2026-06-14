@@ -257,3 +257,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: b0f1bbe
+
+### 2026-06-14T07:30Z · B17 Calendar export (.ics)
+- status: done
+- pillar: bookings
+- what: "Export trip calendar (.ics)" button in Bookings exports the whole trip — one VEVENT per booking + per timed itinerary stop — as a standard VCALENDAR file. New pure tripIcs() in core.js sharing the B28 VEVENT builder.
+- verified: independent agent PASS — tripIcs + #bkics on origin/main, test-core.mjs exits 0 (13 new tripIcs assertions), throwaway import produced a valid 3-VEVENT VCALENDAR (untimed/undated skipped), live served checks 200 with markers.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 2061f72

@@ -106,7 +106,7 @@ plug type and a few language basics for the destination country. Accept: the Alp
 shows emergency 112, EUR, plug type C/F; renders offline; data is static (no API).
 New "Essentials" view tab; countryEssentials() static table in core.js keyed by trip.country (IT/IS).
 
-### B17 · status: wip · pillar: bookings
+### B17 · status: done (2061f72) · pillar: bookings
 **Calendar export (.ics).** Export a trip's bookings + timed stops to a downloadable `.ics` file so
 the plan drops into any calendar app. Accept: a download produces a valid VCALENDAR with one VEVENT
 per booking/timed stop; opens in a calendar app without errors.
