@@ -239,3 +239,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 0bd7adc
+
+### 2026-06-14T23:30Z · B19 Weather-aware re-plan nudge
+- status: done
+- pillar: discovery/live
+- what: Today view shows a gentle banner suggesting indoor swaps (museums/galleries/cafés/spas) when a mostly-outdoor day has rain forecast; silent on clear/foggy/indoor/clean days. Pure `replanNudge()` in core.js, wired into today.js.
+- verified: independent agent PASS — origin/main has merge b31f421 (replanNudge in core.js + today.js #t-nudge); node tools/test-core.mjs exits 0 with 8 new guards (no false positives); live js/core.js + js/today.js HTTP 200 with marker on GitHub Pages.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: b31f42136dc4fd09732483dec94f9981afca9da5

@@ -93,7 +93,7 @@ itinerary overlay.
 amount in the trip currency, see it in your home currency (and vice-versa). Accept: converts both
 directions with the live rate; works offline using the last cached rate.
 
-### B19 · status: wip · pillar: discovery/live
+### B19 · status: done (b31f421) · pillar: discovery/live
 **Weather-aware re-plan nudge.** If a day with mostly outdoor stops has rain in the forecast, show a
 gentle banner suggesting indoor alternatives (reuse the B07 nearby-discovery indoor categories).
 Accept: a rainy outdoor Alpine day shows the nudge; a clear day does not; no false positives on clean data.
