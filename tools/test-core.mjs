@@ -10,7 +10,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, transportContinuity, bookingIcs,
-  nextUpcoming, fmtCountdown } from '../js/core.js';
+  nextUpcoming, fmtCountdown, searchRecords } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -669,6 +669,25 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   // Timed start, no end → 1-hour default duration.
   const noend = bookingIcs({ id: 'y', type: 'train', title: 'Train', start: '2026-08-08T09:30' }, STAMP).split('\r\n');
   eq(noend.includes('DURATION:PT1H'), true, 'bookingIcs: timed + no end → PT1H default');
+}
+
+// ---- B18: offline trip search (pure token filter) ----
+{
+  const recs = [
+    { kind: 'place', title: 'Sirmione', text: 'Sirmione lakefront town Scaliger castle SAT 1 AUG' },
+    { kind: 'note', title: 'Day 1', text: 'Big cheap supermarket shop here Swiss prices later' },
+    { kind: 'booking', title: 'Butterfly Camping', text: 'Butterfly Camping Booking.com NP7QJQ Peschiera hotel' },
+  ];
+  eq(searchRecords(recs, 'castle').map(r => r.title), ['Sirmione'], 'searchRecords: matches a place by description');
+  eq(searchRecords(recs, 'SUPERMARKET').map(r => r.kind), ['note'], 'searchRecords: case-insensitive');
+  eq(searchRecords(recs, 'np7qjq').map(r => r.title), ['Butterfly Camping'], 'searchRecords: finds a booking confirmation #');
+  eq(searchRecords(recs, 'camping peschiera').map(r => r.title), ['Butterfly Camping'],
+    'searchRecords: multi-token AND across fields');
+  eq(searchRecords(recs, 'castle supermarket'), [], 'searchRecords: tokens in different records → no match (AND)');
+  eq(searchRecords(recs, ''), [], 'searchRecords: empty query → no rows (caller restores full view)');
+  eq(searchRecords(recs, '   '), [], 'searchRecords: whitespace-only query → no rows');
+  eq(searchRecords(null, 'x'), [], 'searchRecords: null records → []');
+  eq(searchRecords(recs, 'zzz').length, 0, 'searchRecords: no match → empty');
 }
 
 process.exit(fails ? 1 : 0);

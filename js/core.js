@@ -877,3 +877,15 @@ export function parseEmailStub(subject, body) {
 
 export const esc = s => String(s ?? '').replace(/[&<>"']/g,
   c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// B18 · Offline trip search — pure, network-free filter over already-loaded records.
+// Each record carries a `text` haystack; every whitespace token of the query must
+// appear (case-insensitive substring) for the record to match. Empty query → [].
+export function searchRecords(records, query) {
+  const tokens = String(query || '').toLowerCase().split(/\s+/).filter(Boolean);
+  if (!tokens.length) return [];
+  return (records || []).filter(r => {
+    const hay = String(r && r.text || '').toLowerCase();
+    return tokens.every(t => hay.includes(t));
+  });
+}
