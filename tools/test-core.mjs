@@ -11,7 +11,8 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, fuelEstimate, transportContinuity, bookingIcs, tripIcs,
   nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials, tripOverview,
-  mapTypeChoice, tripTotals, daysToDeparture, dayNote, parseDayHours, openStatus } from '../js/core.js';
+  mapTypeChoice, tripTotals, daysToDeparture, dayNote, parseDayHours, openStatus,
+  cycleTheme, effectiveTheme } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -893,5 +894,15 @@ eq(dayNote({ dayNotes: { d1: 'x' } }, 'd2'), '', 'dayNote: missing day → empty
 eq(dayNote({}, 'd1'), '', 'dayNote: no dayNotes map → empty string');
 eq(dayNote(null, 'd1'), '', 'dayNote: null overlay → empty string');
 eq(dayNote({ dayNotes: { d1: '   ' } }, 'd1'), '', 'dayNote: blank note → empty string');
+
+// ---- B35: dark mode theme cycle + resolution ----
+eq(cycleTheme('auto'), 'light', 'cycleTheme: auto → light');
+eq(cycleTheme('light'), 'dark', 'cycleTheme: light → dark');
+eq(cycleTheme('dark'), 'auto', 'cycleTheme: dark → auto (wraps)');
+eq(cycleTheme('garbage'), 'auto', 'cycleTheme: unknown → auto');
+eq(effectiveTheme('light', true), 'light', 'effectiveTheme: explicit light ignores OS');
+eq(effectiveTheme('dark', false), 'dark', 'effectiveTheme: explicit dark ignores OS');
+eq(effectiveTheme('auto', true), 'dark', 'effectiveTheme: auto follows OS dark');
+eq(effectiveTheme('auto', false), 'light', 'effectiveTheme: auto follows OS light');
 
 process.exit(fails ? 1 : 0);

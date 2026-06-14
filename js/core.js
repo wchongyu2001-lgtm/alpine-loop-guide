@@ -1171,6 +1171,19 @@ export function dayNote(overlay, dayId) {
   return String(notes[dayId] || '').trim();
 }
 
+// B35 · Dark mode — theme choice cycle + resolution (pure). The user cycles
+// auto → light → dark → auto; `effectiveTheme` resolves a choice to the actual
+// palette to paint ('light'|'dark'), following the OS preference when on 'auto'.
+export const THEMES = ['auto', 'light', 'dark'];
+export function cycleTheme(cur) {
+  const i = THEMES.indexOf(cur);
+  return THEMES[(i + 1) % THEMES.length];
+}
+export function effectiveTheme(choice, prefersDark) {
+  if (choice === 'light' || choice === 'dark') return choice;
+  return prefersDark ? 'dark' : 'light';
+}
+
 // B18 · Offline trip search — pure, network-free filter over already-loaded records.
 // Each record carries a `text` haystack; every whitespace token of the query must
 // appear (case-insensitive substring) for the record to match. Empty query → [].

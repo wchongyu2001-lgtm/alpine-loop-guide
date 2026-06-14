@@ -1,7 +1,7 @@
 /* App shell: trip switcher, view tabs, hash routing (#trip/view), sync refresh. */
 import { loadRegistry, loadTrip, refreshOverlays, decorateDays } from './data.js';
 import { save, retryQueue } from './sync.js';
-import { esc } from './core.js';
+import { esc, cycleTheme, effectiveTheme } from './core.js';
 import { icon } from './icons.js';
 import * as today from './today.js';
 import * as overview from './overview.js';
@@ -33,7 +33,32 @@ function route() {
 const pad = n => String(n).padStart(2, '0');
 const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
 
+// B35 · Dark mode — light/dark/auto theme toggle in the header, persisted to
+// localStorage. The early inline script in index.html applies it before paint;
+// this wires the toggle and keeps 'auto' in sync with the OS preference.
+const THEME_LABELS = { auto: '🌗 Auto', light: '☀️ Light', dark: '🌙 Dark' };
+function applyTheme(choice) {
+  const root = document.documentElement;
+  root.dataset.theme = effectiveTheme(choice, matchMedia('(prefers-color-scheme: dark)').matches);
+  root.dataset.themeChoice = choice;
+  const btn = document.getElementById('themetoggle');
+  if (btn) btn.textContent = THEME_LABELS[choice];
+}
+function initTheme() {
+  let choice = localStorage.getItem('v2:theme') || 'auto';
+  applyTheme(choice);
+  document.getElementById('themetoggle')?.addEventListener('click', () => {
+    choice = cycleTheme(choice);
+    localStorage.setItem('v2:theme', choice);
+    applyTheme(choice);
+  });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if ((localStorage.getItem('v2:theme') || 'auto') === 'auto') applyTheme('auto');
+  });
+}
+
 async function boot() {
+  initTheme();
   base = await loadRegistry();
   retryQueue();
   await go();
