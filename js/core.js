@@ -1184,6 +1184,25 @@ export function effectiveTheme(choice, prefersDark) {
   return prefersDark ? 'dark' : 'light';
 }
 
+// ---- B36: one-tap "Open in Google Maps" full route (pure) ----
+// Build a Google Maps driving-directions deep link covering the trip's day bases
+// in order: origin → each intermediate base → destination. Uses the path-based
+// /maps/dir/ form, which has no waypoint cap and opens the native Maps app on a
+// phone, with `lat,lng` coordinates so each stop is unambiguous (car routing
+// between road coordinates defaults to driving). Consecutive days sharing the
+// same base (identical coords) collapse to one stop. Returns null if fewer than
+// two distinct coordinate stops exist (nothing to route).
+export function gmapsRouteUrl(days) {
+  const pts = [];
+  for (const d of days || []) {
+    if (!d || !Array.isArray(d.ll) || d.ll.length < 2) continue;
+    const ll = `${d.ll[0]},${d.ll[1]}`;
+    if (ll !== pts[pts.length - 1]) pts.push(ll);
+  }
+  if (pts.length < 2) return null;
+  return 'https://www.google.com/maps/dir/' + pts.join('/');
+}
+
 // B18 · Offline trip search — pure, network-free filter over already-loaded records.
 // Each record carries a `text` haystack; every whitespace token of the query must
 // appear (case-insensitive substring) for the record to match. Empty query → [].

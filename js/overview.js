@@ -2,7 +2,7 @@
    with its date, headline, first planned stop and booking markers, so the whole
    trip is visible without scrolling day cards. Tap a day to jump to it in the
    Itinerary view. Read-only; operates on already-loaded data. */
-import { esc, tripOverview, effectivePlans, tripTotals, daysToDeparture, dayDate } from './core.js';
+import { esc, tripOverview, effectivePlans, tripTotals, daysToDeparture, dayDate, gmapsRouteUrl } from './core.js';
 import { tripBookings } from './data.js';
 import { icon } from './icons.js';
 
@@ -30,6 +30,8 @@ const STYLE = `
   .ov-sub{color:#5d564a;font-size:.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .ov-marks{flex:0 0 auto;display:flex;gap:5px;color:#5d564a;align-items:center}
   .ov-go{flex:0 0 auto;color:#a39e92;font-size:1.2rem;line-height:1}
+  .ov-route{display:inline-flex;align-items:center;gap:8px;width:100%;justify-content:center;border:1px solid rgba(184,134,11,.5);background:rgba(184,134,11,.1);color:#b8860b;font-weight:600;font-size:.92rem;border-radius:12px;padding:11px 14px;margin:0 0 14px;cursor:pointer;text-decoration:none;box-sizing:border-box}
+  .ov-route:hover,.ov-route:focus{background:rgba(184,134,11,.18);outline:none}
   @media (max-width:430px){.ov-head{font-size:.95rem}.ov-n{flex-basis:24px;height:24px}}`;
 
 export function render(root, ctx) {
@@ -47,6 +49,7 @@ export function render(root, ctx) {
       <p class="ov-intro">The whole <b>${esc(state.trip.label)}</b> at a glance — ${rows.length} day${rows.length === 1 ? '' : 's'}. Tap a day to open it.</p>
       ${countdownHtml(dleft)}
       ${statsHtml(totals)}
+      ${routeHtml(gmapsRouteUrl(state.days))}
       ${rows.length ? `<ol class="ov-list">${rows.map(rowHtml).join('')}</ol>` : '<p class="muted">No days in this trip yet.</p>'}
     </div>`;
 
@@ -63,6 +66,15 @@ function countdownHtml(d) {
     : d === 0 ? '<b>Today</b> <span>the trip begins</span>'
     : `<b>Day ${1 - d}</b> <span>trip under way</span>`;
   return `<div class="ov-count">${txt}</div>`;
+}
+
+// B36 · whole-trip "Open in Google Maps" — a real <a> deep link (works offline as
+// a link; the OS/Maps app resolves it) covering every day base in order. Hidden
+// when there aren't two distinct coordinate stops to route between.
+function routeHtml(url) {
+  if (!url) return '';
+  return `<a class="ov-route" href="${esc(url)}" target="_blank" rel="noopener"
+    >${icon('car', 16)} Open full route in Google Maps</a>`;
 }
 
 function statsHtml(t) {
