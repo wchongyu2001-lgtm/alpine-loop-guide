@@ -41,7 +41,7 @@ Accept: the Alpine bookings render in time order grouped by day; an overlap is v
 covered by a hotel/stay booking and which are uncovered (tap an uncovered night → quick-add). Accept:
 nights with a hotel show covered, nights without show a clear gap, for the seeded trip.
 
-### B25 · status: todo · pillar: bookings
+### B25 · status: wip · pillar: bookings
 **Booking action reminders.** Surface time-sensitive booking actions: online check-in window (flights),
 free-cancellation deadline, and hotel check-in/out times — a "Needs attention" list sorted by urgency.
 Accept: a flight/hotel with the relevant fields produces a correctly-sorted reminder; nothing spurious.
