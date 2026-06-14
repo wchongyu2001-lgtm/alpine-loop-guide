@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B18",
+      "title": "Offline trip search — instantly find any place, note or booking",
+      "pillar": "offline",
+      "date": "2026-06-14T21:30:00Z",
+      "what": "A new “Search” tab puts a single box across the whole open trip: type and it filters live across every place in your plan (name, description, time), every day note/tip, and every booking (title, provider, confirmation #, location). Matching is multi-token AND and case-insensitive — “camping peschiera” narrows to that one stay; results are grouped by Places / Notes / Bookings with a match count. Clearing the box restores the full picture. Critically it runs entirely on already-loaded data with zero network calls, so it works in the field with no signal — exactly when you're scrambling to remember which night the campervan covers or what the hotel confirmation number was.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge b58f0fd on origin/main (searchRecords exported from js/core.js; new js/search.js view registered in js/app.js VIEWS/labels). node tools/test-core.mjs exits 0 with 9 new searchRecords guards (multi-token AND within a record, no cross-record match, case-insensitive, empty/whitespace/null→[], booking conf #, no-match→[]). Grep of js/search.js found NO fetch/XHR/WebSocket — operates only on ctx.state. Live served checks: js/search.js + js/app.js HTTP 200 with markers; GitHub Pages js/search.js 200 on first try.",
+      "commit": "b58f0fd",
+      "deploy": "live"
+    },
+    {
       "id": "B16",
       "title": "Next-up countdown on the Today view — live time to your next stop & booking",
       "pillar": "mobile/live",
