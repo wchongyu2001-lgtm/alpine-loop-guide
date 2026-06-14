@@ -157,10 +157,12 @@ day persists across reload via the overlay; renders in the day card.
 Closed badge (and next-open time if closed) on the itinerary place. Accept: a place with hours shows the
 correct badge for the current time; places without hours show nothing (no false state).
 
-### B35 · status: wip · pillar: polish
+### B35 · status: done (3522d11) · pillar: polish
 **Dark mode.** A theme toggle (light / dark / auto) saved to localStorage, with a dark palette for the
 app chrome + cards (and the map staying legible). Accept: toggling to dark restyles the UI and persists;
 auto follows the OS preference.
+Header 🌗/☀️/🌙 toggle; pure cycleTheme()/effectiveTheme() in core.js; html[data-theme=dark] palette in
+app.css; early inline script in index.html applies theme pre-paint (v2:theme).
 
 ### B36 · status: todo · pillar: maps
 **One-tap "Open in Google Maps" full route.** A button that opens the real Google Maps app/site with the

@@ -329,3 +329,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 0388334
+
+### 2026-06-15T05:00Z · B35 Dark mode
+- status: done
+- pillar: polish
+- what: Header theme toggle (🌗 Auto / ☀️ Light / 🌙 Dark) cycles + persists via localStorage v2:theme; dark palette via html[data-theme=dark] CSS vars (map tiles untouched), auto follows OS live, applied pre-paint by an inline script. Pure cycleTheme()/effectiveTheme() in core.js.
+- verified: PASS — independent agent: origin/main 3522d11 has cycleTheme/effectiveTheme (core.js) + #themetoggle/v2:theme (index.html, app.js) + html[data-theme=dark] (app.css); node tools/test-core.mjs exits 0 with 8 B35 assertions; live Pages served-checks 200 with markers effectiveTheme / themetoggle / data-theme.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 3522d11
