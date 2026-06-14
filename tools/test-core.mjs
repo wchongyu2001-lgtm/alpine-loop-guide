@@ -8,7 +8,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
   legGapMins, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
-  buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline } from '../js/core.js';
+  buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -506,6 +506,28 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(accommodationStrip([], clean), [], 'accommodationStrip: no days → empty');
   eq(accommodationStrip([{ _date: '2026-07-24' }], clean), [],
     'accommodationStrip: single day (departure only) → no nights');
+}
+
+// ---- B25: bookingReminders ----
+{
+  const now = '2026-08-16T10:00';
+  const bks = [
+    { id: 'f1', type: 'flight', title: 'AZ 100 dep tomorrow', start: '2026-08-17T08:00' },   // check-in opens within 48h
+    { id: 'f2', type: 'flight', title: 'AZ 200 dep next week', start: '2026-08-24T08:00' },   // opens far out → skipped
+    { id: 'f3', type: 'flight', title: 'AZ 300 open now', start: '2026-08-16T20:00' },        // window already open
+    { id: 'h1', type: 'hotel', title: 'Hotel A', start: '2026-08-18', end: '2026-08-20',
+      checkin_time: '15:00', checkout_time: '11:00', free_cancellation_until: '2026-08-17T23:59' },
+    { id: 'h2', type: 'hotel', title: 'Hotel B (no times)', start: '2026-08-18', end: '2026-08-20' }, // no fields → nothing
+  ];
+  const r = bookingReminders(bks, now);
+  eq(r.map(x => x.kind), ['checkin', 'checkin', 'cancel', 'hotel-in', 'hotel-out'],
+    'bookingReminders: derives flight check-in / cancel / hotel in+out, sorted by due, no spurious');
+  eq(r[0].id === 'f3' && r[0].urgent, true, 'bookingReminders: an open check-in window is first and urgent');
+  eq(r.every((x, i) => i === 0 || r[i - 1].due <= x.due), true, 'bookingReminders: sorted ascending by due');
+  eq(r.some(x => x.id === 'f2'), false, 'bookingReminders: check-in beyond the horizon is not surfaced');
+  eq(r.some(x => x.id === 'h2'), false, 'bookingReminders: a hotel with no check-in/cancel fields raises nothing');
+  eq(bookingReminders(bks, 'not-a-date'), [], 'bookingReminders: bad now → empty');
+  eq(bookingReminders([], now), [], 'bookingReminders: no bookings → empty');
 }
 
 process.exit(fails ? 1 : 0);

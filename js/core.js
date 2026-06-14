@@ -431,6 +431,73 @@ export function accommodationStrip(days, bookings) {
   });
 }
 
+// ---- B25: time-sensitive booking action reminders (pure) ----
+// Surface actions you must take before a deadline, sorted by urgency (soonest due
+// first). Each kind is emitted ONLY when its inputs exist, so a booking missing the
+// relevant field raises nothing (no spurious noise):
+//   • checkin — a flight's online check-in window, derived from departure (b.start):
+//               opens OPEN_H before, closes CLOSE_H before. Listed only while still
+//               actionable (now < closes) AND relevant now (already open, or opening
+//               within HORIZON_H). Open windows are always urgent.
+//   • cancel  — a booking's free-cancellation deadline (b.free_cancellation_until),
+//               while it's still in the future.
+//   • hotel-in / hotel-out — a hotel's check-in (b.checkin_time on its start day) and
+//               check-out (b.checkout_time on its end day), while still in the future.
+// `due` is an epoch-ms timestamp (parse nowIso the same naive-local way the bookings'
+// times are written). urgent ⇔ due is within URGENT_H. Returns [] on a bad nowIso.
+export function bookingReminders(bookings, nowIso, opts = {}) {
+  const now = Date.parse(nowIso);
+  if (isNaN(now)) return [];
+  const HOUR = 3600e3;
+  const OPEN_H = opts.checkinOpenH ?? 48;    // online check-in opens this long before departure
+  const CLOSE_H = opts.checkinCloseH ?? 1.5; // …and closes this long before departure
+  const HORIZON_H = opts.horizonH ?? 72;     // don't surface a not-yet-open check-in further out than this
+  const URGENT_H = opts.urgentH ?? 24;       // flag anything due within this as urgent
+  const hasT = s => /T\d/.test(String(s || ''));
+  const rel = ms => { const h = Math.round(ms / HOUR); if (h < 1) return 'within the hour';
+    if (h < 24) return `in ${h}h`; const d = Math.round(h / 24); return `in ${d} day${d > 1 ? 's' : ''}`; };
+
+  const out = [];
+  for (const b of bookings || []) {
+    if (b.free_cancellation_until && hasT(b.free_cancellation_until)) {
+      const due = Date.parse(b.free_cancellation_until);
+      if (!isNaN(due) && due > now)
+        out.push({ kind: 'cancel', id: b.id, title: b.title, due,
+          detail: `Free cancellation ends ${rel(due - now)}.`, urgent: due - now <= URGENT_H * HOUR });
+    }
+    if (b.type === 'flight' && hasT(b.start)) {
+      const dep = Date.parse(b.start);
+      if (!isNaN(dep)) {
+        const opens = dep - OPEN_H * HOUR, closes = dep - CLOSE_H * HOUR;
+        if (now < closes) {
+          if (now >= opens)
+            out.push({ kind: 'checkin', id: b.id, title: b.title, due: closes,
+              detail: `Online check-in is open — closes ${rel(closes - now)}.`, urgent: true });
+          else if (opens - now <= HORIZON_H * HOUR)
+            out.push({ kind: 'checkin', id: b.id, title: b.title, due: opens,
+              detail: `Online check-in opens ${rel(opens - now)}.`, urgent: opens - now <= URGENT_H * HOUR });
+        }
+      }
+    }
+    if (b.type === 'hotel') {
+      const inDay = dOnly(b.start), outDay = dOnly(b.end);
+      if (b.checkin_time && inDay) {
+        const due = Date.parse(`${inDay}T${b.checkin_time}`);
+        if (!isNaN(due) && due > now)
+          out.push({ kind: 'hotel-in', id: b.id, title: b.title, due,
+            detail: `Check-in from ${b.checkin_time}, ${rel(due - now)}.`, urgent: due - now <= URGENT_H * HOUR });
+      }
+      if (b.checkout_time && outDay) {
+        const due = Date.parse(`${outDay}T${b.checkout_time}`);
+        if (!isNaN(due) && due > now)
+          out.push({ kind: 'hotel-out', id: b.id, title: b.title, due,
+            detail: `Check-out by ${b.checkout_time}, ${rel(due - now)}.`, urgent: due - now <= URGENT_H * HOUR });
+      }
+    }
+  }
+  return out.sort((a, b) => a.due - b.due);
+}
+
 // ---- B06: "Can I make it?" timing feasibility (pure) ----
 const hhmm = s => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(s || '').trim()); return m ? +m[1] * 60 + +m[2] : null; };
 

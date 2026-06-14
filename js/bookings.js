@@ -3,7 +3,7 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, orphanBookings } from './core.js';
+import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
@@ -61,6 +61,7 @@ export function render(root, ctx) {
       </details>
       <div id="bksuggest">${suggestionsHtml(state)}</div>
     </div>
+    ${remindersHtml(list)}
     ${warningsHtml(state, list)}
     ${stripHtml(state, list)}
     ${stillToBookHtml(state, list)}
@@ -285,6 +286,30 @@ function visibleMail(state) {
     m._stub = m._stub || parseEmailStub(m.subject, m.body);
     return !(m._stub.confirmation && confs.has(m._stub.confirmation.toLowerCase()));
   });
+}
+
+/* ---------- booking action reminders (B25) ---------- */
+
+const REMIND_LABEL = { checkin: 'Check-in', cancel: 'Cancellation', 'hotel-in': 'Hotel check-in', 'hotel-out': 'Hotel check-out' };
+const pad = n => String(n).padStart(2, '0');
+// Naive local "now", matching how booking times are written (same basis as today.js).
+const nowIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+
+function remindersHtml(list) {
+  const reminders = bookingReminders(list, nowIso());
+  if (!reminders.length) return '';
+  const urgent = reminders.filter(r => r.urgent).length;
+  return `<div class="bk-remind">
+    <h3>⏰ Needs attention (${reminders.length}${urgent ? ` · ${urgent} urgent` : ''})</h3>
+    ${reminders.map(r => `
+      <div class="bk-remind-row${r.urgent ? ' urgent' : ''}">
+        <span class="bk-remind-kind">${REMIND_LABEL[r.kind] || 'Action'}</span>
+        <div class="bk-remind-main">
+          <span class="bk-remind-title">${esc(r.title)}</span>
+          <div class="bk-remind-detail">${esc(r.detail)}</div>
+        </div>
+      </div>`).join('')}
+  </div>`;
 }
 
 /* ---------- gap / conflict warnings ---------- */
