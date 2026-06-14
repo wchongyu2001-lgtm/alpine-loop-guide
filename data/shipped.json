@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B19",
+      "title": "Weather-aware re-plan nudge on the Today view",
+      "pillar": "discovery/live",
+      "date": "2026-06-14T23:30:00Z",
+      "what": "When today is mostly outdoors and rain is in the forecast, the mobile Today view now slips a gentle blue banner above the day — \"Rain's forecast and most of today is outdoors. Consider indoor swaps nearby — museums, galleries, cafés, thermal spas.\" It only fires when it should: the day must have at least two tagged stops and a strict majority of them outdoor (views, hikes, lakes, towns, swims…), and the forecast must show real precipitation (≥50% chance or a WMO rain/snow code), so a clear day, a foggy day, or a museum-heavy day stays silent — no nagging on clean data. It reuses the same cached open-meteo forecast the weather chip already loads, so it works offline from the last-known forecast, and the indoor suggestions echo the B07 nearby-discovery categories so the swap is one tab away.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge b31f421 on origin/main (replanNudge exported from js/core.js, imported+used in js/today.js → #t-nudge). node tools/test-core.mjs exits 0 with 8 new replanNudge guards: rainy+mostly-outdoor→nudge, and null for clear day, fog (code 45), mostly-indoor, single-stop, and no-weather (no false positives). Live served checks: js/core.js + js/today.js HTTP 200 with replanNudge marker on GitHub Pages.",
+      "commit": "b31f42136dc4fd09732483dec94f9981afca9da5",
+      "deploy": "live"
+    },
+    {
       "id": "B15",
       "title": "Quick currency converter in the Budget view",
       "pillar": "money",
