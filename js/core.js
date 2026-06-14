@@ -349,6 +349,30 @@ export function bookingWarnings(bookings, trip) {
   return out;
 }
 
+// ---- B23: chronological booking timeline (pure) ----
+// Group a trip's bookings into day buckets, time-sorted within each day, marking
+// which entries overlap another in time (reusing bookingWarnings' overlap pass).
+// Returns [{ date, items: [{ booking, overlap }] }] ordered by date then start.
+export function bookingTimeline(bookings, trip) {
+  const overlap = new Set();
+  for (const w of bookingWarnings(bookings || [], trip))
+    if (w.kind === 'overlap') { overlap.add(w.id); overlap.add(w.otherId); }
+
+  const byDate = {};
+  for (const b of bookings || []) {
+    const d = String(b.start || '').slice(0, 10);
+    if (!d) continue;
+    (byDate[d] = byDate[d] || []).push(b);
+  }
+  return Object.keys(byDate).sort().map(date => ({
+    date,
+    items: byDate[date]
+      .slice()
+      .sort((a, b) => String(a.start).localeCompare(String(b.start)))
+      .map(b => ({ booking: b, overlap: overlap.has(b.id) })),
+  }));
+}
+
 // ---- B22: "still to book" coverage gaps (pure) ----
 // From a trip's dated days + its bookings, surface what isn't booked yet:
 //   • lodging: a night with no accommodation covering it

@@ -2,7 +2,7 @@
    Cache-first for the shell (html/css/js), network-first-then-cache for trip JSON,
    stale-while-revalidate for CDN assets (Leaflet, fonts, Sortable) so the app opens
    with no signal. Bump CACHE on any shell/data change to invalidate old caches. */
-const CACHE = 'tc-shell-v3';
+const CACHE = 'tc-shell-v4';
 // Map tiles live in their own cache so they survive shell-cache version bumps
 // (a CACHE bump shouldn't wipe the offline map). Tiles are stale-while-revalidate.
 const TILES = 'tc-tiles-v1';
@@ -20,7 +20,7 @@ const SHELL = [
   './', 'index.html', 'css/app.css', 'manifest.webmanifest', 'icon.svg',
   'js/app.js', 'js/attachments.js', 'js/bookings.js', 'js/budget.js', 'js/checklists.js',
   'js/core.js', 'js/data.js', 'js/fx.js', 'js/icons.js', 'js/ideas.js', 'js/itinerary.js',
-  'js/logos.js', 'js/map.js', 'js/places.js', 'js/routing.js', 'js/shipped.js', 'js/sync.js', 'js/today.js', 'js/weather.js',
+  'js/logos.js', 'js/map.js', 'js/places.js', 'js/routing.js', 'js/shipped.js', 'js/sync.js', 'js/timeline.js', 'js/today.js', 'js/weather.js',
 ];
 // Trip data — precache all so any trip's itinerary renders offline (Alpine is the priority).
 const DATA = [

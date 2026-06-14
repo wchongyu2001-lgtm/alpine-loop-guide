@@ -168,6 +168,21 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .bk-tobook-kind{font-family:'JetBrains Mono',monospace;font-size:.62em;letter-spacing:.06em;text-transform:uppercase;
   color:#fff;background:var(--pine);border-radius:999px;padding:1px 7px;white-space:nowrap}
 .bk-tobook-detail{font-size:.84em}
+.tl-intro p{font-size:.9em;color:var(--ink-soft)}
+.tl-overlap-lead{color:var(--terra)}
+.tl-day{margin:16px 0;border-left:2px solid var(--line);padding-left:14px}
+.tl-date{font-family:'JetBrains Mono',monospace;font-size:.74em;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--terra);margin-bottom:8px}
+.tl-row{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-top:1px solid var(--line)}
+.tl-row:first-of-type{border-top:0}
+.tl-time{font-family:'JetBrains Mono',monospace;font-size:.74em;color:var(--ink-soft);white-space:nowrap;padding-top:2px;min-width:5.2em}
+.tl-icon{display:flex;padding-top:1px;color:var(--pine)}
+.tl-main{flex:1;min-width:0}
+.tl-title{font-weight:600;font-size:.92em}
+.tl-meta{font-size:.78em;color:var(--ink-soft)}
+.tl-clash{background:#fdf2e9;border-radius:8px;margin:2px 0;padding:6px 8px;border-top:0}
+.tl-clash-tag{font-family:'JetBrains Mono',monospace;font-size:.6em;letter-spacing:.06em;text-transform:uppercase;
+  color:#fff;background:var(--terra);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle}
 .bk-unassigned{margin-top:24px;border-top:2px dashed var(--line);padding-top:12px}
 .bkcard.dragover{border-color:var(--pine);background:var(--paper-2);border-style:dashed}
 .bkatt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px}
