@@ -121,6 +121,17 @@ export function render(root, ctx) {
     ctx.save('bookings', ov); ctx.rerender();
   });
 
+  // F4 confirmation locker: store a reference per night, persisted locally → shown offline.
+  // Save on change/blur (not per-keystroke) and skip rerender so the field keeps focus.
+  root.querySelectorAll('[data-nightconf]').forEach(inp => inp.onchange = () => {
+    const ov = bkOv(state);
+    ov.nightConf = { ...(ov.nightConf || {}) };
+    const v = inp.value.trim();
+    if (v) ov.nightConf[inp.dataset.nightconf] = v;
+    else delete ov.nightConf[inp.dataset.nightconf];
+    ctx.save('bookings', ov);
+  });
+
   root.querySelectorAll('[data-dismwarn]').forEach(b => b.onclick = () => {
     const ov = bkOv(state);
     ov.warnSeen = [...new Set([...(ov.warnSeen || []), b.dataset.dismwarn])];
@@ -491,11 +502,13 @@ function stripHtml(state, list) {
   if (!nights.length) return '';
   const covered = nights.filter(n => n.covered).length;
   const pitches = nights.filter(n => n.pitch).length;
+  const conf = bkOv(state).nightConf || {};
   const sub = pitches
     ? `${covered - pitches}/${nights.length} pitches booked · ${pitches} to book`
     : `${covered}/${nights.length} nights covered`;
   return `<div class="bk-strip">
     <h3>🛏 Where you sleep — ${sub}</h3>
+    <p class="muted">Tap a confirmation field to store each pitch/lift booking reference — saved on this device, shown offline.</p>
     <div class="bk-strip-row">
       ${nights.map(n => {
         const cls = n.pitch ? 'pitch' : (n.covered ? 'covered' : 'gap');
@@ -505,9 +518,12 @@ function stripHtml(state, list) {
         const label = n.pitch ? (n.sleep ? esc(n.sleep) : 'Pitch to book')
           : (n.covered ? esc(n.name) : (n.sleep ? esc(n.sleep) : 'No stay'));
         return `
-        <div class="bk-night ${cls}"${tap} title="${esc(title)}">
-          <span class="bk-night-date">${stripDate(n.date)}</span>
-          <span class="bk-night-name">${label}</span>
+        <div class="bk-night ${cls}">
+          <div class="bk-night-head"${tap} title="${esc(title)}">
+            <span class="bk-night-date">${stripDate(n.date)}</span>
+            <span class="bk-night-name">${label}</span>
+          </div>
+          <input class="bk-night-conf" data-nightconf="${esc(n.date)}" value="${esc(conf[n.date] || '')}" placeholder="conf #" title="Confirmation number for ${esc(n.date)}" />
         </div>`;
       }).join('')}
     </div>
@@ -643,4 +659,4 @@ function syncLabel(state) {
   return `Pipeline last sync: ${new Date(u).toLocaleString()}${ageH > 48 ? ' ⚠ stale' : ''}`;
 }
 
-const bkOv = state => ({ overrides: {}, manual: [], attachments: {}, emailSeen: [], warnSeen: [], bookedToMake: {}, ...(state.overlay.bookings || {}) });
+const bkOv = state => ({ overrides: {}, manual: [], attachments: {}, emailSeen: [], warnSeen: [], bookedToMake: {}, nightConf: {}, ...(state.overlay.bookings || {}) });

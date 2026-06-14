@@ -13,6 +13,7 @@ export function render(root, ctx) {
   }
 
   root.innerHTML = `
+    ${offlineCardHtml()}
     <div class="ess-card">
       <h2 class="ess-title">${e.flag} ${esc(e.name)} — travel essentials</h2>
       <div class="ess-grid">
@@ -41,4 +42,50 @@ export function render(root, ctx) {
           <li><span class="ess-en">${esc(p.en)}</span><span class="ess-local">${esc(p.local)}</span></li>`).join('')}
       </ul>
     </div>`;
+
+  wireOffline(root);
+}
+
+/* F4 · Offline road-pack — a one-tap "Download trip for offline" control. Tells the
+   service worker to pre-cache the app shell + every trip's JSON so the whole companion
+   opens with no Alpine signal. Map tiles cache as you pan the map (separate tile cache);
+   this pass refreshes the shell/data. Degrades gracefully where there's no SW. */
+function offlineCardHtml() {
+  const supported = 'serviceWorker' in navigator;
+  return `
+    <div class="ess-card ess-offline">
+      <h2 class="ess-title">📥 Offline road-pack</h2>
+      <p class="muted">Cache the whole companion on this device so it works with no Alpine signal — app, your itinerary, bookings and reference. Tiles you've panned over on the map stay cached too. Do this on Wi-Fi before you leave.</p>
+      <div class="ess-offrow">
+        <button id="essoffdl" type="button"${supported ? '' : ' disabled'}>Download trip for offline</button>
+        <span id="essoffstatus" class="ess-offstatus muted">${supported ? 'Ready.' : 'Offline caching not supported in this browser.'}</span>
+      </div>
+    </div>`;
+}
+
+function wireOffline(root) {
+  const btn = root.querySelector('#essoffdl');
+  const status = root.querySelector('#essoffstatus');
+  if (!btn || !('serviceWorker' in navigator)) return;
+  btn.onclick = async () => {
+    const reg = await navigator.serviceWorker.ready.catch(() => null);
+    const sw = reg && (reg.active || navigator.serviceWorker.controller);
+    if (!sw) { status.textContent = 'Service worker not active yet — reload and try again.'; return; }
+    btn.disabled = true;
+    status.textContent = '⏳ Starting…';
+    const onMsg = e => {
+      const d = e.data || {};
+      if (d.type === 'CACHE_TRIP_PROGRESS') {
+        status.textContent = `⏳ Caching ${d.done}/${d.total}…`;
+      } else if (d.type === 'CACHE_TRIP_DONE') {
+        navigator.serviceWorker.removeEventListener('message', onMsg);
+        btn.disabled = false;
+        status.textContent = d.ok
+          ? `✓ Saved for offline — ${d.cached} files cached. Open this trip with no signal.`
+          : `✓ Saved ${d.cached}/${d.total} (${d.failed} unreachable — works offline anyway).`;
+      }
+    };
+    navigator.serviceWorker.addEventListener('message', onMsg);
+    sw.postMessage({ type: 'CACHE_TRIP' });
+  };
 }

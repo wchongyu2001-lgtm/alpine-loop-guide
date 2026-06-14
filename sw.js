@@ -2,7 +2,7 @@
    Cache-first for the shell (html/css/js), network-first-then-cache for trip JSON,
    stale-while-revalidate for CDN assets (Leaflet, fonts, Sortable) so the app opens
    with no signal. Bump CACHE on any shell/data change to invalidate old caches. */
-const CACHE = 'tc-shell-v10';
+const CACHE = 'tc-shell-v11';
 // Map tiles live in their own cache so they survive shell-cache version bumps
 // (a CACHE bump shouldn't wipe the offline map). Tiles are stale-while-revalidate.
 const TILES = 'tc-tiles-v1';
@@ -46,6 +46,32 @@ self.addEventListener('activate', e => {
     const keys = await caches.keys();
     await Promise.all(keys.filter(k => k !== CACHE && k !== TILES).map(k => caches.delete(k)));
     await self.clients.claim();
+  })());
+});
+
+// F4 — on-demand "Download trip for offline" pass. The page posts {type:'CACHE_TRIP'};
+// we refresh every shell + data asset into CACHE (fail-soft per asset so one 404 can't
+// abort the run) and report {done,total} progress back to the requesting client, then a
+// final {ok}. Reuses the same CACHE/SHELL/DATA the install step uses — map tiles already
+// land in the TILES cache as you pan the map, and survive this pass untouched.
+self.addEventListener('message', e => {
+  if (!e.data || e.data.type !== 'CACHE_TRIP') return;
+  const reply = msg => { try { e.source && e.source.postMessage(msg); } catch {} };
+  e.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    const assets = [...SHELL, ...DATA];
+    let done = 0, failed = 0;
+    reply({ type: 'CACHE_TRIP_PROGRESS', done, total: assets.length });
+    for (const u of assets) {
+      try {
+        const res = await fetch(u, { cache: 'reload' });
+        if (res && res.ok) await cache.put(u, res.clone());
+        else failed++;
+      } catch { failed++; }
+      done++;
+      reply({ type: 'CACHE_TRIP_PROGRESS', done, total: assets.length });
+    }
+    reply({ type: 'CACHE_TRIP_DONE', ok: failed === 0, cached: done - failed, failed, total: assets.length });
   })());
 });
 
