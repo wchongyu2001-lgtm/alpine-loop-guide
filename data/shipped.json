@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B15",
+      "title": "Quick currency converter in the Budget view",
+      "pillar": "money",
+      "date": "2026-06-14T22:30:00Z",
+      "what": "A small live converter sits in the Budget tab: type an amount in the trip currency (EUR) and instantly see it in your home currency — or type in the home currency and it back-converts to EUR. Pick the home currency from a dropdown of every rate fx.js knows (defaults to USD) and it sticks across reloads. It uses the same Frankfurter/ECB live rates the budget roll-up already pulls, so once you've opened the app online the rate is cached and the converter keeps working offline in the field. Typing updates the other field without a re-render, so focus and the caret never jump.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge 0bd7adc on origin/main (fxConvert exported from js/core.js; \"Currency converter\" budcard in js/budget.js). node tools/test-core.mjs exits 0 with 8 new fxConvert guards incl. both-direction round-trip (100 EUR @1.08 → 108 USD; 108 → 100), 2dp rounding, and null/NaN/zero-rate→null. Live served checks: js/budget.js + js/core.js HTTP 200 with markers on GitHub Pages.",
+      "commit": "0bd7adc",
+      "deploy": "live"
+    },
+    {
       "id": "B18",
       "title": "Offline trip search — instantly find any place, note or booking",
       "pillar": "offline",
