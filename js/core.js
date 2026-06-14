@@ -31,6 +31,20 @@ export function optimizeOrder(items, getLL) {
   return out;
 }
 
+// Preview a nearest-neighbour reorder of a day's stops: the optimized order plus the
+// distance/time saved vs the current order. `anchor` (the day start ll) is prepended to
+// both routes when given so the saving reflects the real drive. Pure — no DOM/network.
+export function optimizePreview(items, getLL, anchor) {
+  const optimized = optimizeOrder(items, getLL);
+  const route = list => routeStats([anchor, ...list.map(getLL)].filter(Boolean));
+  const before = route(items), after = route(optimized);
+  return {
+    optimized, before, after,
+    savedKm: Math.max(0, before.km - after.km),
+    savedHours: Math.max(0, Math.round((before.hours - after.hours) * 10) / 10),
+  };
+}
+
 export const gmapsUrl = (ll, name) => ll
   ? `https://www.google.com/maps/search/?api=1&query=${ll[0]},${ll[1]}`
   : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name || '')}`;
