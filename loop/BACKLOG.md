@@ -125,7 +125,7 @@ New "Overview" view tab; pure tripOverview() in core.js; taps scroll to it-day-<
 > Maps (a key is set in js/config.js). These lean into the road-trip + the new map. Frontend-only,
 > no new deps, no backend/secrets. Build on existing modules; reuse core.js helpers + open-meteo/fx.
 
-### B29 · status: todo · pillar: maps
+### B29 · status: wip · pillar: maps
 **Satellite view + remembered map layer.** On the Google Maps backend, let the user switch map type
 (roadmap / satellite / terrain) and remember the choice in localStorage so it sticks across reloads;
 default to satellite for the campervan scenery. Accept: switching to Satellite persists across reload;
