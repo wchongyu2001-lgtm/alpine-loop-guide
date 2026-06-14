@@ -9,7 +9,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   legGapMins, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
-  bookingRollup, tripEstimate } from '../js/core.js';
+  bookingRollup, tripEstimate, transportContinuity } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -566,6 +566,45 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(tripEstimate(days, budget, meta, 'sp').rows[0].total, 30 + 20 + 50 + 5 + 16,
     'tripEstimate: sp mode uses the splurge activity tier');
   eq(tripEstimate([], budget, meta).total, 0, 'tripEstimate: no days → 0');
+}
+
+// ---- B27: transportContinuity ----
+{
+  // A clean multi-leg chain (arrive = next depart) raises nothing.
+  const clean = [
+    { id: 'f1', type: 'flight', title: 'EK 1 · Singapore (SIN) → Dubai (DXB)', start: '2026-07-24T00:50', end: '2026-07-24T04:05' },
+    { id: 'f2', type: 'flight', title: 'EK 2 · Dubai (DXB) → Milan (MXP)', start: '2026-07-24T09:35', end: '2026-07-24T14:10' },
+    { id: 'c1', type: 'car', title: 'Indie Campers (Venice ↔ Venice)', start: '2026-08-01', end: '2026-08-17' },
+  ];
+  eq(transportContinuity(clean), [], 'transportContinuity: clean chain + round-trip van → no issues');
+
+  // Broken same-day connection: land DXB but next leg departs DOH the same day.
+  const broke = [
+    { id: 'f1', type: 'flight', title: 'EK 1 · Singapore (SIN) → Dubai (DXB)', start: '2026-07-24T00:50', end: '2026-07-24T04:05' },
+    { id: 'f2', type: 'flight', title: 'QR 9 · Doha (DOH) → Milan (MXP)', start: '2026-07-24T09:35', end: '2026-07-24T14:10' },
+  ];
+  eq(transportContinuity(broke).map(c => [c.kind, c.id]), [['break', 'f2']],
+    'transportContinuity: same-day arrive≠depart → break flag');
+
+  // Same-time jump: two timed legs overlap from different origins.
+  const jump = [
+    { id: 'a', type: 'train', title: 'A · Rome → Naples', start: '2026-07-24T09:00', end: '2026-07-24T11:00' },
+    { id: 'b', type: 'train', title: 'B · Florence → Bologna', start: '2026-07-24T10:00', end: '2026-07-24T12:00' },
+  ];
+  eq(transportContinuity(jump).filter(c => c.kind === 'jump').map(c => c.id), ['b'],
+    'transportContinuity: overlapping legs from different places → jump flag');
+
+  // One-way vehicle rental: pickup ≠ drop-off, no "↔".
+  const oneway = [{ id: 'c', type: 'car', title: 'Hertz · Milan → Rome', start: '2026-08-01', end: '2026-08-05' }];
+  eq(transportContinuity(oneway).map(c => c.kind), ['noreturn'],
+    'transportContinuity: one-way car drop-off → noreturn flag');
+
+  // Far-apart legs with different places are NOT flagged (normal unbooked transfer).
+  const farapart = [
+    { id: 'f1', type: 'flight', title: 'X · A (AAA) → B (BBB)', start: '2026-07-24T09:00', end: '2026-07-24T11:00' },
+    { id: 't1', type: 'train', title: 'Y · Cville → Dtown', start: '2026-07-27T09:00', end: '2026-07-27T11:00' },
+  ];
+  eq(transportContinuity(farapart), [], 'transportContinuity: legs days apart → no false break');
 }
 
 process.exit(fails ? 1 : 0);
