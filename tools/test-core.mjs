@@ -10,7 +10,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, transportContinuity, bookingIcs,
-  nextUpcoming, fmtCountdown, searchRecords } from '../js/core.js';
+  nextUpcoming, fmtCountdown, searchRecords, fxConvert } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -703,6 +703,19 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(searchRecords(recs, '   '), [], 'searchRecords: whitespace-only query → no rows');
   eq(searchRecords(null, 'x'), [], 'searchRecords: null records → []');
   eq(searchRecords(recs, 'zzz').length, 0, 'searchRecords: no match → empty');
+}
+
+// ---- B15: quick currency converter (two-way, rate = home units per 1 base) ----
+{
+  // EUR base, USD home, rate 1.08
+  eq(fxConvert(100, 1.08, 'toHome'), 108, 'fxConvert: base→home multiplies');
+  eq(fxConvert(108, 1.08, 'toBase'), 100, 'fxConvert: home→base divides (round-trips)');
+  eq(fxConvert(0, 1.08, 'toHome'), 0, 'fxConvert: zero amount → 0');
+  eq(fxConvert(10, 1.2345, 'toHome'), 12.35, 'fxConvert: rounds to 2dp');
+  eq(fxConvert(null, 1.08, 'toHome'), null, 'fxConvert: null amount → null');
+  eq(fxConvert(NaN, 1.08, 'toHome'), null, 'fxConvert: NaN amount → null');
+  eq(fxConvert(100, 0, 'toBase'), null, 'fxConvert: zero rate → null (avoids div-by-0)');
+  eq(fxConvert(50, 1, 'toHome'), 50, 'fxConvert: rate 1 is identity');
 }
 
 process.exit(fails ? 1 : 0);
