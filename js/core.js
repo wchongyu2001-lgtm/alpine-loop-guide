@@ -241,6 +241,32 @@ export function assignTrip(trips, startISO) {
   return hits[0].id;
 }
 
+// ---- B21: manual quick-add booking (pure) ----
+// Build a booking object from raw manual-form fields. Trims/normalises everything,
+// auto-files to a trip by its start date, and drops empty optionals to null so the
+// card renderer (which is truthiness-gated) stays clean. pax is comma-separated.
+export function buildManualBooking(f, trips, defaultCurrency, id) {
+  const trim = v => String(v == null ? '' : v).trim();
+  const start = trim(f.start), end = trim(f.end);
+  const pax = trim(f.pax).split(',').map(s => s.trim()).filter(Boolean);
+  const amount = trim(f.amount) === '' ? null : Number(f.amount);
+  const loc = trim(f.location);
+  return {
+    id,
+    trip: assignTrip(trips, start),
+    type: trim(f.type) || 'other',
+    title: trim(f.title),
+    start,
+    end: end || null,
+    provider: trim(f.provider) || null,
+    confirmation: trim(f.conf) || null,
+    price: amount != null && !isNaN(amount) ? { amount, currency: trim(f.currency) || defaultCurrency } : null,
+    pax: pax.length ? pax : null,
+    location: loc ? { name: loc } : null,
+    source: 'manual',
+  };
+}
+
 // Bookings that belong to no known trip — empty/null trip, the literal
 // 'unassigned' tag, or a stale trip id no longer in the registry. These would
 // otherwise be invisible (in no trip's list and not the inbox), so they need a

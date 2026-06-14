@@ -3,7 +3,7 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, assignTrip, parseEmailStub, wlShareValid, bookingWarnings, orphanBookings } from './core.js';
+import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, orphanBookings } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
@@ -86,10 +86,14 @@ export function render(root, ctx) {
       <form id="bkform">
         <select name="type">${TYPES.map(t => `<option>${t}</option>`).join('')}</select>
         <input name="title" placeholder="Title (e.g. FI 418 · KEF → DUB)" required />
-        <input name="start" type="datetime-local" required />
+        <input name="provider" placeholder="Provider (e.g. Icelandair)" />
+        <label class="bkfield">Start <input name="start" type="datetime-local" required /></label>
+        <label class="bkfield">End <input name="end" type="datetime-local" /></label>
+        <input name="location" placeholder="Location (e.g. B&B Hotel Milano)" />
         <input name="conf" placeholder="Confirmation #" />
         <input name="amount" type="number" step="0.01" placeholder="Price" />
         <input name="currency" placeholder="EUR" size="4" />
+        <input name="pax" placeholder="Travellers (comma-separated)" />
         <button>Add</button>
       </form>
     </details>
@@ -112,17 +116,15 @@ export function render(root, ctx) {
   if (form) form.onsubmit = e => {
     e.preventDefault();
     const f = new FormData(form);
-    const start = f.get('start');
     const ov = bkOv(state);
     const id = 'manual-' + Date.now();
-    ov.manual = [...(ov.manual || []), {
-      id,
-      trip: assignTrip(state.registry.trips, start),
-      type: f.get('type'), title: f.get('title'), start,
-      confirmation: f.get('conf') || null,
-      price: f.get('amount') ? { amount: +f.get('amount'), currency: f.get('currency') || state.trip.currency } : null,
-      source: pendingEmail ? 'email-fetch' : 'manual',
-    }];
+    const booking = buildManualBooking({
+      type: f.get('type'), title: f.get('title'), provider: f.get('provider'),
+      start: f.get('start'), end: f.get('end'), location: f.get('location'),
+      conf: f.get('conf'), amount: f.get('amount'), currency: f.get('currency'), pax: f.get('pax'),
+    }, state.registry.trips, state.trip.currency, id);
+    if (pendingEmail) booking.source = 'email-fetch';
+    ov.manual = [...(ov.manual || []), booking];
     if (pendingEmail) {
       if (pendingEmail.attachments.length) ov.attachments = { ...(ov.attachments || {}), [id]: pendingEmail.attachments };
       ov.emailSeen = [...(ov.emailSeen || []), pendingEmail.id];
@@ -333,6 +335,7 @@ function cardBody(b, attachments) {
           ${b.provider ? ` · ${esc(b.provider)}` : ''}
           ${b.price && b.price.amount ? ` · ${fmtMoney(b.price.amount, b.price.currency + ' ')}` : ''}
         </div>
+        ${b.location && b.location.name && !ll ? `<div class="bkpax muted">📍 ${esc(b.location.name)}</div>` : ''}
         ${b.confirmation ? `<div class="bkconf">conf <b>${esc(b.confirmation)}</b></div>` : ''}
         ${b.pax ? `<div class="bkpax muted">${b.pax.map(esc).join(' · ')}</div>` : ''}
         ${b.notes ? `<div class="bkpax muted">${esc(b.notes)}</div>` : ''}
