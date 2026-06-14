@@ -32,7 +32,7 @@ Turn the flat "Bookings to make" checklist into deadline-driven cards.
 - Reuse the bookings_to_make data + checklists. Acceptance: a countdown view/section renders
   with per-item deadlines and status; overdue/urgent highlighted.
 
-## F4 · Offline road-pack + confirmation locker — status: wip
+## F4 · Offline road-pack + confirmation locker — status: done (commit d60f88f)
 One-tap make-the-trip-work-with-no-signal.
 - A "Download trip for offline" action that pre-caches maps tiles + all trip data via the
   service worker (sw.js already cache-first); plus a small locker to store each campsite/lift

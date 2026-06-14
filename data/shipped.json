@@ -450,6 +450,17 @@
       "verify_note": "Green-gate passed: node --check js/core.js+js/bookings.js, JSON.parse data/alpine.json, test-core exits 0 with 14 new bookingCountdown cases (campsite ranks first/overdue on 2026-06-14, 'May 2026'->15 May, '1-2wk ahead'->start-10d, day-of->no deadline, booked sinks). Local served-check 200+marker. Playwright re-drive ok:true/pageErrors:[] with in-browser eval confirming 15 countdown cards render: campsites '30d overdue' (u-overdue) first, Jungfraujoch 'book by 22 Jul 2026 / 38d left' second, Gornergrat 'buy day-of' — and a toggle test flipping campsites to 'booked checkmark' sinking it to the bottom.",
       "commit": "ab006d9",
       "deploy": "live"
+    },
+    {
+      "id": "F4",
+      "title": "Offline road-pack + confirmation locker",
+      "pillar": "essentials",
+      "date": "2026-06-14T00:00:00Z",
+      "what": "Two ways to make the trip work with no Alpine signal. (1) The Essentials view opens with an 'Offline road-pack' card: one 'Download trip for offline' button postMessages the service worker, which refreshes every app-shell module + all trip JSON into its cache (fail-soft per asset) and reports live progress ('Caching N/total…') then a done state ('Saved for offline — N files cached'); map tiles you've panned over already persist in their own tile cache and survive untouched. (2) A confirmation locker on the 'Where you sleep' strip in Bookings: each night now has a 'conf #' field to store that pitch/lift booking reference, saved on-device in the bookings overlay (localStorage) so it shows even offline and across reloads.",
+      "verified": true,
+      "verify_note": "Green-gate passed: node --check sw.js+js/essentials.js+js/bookings.js, test-core exits 0 (incl. existing sw.js precache/tile-cache guards still green after CACHE bump v10→v11). Local served-check 200+marker; live served-check 200+marker. Playwright re-drive ok:true/pageErrors:[] with in-browser eval confirming: the offline button renders ('Download trip for offline'); clicking it runs the SW cache pass to completion ('Saved for offline — 36 files cached', cache key tc-shell-v11); 15 per-night conf fields render; a set value persists to localStorage nightConf and survives a full page reload (set 'PERSIST99' → reload → field still 'PERSIST99'). Residual console 504s are pre-existing baseline (sandbox blocks external CDN/FX; SW cross-origin fallback), present identically on pre-change main.",
+      "commit": "d60f88f",
+      "deploy": "live"
     }
   ]
 }
