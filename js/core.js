@@ -716,6 +716,50 @@ export function bookingRollup(bookings, toBase = a => a) {
   return { byType, total: round(total), count };
 }
 
+// ---- B28: single-booking iCalendar (.ics) for add-to-calendar (pure) ----
+// Floating local times, matching how booking times are stored (naive, no zone).
+// A date-only start becomes an all-day event; a timed start with no end gets a
+// 1-hour default. `dtstamp` is the required UTC stamp (YYYYMMDDTHHMMSSZ); pass
+// one for determinism, else "now" is used.
+function icsDateParts(s) {
+  const t = String(s || '');
+  const ymd = t.slice(0, 10).replace(/-/g, '');
+  if (t.length <= 10 || t.indexOf('T') < 0) return { date: true, val: ymd };
+  const hm = t.slice(11, 16).replace(/:/g, '').padEnd(4, '0');
+  return { date: false, val: ymd + 'T' + hm + '00' };
+}
+function icsNowStamp() {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}Z`;
+}
+export function bookingIcs(b, dtstamp) {
+  const e = s => String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/([,;])/g, '\\$1').replace(/\r?\n/g, '\\n');
+  const start = icsDateParts(b.start);
+  const lines = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Travel Companion//Bookings//EN',
+    'BEGIN:VEVENT',
+    `UID:${e(b.id || 'booking')}@travel-companion`,
+    `DTSTAMP:${dtstamp || icsNowStamp()}`,
+    start.date ? `DTSTART;VALUE=DATE:${start.val}` : `DTSTART:${start.val}`,
+  ];
+  if (b.end) {
+    const end = icsDateParts(b.end);
+    lines.push(end.date ? `DTEND;VALUE=DATE:${end.val}` : `DTEND:${end.val}`);
+  } else if (!start.date) {
+    lines.push('DURATION:PT1H');
+  }
+  lines.push(`SUMMARY:${e(b.title)}`);
+  const desc = [];
+  if (b.provider) desc.push('Provider: ' + b.provider);
+  if (b.confirmation) desc.push('Confirmation: ' + b.confirmation);
+  if (b.pax && b.pax.length) desc.push('Travellers: ' + b.pax.join(', '));
+  if (b.price && b.price.amount) desc.push('Price: ' + b.price.amount + ' ' + (b.price.currency || ''));
+  if (desc.length) lines.push('DESCRIPTION:' + e(desc.join('\n')));
+  if (b.location && b.location.name) lines.push('LOCATION:' + e(b.location.name));
+  lines.push('END:VEVENT', 'END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
 // ---- B11: "where am I in the day?" — now/next progress on the Today plan (pure) ----
 // Given a day's ordered plan and the current "HH:MM", label each stop: 'now' while
 // its time window contains now, 'next' for the first not-yet-started timed stop,

@@ -9,7 +9,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   legGapMins, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
-  bookingRollup, tripEstimate, transportContinuity } from '../js/core.js';
+  bookingRollup, tripEstimate, transportContinuity, bookingIcs } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -605,6 +605,37 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
     { id: 't1', type: 'train', title: 'Y · Cville → Dtown', start: '2026-07-27T09:00', end: '2026-07-27T11:00' },
   ];
   eq(transportContinuity(farapart), [], 'transportContinuity: legs days apart → no false break');
+}
+
+// ---- B28: bookingIcs single-booking calendar export ----
+{
+  const STAMP = '20260614T120000Z';
+  const hotel = {
+    id: 'manual-1', type: 'hotel', title: 'B&B Hotel, Milano', provider: 'Booking.com',
+    start: '2026-08-05T15:00', end: '2026-08-06T11:00', confirmation: 'ABC-123',
+    price: { amount: 240, currency: 'EUR' }, pax: ['Chongyu', 'Yuanxin'],
+    location: { name: 'Via Roma 1, Milano' },
+  };
+  const ics = bookingIcs(hotel, STAMP).split('\r\n');
+  eq(ics[0], 'BEGIN:VCALENDAR', 'bookingIcs: starts a VCALENDAR');
+  eq(ics[ics.length - 1], 'END:VCALENDAR', 'bookingIcs: ends the VCALENDAR');
+  eq(ics.includes('BEGIN:VEVENT') && ics.includes('END:VEVENT'), true, 'bookingIcs: wraps one VEVENT');
+  eq(ics.includes('DTSTART:20260805T150000'), true, 'bookingIcs: timed DTSTART floating-local');
+  eq(ics.includes('DTEND:20260806T110000'), true, 'bookingIcs: timed DTEND from end');
+  eq(ics.includes('UID:manual-1@travel-companion'), true, 'bookingIcs: UID from booking id');
+  eq(ics.includes('DTSTAMP:20260614T120000Z'), true, 'bookingIcs: DTSTAMP passed through');
+  eq(ics.includes('SUMMARY:B&B Hotel\\, Milano'), true, 'bookingIcs: escapes comma in SUMMARY');
+  eq(ics.includes('LOCATION:Via Roma 1\\, Milano'), true, 'bookingIcs: LOCATION present + escaped');
+  eq(ics.some(l => l.startsWith('DESCRIPTION:') && l.includes('Confirmation: ABC-123')), true, 'bookingIcs: conf in DESCRIPTION');
+
+  // Date-only start, no end → all-day VALUE=DATE, no DTEND/DURATION.
+  const allday = bookingIcs({ id: 'x', type: 'activity', title: 'Funicular', start: '2026-08-07' }, STAMP).split('\r\n');
+  eq(allday.includes('DTSTART;VALUE=DATE:20260807'), true, 'bookingIcs: date-only → all-day DTSTART');
+  eq(allday.some(l => l.startsWith('DTEND') || l.startsWith('DURATION')), false, 'bookingIcs: all-day with no end → no DTEND/DURATION');
+
+  // Timed start, no end → 1-hour default duration.
+  const noend = bookingIcs({ id: 'y', type: 'train', title: 'Train', start: '2026-08-08T09:30' }, STAMP).split('\r\n');
+  eq(noend.includes('DURATION:PT1H'), true, 'bookingIcs: timed + no end → PT1H default');
 }
 
 process.exit(fails ? 1 : 0);
