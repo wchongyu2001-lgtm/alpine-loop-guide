@@ -211,6 +211,9 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .bk-night.covered{background:rgba(45,90,61,.12);border-color:rgba(45,90,61,.3)}
 .bk-night.gap{background:#fdf2e9;border-color:var(--terra);border-style:dashed;cursor:pointer}
 .bk-night.gap:hover{background:#fbe6d3}
+.bk-night.pitch{background:#fff8e6;border-color:#d4a017;border-style:dashed;cursor:pointer}
+.bk-night.pitch:hover{background:#fcefcc}
+.bk-night.pitch .bk-night-name{color:#a07400}
 .bk-night-date{font-family:'JetBrains Mono',monospace;font-size:.66em;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
 .bk-night-name{font-size:.78em;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bk-night.gap .bk-night-name{color:var(--terra)}

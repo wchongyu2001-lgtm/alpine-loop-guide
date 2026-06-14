@@ -525,10 +525,16 @@ export function coverageGaps(days, bookings) {
 export function accommodationStrip(days, bookings) {
   const dated = (days || []).filter(d => d._date).sort((a, b) => a._date.localeCompare(b._date));
   const lodging = (bookings || []).filter(b => b.type === 'hotel' || isCamperBed(b));
-  const cover = date => lodging.find(b => dOnly(b.start) <= date && date < dOnly(b.end || b.start));
+  // A dedicated bed for the night: a hotel/apartment booking, NOT just the trip-spanning
+  // campervan. On a campervan trip the van is your bed, but each night still needs a
+  // *pitch/Stellplatz* booked — so a van-only night is "pitch pending", not done.
+  const beds = lodging.filter(b => !isCamperBed(b));
+  const cover = (list, date) => list.find(b => dOnly(b.start) <= date && date < dOnly(b.end || b.start));
   return dated.slice(0, -1).map(d => {
-    const b = cover(d._date);
-    return { date: d._date, sleep: d.sleep || '', covered: !!b, name: b ? b.title : '' };
+    const b = cover(lodging, d._date);
+    const bed = cover(beds, d._date);
+    return { date: d._date, sleep: d.sleep || '', covered: !!b, name: b ? b.title : '',
+             pitch: !!b && !bed };
   });
 }
 

@@ -433,15 +433,26 @@ function stripHtml(state, list) {
   const nights = accommodationStrip(state.days, list);
   if (!nights.length) return '';
   const covered = nights.filter(n => n.covered).length;
+  const pitches = nights.filter(n => n.pitch).length;
+  const sub = pitches
+    ? `${covered - pitches}/${nights.length} pitches booked · ${pitches} to book`
+    : `${covered}/${nights.length} nights covered`;
   return `<div class="bk-strip">
-    <h3>🛏 Where you sleep — ${covered}/${nights.length} nights covered</h3>
+    <h3>🛏 Where you sleep — ${sub}</h3>
     <div class="bk-strip-row">
-      ${nights.map(n => `
-        <div class="bk-night ${n.covered ? 'covered' : 'gap'}"${n.covered ? '' : ` data-booknight="${esc(n.date)}"`}
-             title="${esc(n.covered ? n.name : 'Tap to book a stay for ' + n.date)}">
+      ${nights.map(n => {
+        const cls = n.pitch ? 'pitch' : (n.covered ? 'covered' : 'gap');
+        const tap = (n.covered && !n.pitch) ? '' : ` data-booknight="${esc(n.date)}"`;
+        const title = n.pitch ? ('Van is your bed — tap to book a pitch for ' + n.date)
+          : (n.covered ? n.name : ('Tap to book a stay for ' + n.date));
+        const label = n.pitch ? (n.sleep ? esc(n.sleep) : 'Pitch to book')
+          : (n.covered ? esc(n.name) : (n.sleep ? esc(n.sleep) : 'No stay'));
+        return `
+        <div class="bk-night ${cls}"${tap} title="${esc(title)}">
           <span class="bk-night-date">${stripDate(n.date)}</span>
-          <span class="bk-night-name">${n.covered ? esc(n.name) : (n.sleep ? esc(n.sleep) : 'No stay')}</span>
-        </div>`).join('')}
+          <span class="bk-night-name">${label}</span>
+        </div>`;
+      }).join('')}
     </div>
   </div>`;
 }
