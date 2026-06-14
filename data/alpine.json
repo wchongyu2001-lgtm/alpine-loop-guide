@@ -1430,7 +1430,48 @@
      "cost": "~€28pp"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-toblach-drive",
+     "n": "Zell am See → Dolomites drive (via Lienz)",
+     "t": "act",
+     "ll": [46.829, 12.769],
+     "time": "08:30–12:00",
+     "d": "Roll south out of Zell am See over Felbertauern (~€11 tunnel toll, the value pick vs the long Gerlos detour) into South Tyrol. Coffee + leg-stretch in arcaded Lienz, then on to Toblach. Restock the van's larder in Bruneck/Toblach Eurospar before you climb — valley shops are tiny and pricey."
+    },
+    {
+     "id": "wl-toblach-pitch",
+     "n": "Pitch Camping Olympia, Toblach",
+     "t": "act",
+     "ll": [46.73, 12.221],
+     "time": "12:15–13:30",
+     "d": "Check in and set up the van at Camping Olympia (Via Major 28, ~€40–54/night for 2). Pool/sauna + cycle path to the lake on the doorstep — your 1-night Dolomites gateway base. Pre-book 1–2 mths ahead for peak Aug."
+    },
+    {
+     "id": "wl-dobbiaco-lake",
+     "n": "Lago di Dobbiaco swim & loop",
+     "t": "swim",
+     "ll": [46.715, 12.226],
+     "time": "14:30–16:30",
+     "d": "FREE. Cycle the path straight from the campsite to this calm reed-fringed lake; easy ~3km loop and a swim spot under the peaks — the gentle first-Dolomites afternoon after the drive."
+    },
+    {
+     "id": "wl-innichen",
+     "n": "San Candido / Innichen",
+     "t": "gem",
+     "ll": [46.733, 12.279],
+     "time": "16:45–18:15",
+     "d": "FREE stroll. Pastel village with a Romanesque collegiate church — gelato and a wander through the pedestrian centre before dinner."
+    },
+    {
+     "id": "wl-toblach-dinner",
+     "n": "First Südtirol dinner",
+     "t": "food",
+     "ll": [46.73, 12.221],
+     "time": "19:30–21:00",
+     "d": "~€28pp. Speck, canederli dumplings and a glass of Lagrein at a Toblach Gasthof or the campsite restaurant — South Tyrol's food night begins. Value tip: the campsite's own kitchen saves the drive back."
+    }
+   ]
   },
   {
    "id": "braies",
@@ -1505,7 +1546,40 @@
      "cost": "Free"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-braies-dawn",
+     "n": "Lago di Braies — beat the 9:30 vehicle ban",
+     "t": "view",
+     "ll": [46.694, 12.085],
+     "time": "07:00–09:00",
+     "d": "CRITICAL TIMING. The Braies access road closes to private vehicles ~9:30–16:00 in Aug — break camp at Toblach early and drive the ~25min so you park before 9am (parking ~€7/hr). Reward: glassy turquoise water, wooden rowboats (€30/30min, optional splurge) and the postcard cliffs crowd-free at dawn. If you miss the window, use the shuttle from Toblach/Villabassa instead of driving up."
+    },
+    {
+     "id": "wl-tre-cime",
+     "n": "Tre Cime di Lavaredo loop",
+     "t": "hike",
+     "ll": [46.618, 12.301],
+     "time": "10:00–14:30",
+     "d": "The Dolomites' signature hike. Drive the toll road up to Rifugio Auronzo (~€30/car — pricey but it saves a 600m climb, the value pick for the day) then walk the ~4h, mostly-level circuit around the three towers past rifugios and WWI tunnels. Lunch at Rifugio Locatelli with the classic head-on view, or picnic from the van pack."
+    },
+    {
+     "id": "wl-misurina",
+     "n": "Lago di Misurina golden hour",
+     "t": "swim",
+     "ll": [46.581, 12.255],
+     "time": "15:00–16:30",
+     "d": "FREE. Drop back down to this lakeside resort below the Sorapis cliffs — gentle stroll, a paddle, gelato; it turns gold late afternoon. Quick stop at tiny Lago d'Antorno (free) on the way down for the mirror reflection most people miss."
+    },
+    {
+     "id": "wl-braies-pitch",
+     "n": "Relocate + pitch Camping Olympic, Cortina",
+     "t": "act",
+     "ll": [46.567, 12.122],
+     "time": "17:00–18:30",
+     "d": "Today's itinerary drive is 0, but you've relocated the van's base toward Cortina: check in at Camping Olympic (Località Fiames, SS51 ~4km N of Cortina, ~€44–58/night, bus at the gate). Pine-shaded riverside pitches; sets you up pointed at Val Gardena for tomorrow. Book 1–2 mths ahead."
+    }
+   ]
   },
   {
    "id": "seceda",
@@ -1587,7 +1661,48 @@
      "cost": "~€35pp"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-seceda-ridge",
+     "n": "Ortisei → Seceda cable car (morning light)",
+     "t": "view",
+     "ll": [46.604, 11.731],
+     "time": "08:30–11:30",
+     "d": "Drive ~40min from Cortina to Ortisei, park, and ride the cable car up for the otherworldly tilted ridgeline in crisp morning light — one of the great Dolomite views (~€45pp return). Value alt: drive to the Alpe di Siusi base and walk the meadow for ~€18. Short ridge walk along the Fermeda saddle at the top before the cloud builds."
+    },
+    {
+     "id": "wl-alpe-siusi",
+     "n": "Alpe di Siusi meadow walk",
+     "t": "hike",
+     "ll": [46.541, 11.61],
+     "time": "12:00–14:00",
+     "d": "Europe's largest alpine meadow under the Sassolungo spires — easy rolling trails, picnic from the van with the Schlern in view (~€18 gondola/bus). The relaxed midday counterpoint to Seceda's drama."
+    },
+    {
+     "id": "wl-carezza",
+     "n": "Sella/Pordoi pass drive + Lago di Carezza",
+     "t": "gem",
+     "ll": [46.41, 11.577],
+     "time": "14:30–16:30",
+     "d": "Drive the great Dolomite passes (Sella/Pordoi hairpins — free and spectacular) and stop at the 'rainbow lake' Carezza reflecting the Latemar (parking ~€6). Then drop down to your Val di Fassa base."
+    },
+    {
+     "id": "wl-seceda-pitch",
+     "n": "Pitch Camping Marmotta, Pozza di Fassa",
+     "t": "act",
+     "ll": [46.43, 11.683],
+     "time": "16:45–18:15",
+     "d": "Check in at Camping Marmotta (Strada de Sèn Jan, Val di Fassa, ~€38–52/night for 2) — quiet riverside pitches + pool, great-value last Dolomites base. Book 1–2 mths ahead."
+    },
+    {
+     "id": "wl-seceda-dinner",
+     "n": "South Tyrol wine dinner",
+     "t": "food",
+     "ll": [46.566, 11.674],
+     "time": "19:30–21:30",
+     "d": "~€35pp — the big food/wine night. A Val di Fassa hut or Gardena Stube: Schlutzkrapfen, a Gewürztraminer or Lagrein, and a final mountain toast before the run back to the lagoon."
+    }
+   ]
   },
   {
    "id": "return",
@@ -1646,7 +1761,48 @@
      "cost": "Campsite €35"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-return-morning",
+     "n": "Slow mountain morning + descend to the plains",
+     "t": "act",
+     "ll": [46.43, 11.683],
+     "time": "08:30–11:00",
+     "d": "No rush — a last coffee at the Val di Fassa pitch, pack up, then drive down out of the Dolomites onto the Veneto plain via the A22/A27. The mountains shrink in the mirror; aim the van for the Prosecco hills for lunch."
+    },
+    {
+     "id": "wl-prosecco",
+     "n": "Prosecco Hills lunch (Valdobbiadene)",
+     "t": "food",
+     "ll": [45.897, 12.012],
+     "time": "12:30–14:30",
+     "d": "MUST. UNESCO vineyard ridges — a last Italian lunch with a glass of proper Prosecco Superiore straight from the source (tasting ~€15pp). Cantina lunch among the vines is the value splurge to end the trip on."
+    },
+    {
+     "id": "wl-treviso",
+     "n": "Treviso wander",
+     "t": "town",
+     "ll": [45.666, 12.243],
+     "time": "15:30–17:00",
+     "d": "FREE. Canals, frescoed porticoes and the birthplace of tiramisù — a relaxed final town stop and one last gelato/espresso before the lagoon."
+    },
+    {
+     "id": "wl-mestre-prep",
+     "n": "Mestre: pitch + van hand-back prep",
+     "t": "van",
+     "ll": [45.493, 12.243],
+     "time": "17:30–19:00",
+     "d": "Pitch at Camping Jolly delle Querce, Marghera/Mestre (~€36–50, closest proper site to the Indie Campers Venice depot). Crucial pre-return chores: dump grey/black tanks, refill fresh water, refuel to the level your contract requires, and clean out the van so the 11:00 hand-back tomorrow is stress-free."
+    },
+    {
+     "id": "wl-venice-lastnight",
+     "n": "Last lagoon evening in Venice (optional)",
+     "t": "act",
+     "ll": [45.438, 12.327],
+     "time": "19:30–22:30",
+     "d": "Optional but worth it. Leave the van pitched and take the ACTV bus into Piazzale Roma (~15–20min) for a final cicchetti-and-spritz dinner in Venice on foot — far cheaper and less stressful than driving the van anywhere near the lagoon. Last bus back to Mestre well before midnight."
+    }
+   ]
   },
   {
    "id": "liecht",
