@@ -25,7 +25,7 @@ Protect the expensive weather-dependent lift days (Jungfraujoch, Gornergrat, Sec
 - Extends the existing weather re-plan nudge (B19). Acceptance: a lift day with poor forecast
   shows a warning + swap suggestion in the Today/itinerary view.
 
-## F3 · Booking countdown tracker — status: wip
+## F3 · Booking countdown tracker — status: done (commit ab006d9)
 Turn the flat "Bookings to make" checklist into deadline-driven cards.
 - Each bookable item: "book by <date>", days-left countdown, booked/not status, sorted by
   sell-out risk (campsites > Jungfraujoch slot > rest).

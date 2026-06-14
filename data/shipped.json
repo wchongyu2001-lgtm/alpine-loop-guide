@@ -439,6 +439,17 @@
       "verify_note": "Green-gate passed: node --check js/core.js+js/today.js, JSON.parse data/alpine.json, test-core exits 0 with 14 new liftInfo/liftScore/liftAdvice cases, local served-check 200+marker. Playwright re-drive ok:true/pageErrors:[] with in-browser eval confirming liftInfo detects Jungfraujoch(3454m), out-of-range forecast degrades to {state:pending}, and a poor forecast returns {state:poor, swap:THU 6 AUG}.",
       "commit": "b93c1fb",
       "deploy": "live"
+    },
+    {
+      "id": "F3",
+      "title": "Booking countdown tracker",
+      "pillar": "bookings",
+      "date": "2026-06-14T00:00:00Z",
+      "what": "The Bookings view now opens with a deadline-driven 'Booking countdown' section: the flat 'bookings to make' list becomes per-item cards showing what / a derived book-by date / a live days-left countdown / booked status, sorted by sell-out risk (campsites first, then the Jungfraujoch timeslot, then time-sensitive bookings, with buy-day-of items last). Overdue and within-7-day items are flagged red. Book-by dates are derived from each item's prose lead-time relative to the trip start (2026-08-01); the countdown recomputes from the live current date every render. Ticking an item marks it booked, strikes it through, and sinks it to the bottom; the state persists in the bookings overlay.",
+      "verified": true,
+      "verify_note": "Green-gate passed: node --check js/core.js+js/bookings.js, JSON.parse data/alpine.json, test-core exits 0 with 14 new bookingCountdown cases (campsite ranks first/overdue on 2026-06-14, 'May 2026'->15 May, '1-2wk ahead'->start-10d, day-of->no deadline, booked sinks). Local served-check 200+marker. Playwright re-drive ok:true/pageErrors:[] with in-browser eval confirming 15 countdown cards render: campsites '30d overdue' (u-overdue) first, Jungfraujoch 'book by 22 Jul 2026 / 38d left' second, Gornergrat 'buy day-of' — and a toggle test flipping campsites to 'booked checkmark' sinking it to the bottom.",
+      "commit": "ab006d9",
+      "deploy": "live"
     }
   ]
 }
