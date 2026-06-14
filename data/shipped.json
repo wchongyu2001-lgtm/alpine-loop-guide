@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B24",
+      "title": "Where you sleep — a per-night strip showing which nights are booked and which are gaps",
+      "pillar": "bookings",
+      "date": "2026-06-14T14:00:00Z",
+      "what": "The Bookings view now opens with a 🛏 coverage strip — one cell per night of the trip (the final departure day is excluded since it needs no bed). Each night is colour-coded: a green cell with the hotel/stay name when a booking spans that night (check-in ≤ night < checkout, so checkout day doesn't double-count), or a dashed terracotta gap when nothing covers it. The header counts covered nights at a glance (e.g. “6/7 nights covered”). A campervan/motorhome counts as the bed it is, matching the “Still to book” logic so the two never disagree. Tapping an uncovered night jumps straight to the manual add form pre-filled as a hotel for that date (check-in 15:00, checkout next morning) so you can lock the stay in one tap. On the seeded Alpine trip every booked night shows covered with its stay name and any uncovered night shows a clear, tappable gap.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge 568f4b2 on origin/main (accommodationStrip in js/core.js, stripHtml + data-booknight quick-add in js/bookings.js, .bk-night/.bk-strip in css/app.css). node tools/test-core.mjs exits 0 with 9 new accommodationStrip guards ok (per-night cells, departure-day excluded, checkout-exclusive coverage, campervan-as-bed, uncovered→false, empty edge cases). Live served checks 200 with markers Travel Companion + accommodationStrip + bk-strip.",
+      "commit": "568f4b2",
+      "deploy": "live"
+    },
+    {
       "id": "B23",
       "title": "Booking timeline — every reservation in one chronological, day-by-day view",
       "pillar": "bookings",
