@@ -203,3 +203,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: dec79aa
+
+### 2026-06-14T20:30Z · B16 Next-up countdown on the Today view
+- status: done
+- pillar: mobile/live
+- what: Live "Next up" section on the Today view counting down to the soonest upcoming timed stop and the next booking; ticks each minute, degrades to "Nothing left scheduled today", only shows when the open day is today.
+- verified: PASS — independent agent: merge b5b0189 on origin/main, test-core exits 0 with new nextUpcoming/fmtCountdown guards, live served checks 200 (markers "Next up" + nextUpcoming), sanity import excludes past items.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: b5b0189
