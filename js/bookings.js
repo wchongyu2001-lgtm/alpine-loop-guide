@@ -3,12 +3,15 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings } from './core.js';
+import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, convert } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
+import { rates } from './fx.js';
 import { icon } from './icons.js';
 import { logoImg } from './logos.js';
+
+let fxRates = null; // {CUR: units per 1 base}, loaded once per session (shared shape with budget.js)
 
 let attSeq = 0; // unique-per-call suffix; Date.now alone collides in a loop
 
@@ -25,6 +28,7 @@ export function render(root, ctx) {
   pendingEmail = null; // prefilled form dies with each rerender; don't leak into a later manual add
   const { state } = ctx;
   const list = tripBookings(state, state.trip.id);
+  if (!fxRates) rates(state.trip.currency || 'EUR').then(r => { fxRates = r; ctx.rerender(); });
   const unassigned = orphanBookings(allBookings(state), state.registry.trips);
   const atts = bkOv(state).attachments || {};
 
@@ -62,6 +66,7 @@ export function render(root, ctx) {
       <div id="bksuggest">${suggestionsHtml(state)}</div>
     </div>
     ${remindersHtml(list)}
+    ${rollupHtml(state, list)}
     ${warningsHtml(state, list)}
     ${stripHtml(state, list)}
     ${stillToBookHtml(state, list)}
@@ -309,6 +314,29 @@ function remindersHtml(list) {
           <div class="bk-remind-detail">${esc(r.detail)}</div>
         </div>
       </div>`).join('')}
+  </div>`;
+}
+
+/* ---------- committed cost rollup vs budget (B26) ---------- */
+
+function rollupHtml(state, list) {
+  const base = state.trip.currency || 'EUR';
+  const cur = (state.tripData?.meta?.curSymbol) || (base + ' ');
+  const toBase = (amt, c) => (!c || c === base || !fxRates || !fxRates[c]) ? amt : convert(amt, 1 / fxRates[c]);
+  const roll = bookingRollup(list, toBase);
+  if (!roll.count) return '';
+  const mode = (state.overlay.expenses || {}).mode || 'bu';
+  const est = tripEstimate(state.days, state.tripData?.budget, state.tripData?.meta, mode).total;
+  const pct = est ? Math.round(roll.total / est * 100) : 0;
+  return `<div class="bk-rollup">
+    <h3>💶 Committed so far — ${fmtMoney(roll.total, cur)} <small class="muted">${roll.count} booking${roll.count > 1 ? 's' : ''}</small></h3>
+    ${est ? `<div class="bk-rollup-vs">${pct}% of the ${fmtMoney(est, cur)} trip budget already reserved.</div>` : ''}
+    <div class="bk-rollup-bars">
+      ${roll.byType.map(t => `
+        <div class="bk-rollup-bar"><span>${esc(t.label)}</span>
+          <i style="width:${roll.total ? Math.round(t.total / roll.total * 100) : 0}%"></i>
+          <b>${fmtMoney(t.total, cur)}</b></div>`).join('')}
+    </div>
   </div>`;
 }
 

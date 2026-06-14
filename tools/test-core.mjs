@@ -8,7 +8,8 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
   legGapMins, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
-  buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders } from '../js/core.js';
+  buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
+  bookingRollup, tripEstimate } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -528,6 +529,43 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(r.some(x => x.id === 'h2'), false, 'bookingReminders: a hotel with no check-in/cancel fields raises nothing');
   eq(bookingReminders(bks, 'not-a-date'), [], 'bookingReminders: bad now → empty');
   eq(bookingReminders([], now), [], 'bookingReminders: no bookings → empty');
+}
+
+// ---- B26: bookingRollup + tripEstimate ----
+{
+  const bks = [
+    { id: 'f1', type: 'flight', title: 'AZ 100', price: { amount: 200, currency: 'EUR' } },
+    { id: 'f2', type: 'flight', title: 'AZ 200', price: { amount: 100, currency: 'EUR' } },
+    { id: 'h1', type: 'hotel', title: 'Hotel A', price: { amount: 300, currency: 'EUR' } },
+    { id: 't1', type: 'train', title: 'Trenitalia', price: { amount: 50, currency: 'EUR' } },
+    { id: 'c1', type: 'car', title: 'Hertz', price: { amount: 150, currency: 'EUR' } },
+    { id: 'a1', type: 'activity', title: 'Funicular', price: { amount: 40, currency: 'EUR' } },
+    { id: 'o1', type: 'other', title: 'Misc', price: { amount: 10, currency: 'EUR' } },
+    { id: 'np', type: 'hotel', title: 'No price', price: null },           // ignored
+    { id: 'z', type: 'flight', title: 'Zero', price: { amount: 0 } },      // ignored
+  ];
+  const r = bookingRollup(bks);
+  eq(r.total, 850, 'bookingRollup: grand total sums only priced bookings');
+  eq(r.count, 7, 'bookingRollup: counts only priced bookings');
+  eq(r.byType.map(t => [t.key, t.total]),
+    [['flights', 300], ['stays', 300], ['transport', 200], ['activities', 40], ['other', 10]],
+    'bookingRollup: grouped by headline type in fixed order, train+car → transport');
+  eq(bookingRollup([]), { byType: [], total: 0, count: 0 }, 'bookingRollup: no bookings → empty');
+
+  // FX: a USD booking converted to EUR via toBase (USD rate = 1.1 units per EUR → /1.1)
+  const fxRates = { EUR: 1, USD: 1.1 };
+  const toBase = (amt, c) => (!c || c === 'EUR') ? amt : convert(amt, 1 / fxRates[c]);
+  const fxRoll = bookingRollup([{ type: 'hotel', price: { amount: 110, currency: 'USD' } }], toBase);
+  eq(fxRoll.total, 100, 'bookingRollup: FX-converts foreign currency into base via toBase');
+
+  const days = [{ id: 'd1', drive: 2 }, { id: 'd2', drive: 0 }];
+  const budget = { d1: { camp: 30, food: 20, act: { bu: 10, sp: 50 }, x: 5 }, d2: { camp: 25, food: 15 } };
+  const meta = { fuelPerH: 8 };
+  eq(tripEstimate(days, budget, meta, 'bu').total, 30 + 20 + 10 + 5 + 16 + 25 + 15,
+    'tripEstimate: bu mode sums camp+food+act.bu+x+fuel across days');
+  eq(tripEstimate(days, budget, meta, 'sp').rows[0].total, 30 + 20 + 50 + 5 + 16,
+    'tripEstimate: sp mode uses the splurge activity tier');
+  eq(tripEstimate([], budget, meta).total, 0, 'tripEstimate: no days → 0');
 }
 
 process.exit(fails ? 1 : 0);

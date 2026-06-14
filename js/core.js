@@ -618,6 +618,43 @@ export function budgetVsActual(days, expenses) {
   return { rows, totals };
 }
 
+// ---- Guide estimate per day + total (pure) — shared by Budget and the B26 rollup ----
+// One source of truth for the "trip budget" figure: per day, camp + food + the chosen
+// activity tier (bu|sp) + extras + fuel (drive hours × fuelPerH). Returns { rows:[{d,total}], total }.
+export function tripEstimate(days, budget, meta, mode = 'bu') {
+  const rows = (days || []).map(d => {
+    const b = (budget || {})[d.id] || {};
+    const act = typeof b.act === 'object' ? (b.act[mode === 'sp' ? 'sp' : 'bu'] || 0) : (b.act || 0);
+    const fuel = (d.drive || 0) * ((meta || {}).fuelPerH || 0);
+    return { d, total: (b.camp || 0) + (b.food || 0) + act + (b.x || 0) + fuel };
+  });
+  return { rows, total: rows.reduce((s, e) => s + e.total, 0) };
+}
+
+// ---- B26: committed booking spend rolled up by type, for "vs budget" (pure) ----
+// Sum every priced booking into the trip base currency via toBase(amount, currency)
+// — pass the same FX-aware converter the Budget view uses; default is identity.
+// Booking types collapse into four headline buckets (+ other); returns only the
+// buckets with spend (fixed order), the grand total, and the count of priced
+// bookings. Bookings with no price are ignored, so an empty trip → total 0.
+const ROLLUP_GROUP = { flight: 'flights', hotel: 'stays', train: 'transport', bus: 'transport', car: 'transport', ferry: 'transport', activity: 'activities' };
+const ROLLUP_ORDER = ['flights', 'stays', 'transport', 'activities', 'other'];
+const ROLLUP_LABEL = { flights: 'Flights', stays: 'Stays', transport: 'Transport', activities: 'Activities', other: 'Other' };
+export function bookingRollup(bookings, toBase = a => a) {
+  const sums = {};
+  let total = 0, count = 0;
+  (bookings || []).forEach(b => {
+    if (!b || !b.price || !b.price.amount) return;
+    const amt = Number(toBase(b.price.amount, b.price.currency)) || 0;
+    const g = ROLLUP_GROUP[b.type] || 'other';
+    sums[g] = (sums[g] || 0) + amt;
+    total += amt; count++;
+  });
+  const round = n => Math.round(n * 100) / 100;
+  const byType = ROLLUP_ORDER.filter(g => g in sums).map(g => ({ key: g, label: ROLLUP_LABEL[g], total: round(sums[g]) }));
+  return { byType, total: round(total), count };
+}
+
 // ---- B11: "where am I in the day?" — now/next progress on the Today plan (pure) ----
 // Given a day's ordered plan and the current "HH:MM", label each stop: 'now' while
 // its time window contains now, 'next' for the first not-yet-started timed stop,
