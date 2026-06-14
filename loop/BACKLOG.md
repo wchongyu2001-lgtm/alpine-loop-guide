@@ -100,10 +100,11 @@ Accept: a rainy outdoor Alpine day shows the nudge; a clear day does not; no fal
 
 ## Batch 2 — P3 (essentials & polish)
 
-### B14 · status: wip · pillar: offline
+### B14 · status: done (b0f1bbe) · pillar: offline
 **Country essentials card.** Per trip, an offline card with the emergency number, currency, power
 plug type and a few language basics for the destination country. Accept: the Alpine (Italy) trip
 shows emergency 112, EUR, plug type C/F; renders offline; data is static (no API).
+New "Essentials" view tab; countryEssentials() static table in core.js keyed by trip.country (IT/IS).
 
 ### B17 · status: todo · pillar: bookings
 **Calendar export (.ics).** Export a trip's bookings + timed stops to a downloadable `.ics` file so

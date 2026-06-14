@@ -248,3 +248,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: b31f42136dc4fd09732483dec94f9981afca9da5
+
+### 2026-06-15T00:30:00Z · B14 Country essentials card
+- status: done
+- pillar: offline
+- what: New "Essentials" tab — per-trip offline card with emergency number (112), currency, plug type + voltage, and language basics. Static data (no API), precached in the service worker.
+- verified: PASS — independent agent confirmed merge b0f1bbe on origin/main (js/essentials.js wired into VIEWS, countryEssentials() in core.js, "country" in trips.json, sw.js shell + CACHE v6), test-core.mjs exits 0 with 8 B14 guards, live GitHub Pages fetch of js/essentials.js 200 w/ marker.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: b0f1bbe
