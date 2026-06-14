@@ -46,7 +46,7 @@ nights with a hotel show covered, nights without show a clear gap, for the seede
 free-cancellation deadline, and hotel check-in/out times — a "Needs attention" list sorted by urgency.
 Accept: a flight/hotel with the relevant fields produces a correctly-sorted reminder; nothing spurious.
 
-### B26 · status: todo · pillar: bookings
+### B26 · status: wip · pillar: bookings
 **Booking cost rollup vs budget.** Total committed reservation spend broken down by type (flights,
 stays, transport, activities) in the trip currency (FX-converted), shown against the trip budget so
 you see how much of the trip is already paid/committed. Accept: the rollup sums the seeded bookings by
