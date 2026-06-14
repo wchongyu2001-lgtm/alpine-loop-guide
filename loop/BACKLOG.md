@@ -18,7 +18,7 @@ If you think of a valuable new item mid-run, append it to the bottom as `todo`.
 > next. Build on the existing bookings model (data/bookings.json + the `bookings` overlay: manual[]
 > + overrides{}) and the Bookings view (js/bookings.js). Frontend-only, no backend/secrets.
 
-### B21 · status: wip · pillar: bookings
+### B21 · status: done (cb5e914) · pillar: bookings
 **Manual quick-add booking.** A form in the Bookings view to add a reservation by hand (type
 flight/hotel/train/bus/car/activity/other, title, provider, start datetime, optional end, confirmation #,
 price+currency, pax, location), saved to the `bookings` overlay `manual[]` so it shows in the timeline

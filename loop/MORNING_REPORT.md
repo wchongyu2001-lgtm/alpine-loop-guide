@@ -130,3 +130,13 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 64516b2
+
+### 2026-06-14T00:00:00Z · B21 Manual quick-add booking
+- status: done
+- pillar: bookings
+- what: Extended the Bookings manual-add form to capture provider, optional end time, location and travellers (pax); routed submit through a new pure buildManualBooking() that trims/files/normalises and saves into the manual[] overlay so hand-added bookings show in the timeline like imported ones.
+- verified: PASS — independent agent confirmed merge cb5e914 on origin/main, node tools/test-core.mjs exits 0 (4 new buildManualBooking guards ok), LIVE served checks 200 with buildManualBooking marker in js/bookings.js + js/core.js (no propagation lag).
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: cb5e914
+- note: Owner inserted Batch 3 (booking-planning, B21–B28) above Batch 2 mid-run; pivoted from the previously-claimed B16 (released back to todo) to honor the new top priority.
