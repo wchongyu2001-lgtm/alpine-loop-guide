@@ -293,3 +293,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 6874fe9
+
+### 2026-06-15T01:10Z · B31 Trip totals + departure countdown
+- status: done
+- pillar: polish
+- what: Overview tab now leads with a live "X days to departure" countdown + a compact stats strip (driving km, driving hours, nights, planned stops, bookings, days). Two pure fns in core.js: tripTotals() + daysToDeparture().
+- verified: PASS — independent agent confirmed artifacts on origin/main (4d49f62), test-core exits 0 with 15 B31 assertions, logic correct, live Pages served-checks 200 with markers after propagation.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 4d49f62
