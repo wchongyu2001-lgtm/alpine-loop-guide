@@ -212,3 +212,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: b5b0189
+
+### 2026-06-14T21:35Z · B18 Offline trip search
+- status: done
+- pillar: offline
+- what: New "Search" tab — instant client-side filter across the open trip's places, day notes and bookings (name/desc/time/provider/conf#/location), multi-token AND, grouped results, zero network.
+- verified: PASS (independent agent) — merge b58f0fd on origin/main; test-core exits 0 with 9 new searchRecords guards; js/search.js has no fetch/XHR (offline-only); live served checks 200 incl. GitHub Pages js/search.js.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: b58f0fd
