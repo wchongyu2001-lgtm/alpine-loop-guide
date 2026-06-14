@@ -7,7 +7,8 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
   legGapMins, legFeasibility, dayLoad,
-  overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking } from '../js/core.js';
+  overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
+  buildManualBooking } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -395,6 +396,34 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(g2.includes('Hiking boots'), false, 'suggestPacking: no outdoor activity → no boots');
   eq(suggestPacking([{ weather: null, text: '' }]).includes('Reusable water bottle'), true,
     'suggestPacking: no weather → still base essentials');
+}
+
+// ---- B21: manual quick-add booking (pure) ----
+{
+  const trips = [{ id: 'alpine', start: '2026-08-01', end: '2026-08-17' }];
+  const full = buildManualBooking({
+    type: 'hotel', title: '  B&B Hotel Milano  ', provider: ' Booking.com ',
+    start: '2026-08-05T14:00', end: '2026-08-06T11:00', location: ' Milan ',
+    conf: ' ABC123 ', amount: '120', currency: ' EUR ', pax: ' Chongyu , Yuanxin ,',
+  }, trips, '€', 'manual-1');
+  eq(full, {
+    id: 'manual-1', trip: 'alpine', type: 'hotel', title: 'B&B Hotel Milano',
+    start: '2026-08-05T14:00', end: '2026-08-06T11:00', provider: 'Booking.com',
+    confirmation: 'ABC123', price: { amount: 120, currency: 'EUR' },
+    pax: ['Chongyu', 'Yuanxin'], location: { name: 'Milan' }, source: 'manual',
+  }, 'buildManualBooking: full hotel → trimmed, filed to alpine, pax split, price set');
+
+  const min = buildManualBooking({ title: 'Mystery', start: '2026-09-01T09:00' }, trips, '€', 'manual-2');
+  eq(min, {
+    id: 'manual-2', trip: 'unassigned', type: 'other', title: 'Mystery',
+    start: '2026-09-01T09:00', end: null, provider: null, confirmation: null,
+    price: null, pax: null, location: null, source: 'manual',
+  }, 'buildManualBooking: bare fields → empty optionals null, default type, unassigned outside trips');
+
+  eq(buildManualBooking({ title: 'x', start: '2026-08-05', amount: '' }, trips, '€', 'm3').price, null,
+    'buildManualBooking: blank amount → no price');
+  eq(buildManualBooking({ title: 'x', start: '2026-08-05', amount: '50' }, trips, '£', 'm4').price,
+    { amount: 50, currency: '£' }, 'buildManualBooking: amount without currency → trip default currency');
 }
 
 process.exit(fails ? 1 : 0);

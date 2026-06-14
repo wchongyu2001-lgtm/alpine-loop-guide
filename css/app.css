@@ -181,6 +181,8 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .bk-add{margin-top:20px}
 .bk-add form,#exform{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .bk-add input,.bk-add select{flex:1;min-width:120px}
+.bk-add .bkfield{flex:1;min-width:170px;display:flex;align-items:center;gap:6px;font-size:.82rem;color:#5d564a}
+.bk-add .bkfield input{min-width:0}
 
 /* map */
 .mapbar{margin-bottom:8px}
