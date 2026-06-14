@@ -1,6 +1,6 @@
 /* Budget: guide estimates (from v1 data) + actual expenses with splitting,
    multi-currency roll-up (booked items converted to the trip base) + settle-up. */
-import { esc, fmtMoney, computeBalances, convert, simplifyDebts, budgetVsActual } from './core.js';
+import { esc, fmtMoney, computeBalances, convert, simplifyDebts, budgetVsActual, tripEstimate } from './core.js';
 import { tripBookings } from './data.js';
 import { rates } from './fx.js';
 
@@ -17,14 +17,7 @@ export function render(root, ctx) {
   const mode = ov.mode || 'bu';
 
   // --- estimates from guide data ---
-  const est = state.days.map(d => {
-    const b = (td.budget || {})[d.id] || {};
-    const act = typeof b.act === 'object' ? (b.act[mode === 'sp' ? 'sp' : 'bu'] || 0) : (b.act || 0);
-    const fuel = (d.drive || 0) * (td.meta.fuelPerH || 0);
-    const total = (b.camp || 0) + (b.food || 0) + act + (b.x || 0) + fuel;
-    return { d, total };
-  });
-  const estTotal = est.reduce((s, e) => s + e.total, 0);
+  const { rows: est, total: estTotal } = tripEstimate(state.days, td.budget, td.meta, mode);
   const hasSplurge = Object.values(td.budget || {}).some(b => typeof b.act === 'object');
 
   // --- actuals: manual expenses + priced bookings ---

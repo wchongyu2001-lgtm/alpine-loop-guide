@@ -189,6 +189,13 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .bk-night-date{font-family:'JetBrains Mono',monospace;font-size:.66em;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
 .bk-night-name{font-size:.78em;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bk-night.gap .bk-night-name{color:var(--terra)}
+.bk-rollup{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:12px 0}
+.bk-rollup h3{font-size:.86em;color:var(--ink);margin:0 0 4px}
+.bk-rollup h3 small{font-weight:400;font-size:.78em}
+.bk-rollup-vs{font-size:.8em;color:var(--ink-soft);margin-bottom:8px}
+.bk-rollup-bar{display:grid;grid-template-columns:80px 1fr 80px;gap:8px;align-items:center;font-size:.8em;margin:3px 0}
+.bk-rollup-bar i{display:block;height:8px;border-radius:4px;background:var(--pine);min-width:2px}
+.bk-rollup-bar b{text-align:right;font-family:'JetBrains Mono',monospace;font-weight:400}
 .tl-intro p{font-size:.9em;color:var(--ink-soft)}
 .tl-overlap-lead{color:var(--terra)}
 .tl-day{margin:16px 0;border-left:2px solid var(--line);padding-left:14px}
