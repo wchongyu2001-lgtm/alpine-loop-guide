@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B17",
+      "title": "Calendar export (.ics)",
+      "pillar": "bookings",
+      "date": "2026-06-14T07:30:00Z",
+      "what": "The Bookings view now has a \"📅 Export trip calendar (.ics)\" button that downloads the whole trip as one standard calendar file: one event per booking (flights, stays, transport, activities — with provider, confirmation #, price and location) plus one event per timed itinerary stop (start/end pulled from the stop's HH:MM time). Untimed stops and undated days are skipped, and times are floating-local (no timezone surprises), so the file drops cleanly into Apple Calendar, Google Calendar or Outlook. Built on a new pure tripIcs() that shares the same VEVENT builder as the existing single-booking add-to-calendar.",
+      "verified": true,
+      "verify_note": "Independent agent PASS: tripIcs + #bkics button on origin/main (merge 2061f72); node tools/test-core.mjs exits 0 with 13 new tripIcs assertions; live throwaway import produced a valid VCALENDAR (2 bookings + 1 timed stop = 3 VEVENTs, untimed/undated skipped); live served checks 200 with markers on first try.",
+      "commit": "2061f72",
+      "deploy": "live"
+    },
+    {
       "id": "MAP-GMAPS",
       "title": "Map view can run on Google Maps",
       "pillar": "logistics",
