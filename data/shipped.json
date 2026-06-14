@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B26",
+      "title": "Committed so far — booking spend rolled up by type vs the trip budget",
+      "pillar": "bookings",
+      "date": "2026-06-14T17:00:00Z",
+      "what": "The Bookings view now shows a 💶 Committed so far card that totals every priced reservation for the trip and breaks it down by headline type — Flights, Stays, Transport (train/bus/car/ferry), Activities and Other — each with a proportional bar. Foreign-currency bookings are FX-converted into the trip's base currency using the same live-rate path the Budget view uses (cached for the day, graceful fallback offline), so the grand total is apples-to-apples. The card also reads the trip's guide budget via a shared tripEstimate helper (now the single source of that figure for both Budget and Bookings) and shows what fraction is already reserved — e.g. “42% of the €1,200 trip budget already reserved.” Bookings with no price are ignored, so an all-unpriced trip shows nothing. On the seeded Alpine trip the rollup sums the reservations by type with a correct grand total and ties into the existing budget number.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge baf738f on origin/main (bookingRollup + tripEstimate in js/core.js, rollupHtml 💶 Committed so far card in js/bookings.js, budget.js refactored to use tripEstimate, .bk-rollup styles in css/app.css). node tools/test-core.mjs exits 0 with new guards: grand total sums priced-only, count, group mapping (train+car→transport, fixed order), FX-convert via toBase, and tripEstimate bu/sp/no-days. Live served checks 200 with markers bookingRollup (core.js) + rollupHtml (bookings.js).",
+      "commit": "baf738f",
+      "deploy": "live"
+    },
+    {
       "id": "B25",
       "title": "Needs attention — time-sensitive booking reminders sorted by urgency",
       "pillar": "bookings",
