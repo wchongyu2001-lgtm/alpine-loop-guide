@@ -13,7 +13,7 @@
   },
 
   "nights": [
-    { "night": 1,  "date": "2026-08-01", "region": "Lake Garda / Veneto (warm-up)", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 1,  "date": "2026-08-01", "region": "Lake Garda / Veneto (warm-up)", "campsite": "Camping San Benedetto", "location": "Peschiera del Garda (lakeside, A4-accessible)", "booked_status": "to-book", "done": true },
     { "night": 2,  "date": "2026-08-02", "region": "Italian Lakes / approach to Switzerland", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
     { "night": 3,  "date": "2026-08-03", "region": "Swiss Alps - Lauterbrunnen / Berner Oberland", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
     { "night": 4,  "date": "2026-08-04", "region": "Swiss Alps - Berner Oberland (Jungfrau)", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
