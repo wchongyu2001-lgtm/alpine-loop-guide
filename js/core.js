@@ -221,6 +221,24 @@ export function suggestPacking(dayInfos) {
   return items;
 }
 
+// B19: weather-aware re-plan nudge. Pure → testable. Given a day's plan items
+// (each carries a tag `t`) and that day's weather, decide whether to gently nudge
+// toward indoor alternatives (reusing the B07 nearby indoor categories). Returns
+// null unless the day is mostly outdoor AND rain is forecast → { outdoor, total, suggest }.
+const OUTDOOR_TAGS = new Set(['view', 'hike', 'swim', 'lake', 'scenic', 'falls', 'park', 'town', 'gem', 'van', 'act']);
+const INDOOR_SUGGEST = ['museums', 'galleries', 'cafés', 'thermal spas'];
+export function replanNudge(plan, weather) {
+  const w = weather;
+  if (!w) return null;
+  const rain = (w.precip != null && w.precip >= 50) || (w.code != null && w.code >= 51);
+  if (!rain) return null;
+  const stops = (plan || []).filter(p => p && p.t);
+  if (stops.length < 2) return null;
+  const outdoor = stops.filter(p => OUTDOOR_TAGS.has(p.t)).length;
+  if (outdoor <= stops.length / 2) return null; // not "mostly" outdoor
+  return { outdoor, total: stops.length, suggest: INDOOR_SUGGEST };
+}
+
 export const convert = (amt, rate) => amt == null ? null : Math.round(amt * rate * 100) / 100;
 
 // Two-way currency conversion using a rate = units of home per 1 unit of base.
