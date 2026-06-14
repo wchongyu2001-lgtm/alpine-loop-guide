@@ -679,6 +679,25 @@ export function effectivePlans(days, overlayPlans) {
   return out;
 }
 
+// B20 · Compact trip-overview rows: one entry per day with its date, headline,
+// first planned stop and that day's booking markers. Pure — drives the Overview view.
+// days are decorated (._n/._date/._label); plans keyed by day.id; bookings is the trip list.
+export function tripOverview(days, plans = {}, bookings = []) {
+  return (days || []).map(d => {
+    const plan = (plans && plans[d.id]) || d.plan || [];
+    const dayBk = (bookings || []).filter(b => String(b.start).slice(0, 10) === d._date);
+    const firstStop = (plan[0] && plan[0].n) || '';
+    return {
+      id: d.id,
+      n: d._n,
+      date: d._label || d.date || '',
+      headline: d.short || firstStop || '',
+      firstStop,
+      bookings: dayBk.map(b => ({ type: b.type, title: b.title })),
+    };
+  });
+}
+
 // Expense splitting between two travellers (extensible to N via shares).
 // split: {type:'equal'} | {type:'solo'} (payer only) | {type:'shares', shares:{name:fraction}}
 export function computeBalances(expenses, travellers) {

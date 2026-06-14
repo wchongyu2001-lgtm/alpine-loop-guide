@@ -187,7 +187,7 @@ function dayCard(day, plan, bookings, state) {
   const mode = dayMode(state, day.id);
   const load = dayLoad(plan, mode);
   return `
-  <div class="daycard">
+  <div class="daycard" id="it-day-${day.id}">
     <div class="dayhead">
       <span class="daynum">${day._n}</span>
       <div>
