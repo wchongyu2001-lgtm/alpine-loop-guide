@@ -5,7 +5,7 @@ import { esc, gmapsPlaceUrl, amapsPlaceUrl, gmapsDirUrl, routeStats, optimizeOrd
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, pickSummaryExtract, thumbCacheKey, factCacheKey,
   splitTime, joinTime, matchBooking, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey,
-  fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon, daylight } from './core.js';
+  fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon, daylight, dayNote } from './core.js';
 import { tripBookings } from './data.js';
 import { BASE } from './sync.js';
 import { enrich } from './places.js';
@@ -104,6 +104,14 @@ export function render(root, ctx) {
     if (v === (p.note || p.d || '')) return;
     p.note = v || undefined; if (p.d && !v) p.d = undefined;
     setPlan(ctx, dayId, plans[dayId]); ctx.rerender();
+  });
+
+  // B33: free-form per-day notes — save on blur, persist via the itinerary overlay.
+  root.querySelectorAll('.dn-input[data-daynote]').forEach(ta => ta.onblur = () => {
+    const dayId = ta.dataset.daynote;
+    const v = ta.value.trim();
+    if (v === dayNote(state.overlay.itinerary, dayId)) return;
+    setDayNote(ctx, dayId, v);
   });
 
   hydrateFacts(root);
@@ -219,6 +227,7 @@ function dayCard(day, plan, bookings, state) {
       <div class="results"></div>
     </div>
     ${day.sleep ? `<div class="sleep">Sleep · ${esc(day.sleep)}</div>` : ''}
+    <div class="daynote"><textarea class="dn-input" data-daynote="${day.id}" rows="2" placeholder="📝 Day notes — fill water at…, ZTL zone, etc.">${esc(dayNote(state.overlay.itinerary, day.id))}</textarea></div>
   </div>`;
 }
 
@@ -410,5 +419,14 @@ const dayMode = (state, dayId) => ((state.overlay.itinerary || {}).dayModes || {
 function setMode(ctx, dayId, mode) {
   const ov = ovFull(ctx.state);
   ov.dayModes = { ...(ov.dayModes || {}), [dayId]: mode };
+  ctx.save('itinerary', ov);
+}
+
+// B33: free-form per-day note persisted to the itinerary overlay's dayNotes map.
+function setDayNote(ctx, dayId, text) {
+  const ov = ovFull(ctx.state);
+  const notes = { ...(ov.dayNotes || {}) };
+  if (text) notes[dayId] = text; else delete notes[dayId];
+  ov.dayNotes = notes;
   ctx.save('itinerary', ov);
 }

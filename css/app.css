@@ -133,6 +133,9 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .addplace .results button{text-align:left;border:0;background:none;padding:8px 10px;cursor:pointer;font-size:.84em}
 .addplace .results button:hover{background:var(--paper-2)}
 .sleep{margin-top:8px;font-size:.8em;color:var(--pine);font-weight:600}
+.daynote{margin-top:8px}
+.dn-input{width:100%;resize:vertical;font:inherit;font-size:.82em;padding:6px 8px;
+  border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
 
 /* bookings */
 .bk-intro p{font-size:.92em}
