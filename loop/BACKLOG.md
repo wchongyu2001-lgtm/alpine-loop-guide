@@ -147,7 +147,7 @@ start. Pure compute, offline. Accept: correct totals + countdown for the trip; r
 open-meteo daily endpoint weather.js already uses (cached for offline). Useful for driving + photos.
 Accept: each day shows plausible sunrise/sunset; degrades gracefully offline from cache.
 
-### B33 · status: todo · pillar: polish
+### B33 · status: wip · pillar: polish
 **Free-form day notes.** A per-day notes field (plain text) saved to the itinerary overlay, so the owner
 can jot reminders ("fill water at…", "ZTL zone — don't drive in") on any day. Accept: typing a note on a
 day persists across reload via the overlay; renders in the day card.
