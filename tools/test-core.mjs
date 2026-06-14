@@ -1,4 +1,4 @@
-import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans, dayDate, parseEmailStub, thumbAccent,
+import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview, effectivePlans, dayDate, parseEmailStub, thumbAccent,
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, thumbCacheKey,
   gmapsPlaceUrl, amapsPlaceUrl, splitTime, joinTime, matchBooking, pickSummaryExtract, factCacheKey,
   placeProxyUrl, placePhotoUrl, placeCacheKey, fmtRating, priceTier, parsePlace,
@@ -68,6 +68,21 @@ else console.log(`ok   routeStats ~${r.km}km ${r.hours}h`);
 
 const pts = [{ ll: [0, 0] }, { ll: [0, 3] }, { ll: [0, 1] }, { ll: [0, 2] }];
 eq(optimizeOrder(pts, p => p.ll).map(p => p.ll[1]), [0, 1, 2, 3], 'nearest-neighbour orders line');
+
+// B13: optimize-day preview — optimized order + km/time saved vs current order.
+{
+  const pv = optimizePreview(pts, p => p.ll);
+  eq(pv.optimized.map(p => p.ll[1]), [0, 1, 2, 3], 'optimizePreview: returns the optimized order');
+  if (!(pv.savedKm > 0)) { fails++; console.error(`FAIL optimizePreview savedKm=${pv.savedKm} expected >0`); }
+  else console.log(`ok   optimizePreview saves ~${pv.savedKm}km`);
+  if (!(pv.before.km >= pv.after.km)) { fails++; console.error('FAIL optimizePreview after route longer than before'); }
+  // Already-optimal order → zero (never negative) savings.
+  const opt = [{ ll: [0, 0] }, { ll: [0, 1] }, { ll: [0, 2] }];
+  eq(optimizePreview(opt, p => p.ll).savedKm, 0, 'optimizePreview: already-shortest → 0 saved (no negative)');
+  // Anchor (day start) is folded into both routes.
+  const withAnchor = optimizePreview(pts, p => p.ll, [0, 0]);
+  if (withAnchor.before.km < pv.before.km) { fails++; console.error('FAIL optimizePreview anchor not counted'); }
+}
 
 const days = [{ id: 'a', plan: [{ id: 'p1' }] }, { id: 'b', plan: [] }];
 eq(effectivePlans(days, { b: [{ id: 'p2' }] }), { a: [{ id: 'p1' }], b: [{ id: 'p2' }] }, 'overlay replaces per-day');

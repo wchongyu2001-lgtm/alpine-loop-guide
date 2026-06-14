@@ -1,7 +1,7 @@
 /* Day-by-day editable itinerary: drag-drop plans, place search, route stats,
    live place enrichment (rating/category/hours/photo), per-leg travel times,
    per-day weather. */
-import { esc, gmapsPlaceUrl, amapsPlaceUrl, gmapsDirUrl, routeStats, optimizeOrder, effectivePlans, thumbAccent,
+import { esc, gmapsPlaceUrl, amapsPlaceUrl, gmapsDirUrl, routeStats, optimizeOrder, optimizePreview, effectivePlans, thumbAccent,
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, pickSummaryExtract, thumbCacheKey, factCacheKey,
   splitTime, joinTime, matchBooking, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey,
@@ -18,6 +18,8 @@ const TYPE_ICON = { flight: '✈', hotel: '🛏', train: '🚆', bus: '🚌', ca
 
 // Which place detail drawer is open (survives rerenders).
 let openId = null;
+// Last optimize, for the inline savings preview + one-tap undo (survives rerenders).
+let lastOpt = null;
 
 export function render(root, ctx) {
   const { state } = ctx;
@@ -125,10 +127,21 @@ export function render(root, ctx) {
     });
   });
 
-  // optimize order (keeps first stop)
+  // optimize order (keeps first stop) — store the previous order + savings for an undo banner
   root.querySelectorAll('[data-opt]').forEach(b => b.onclick = () => {
     const dayId = b.dataset.opt;
-    setPlan(ctx, dayId, optimizeOrder(plans[dayId], p => p.ll));
+    const day = state.days.find(d => d.id === dayId);
+    const prev = plans[dayId].slice();
+    const pv = optimizePreview(plans[dayId], p => p.ll, day && day.ll);
+    setPlan(ctx, dayId, pv.optimized);
+    lastOpt = { dayId, prev, savedKm: pv.savedKm, savedHours: pv.savedHours };
+    ctx.rerender();
+  });
+
+  // undo the last optimize — restore the stored pre-optimize order
+  root.querySelectorAll('[data-undo]').forEach(b => b.onclick = () => {
+    const dayId = b.dataset.undo;
+    if (lastOpt && lastOpt.dayId === dayId) { setPlan(ctx, dayId, lastOpt.prev); lastOpt = null; }
     ctx.rerender();
   });
 
@@ -195,6 +208,9 @@ function dayCard(day, plan, bookings, state) {
       ${plan.map((p, i) => placeRow(day, p, plan[i + 1], mode, dayBk, tag)).join('')}
     </ul>
     ${stats ? `<div class="routestats">~${stats.km} km · ~${stats.hours} h driving today</div>` : ''}
+    ${lastOpt && lastOpt.dayId === day.id ? `<div class="optundo">⚡ Reordered nearest-first${
+      lastOpt.savedKm ? ` · saved ~${lastOpt.savedKm} km / ~${lastOpt.savedHours} h` : ' · already shortest'
+    }<button class="mini" data-undo="${day.id}" title="Restore the previous order">↶ undo</button></div>` : ''}
     ${load.overpacked ? `<div class="dayload-warn">⚠ Packed day — ~${fmtDuration(load.totalMins)} of stops + travel</div>` : ''}
     ${sugg.length ? `<div class="suggs">${sugg.slice(0, 6).map((st, i) =>
       `<button class="chip" data-sug="${day.id}|${(day.stops || []).indexOf(st)}" title="${esc(st.d || '')}">+ ${tag[st.t] || '•'} ${esc(st.n)}</button>`).join('')}</div>` : ''}
