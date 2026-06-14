@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "trip": "alpine",
+    "preset": "grand",
+    "label": "The Grand Loop",
+    "travelers": 2,
+    "who": "owner + YX",
+    "vehicle": "campervan (Indie Campers, booked)",
+    "route": "Venice -> Switzerland -> Austria -> Dolomites -> Venice",
+    "dates": { "start": "2026-08-01", "end": "2026-08-17", "nights": 16 },
+    "optimization": "value-optimized",
+    "notes": "Pick up van Fri 1 Aug PM in Venice; return van AM Mon 17 Aug. Regions below are first-pass guesses from the Grand Loop route; the loop refines them with real campsites/stops."
+  },
+
+  "nights": [
+    { "night": 1,  "date": "2026-08-01", "region": "Lake Garda / Veneto (warm-up)", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 2,  "date": "2026-08-02", "region": "Italian Lakes / approach to Switzerland", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 3,  "date": "2026-08-03", "region": "Swiss Alps - Lauterbrunnen / Berner Oberland", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 4,  "date": "2026-08-04", "region": "Swiss Alps - Berner Oberland (Jungfrau)", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 5,  "date": "2026-08-05", "region": "Swiss Alps - Grindelwald / Interlaken", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 6,  "date": "2026-08-06", "region": "Central Switzerland - Lucerne / Furka-Grimsel passes", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 7,  "date": "2026-08-07", "region": "Swiss Alps - Zermatt / Saas region (Matterhorn)", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 8,  "date": "2026-08-08", "region": "Eastern Switzerland - Engadin / St Moritz (toward Austria)", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 9,  "date": "2026-08-09", "region": "Austria - Tirol / Innsbruck area", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 10, "date": "2026-08-10", "region": "Austria - Tirol / Zillertal or Stubai", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 11, "date": "2026-08-11", "region": "Austria - Hohe Tauern / Grossglockner", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 12, "date": "2026-08-12", "region": "Austria/Italy border - East Tirol toward Dolomites", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 13, "date": "2026-08-13", "region": "Dolomites - Alta Badia / Val Gardena", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 14, "date": "2026-08-14", "region": "Dolomites - Cortina d'Ampezzo / Tre Cime", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 15, "date": "2026-08-15", "region": "Dolomites - Lago di Braies / Val di Funes", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 16, "date": "2026-08-16", "region": "Veneto - return run toward Venice", "campsite": null, "location": null, "booked_status": "to-book", "done": false }
+  ],
+
+  "days": [
+    { "day": 1,  "date": "2026-08-01", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 2,  "date": "2026-08-02", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 3,  "date": "2026-08-03", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 4,  "date": "2026-08-04", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 5,  "date": "2026-08-05", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 6,  "date": "2026-08-06", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 7,  "date": "2026-08-07", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 8,  "date": "2026-08-08", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 9,  "date": "2026-08-09", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 10, "date": "2026-08-10", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 11, "date": "2026-08-11", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 12, "date": "2026-08-12", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 13, "date": "2026-08-13", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 14, "date": "2026-08-14", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 15, "date": "2026-08-15", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 16, "date": "2026-08-16", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 17, "date": "2026-08-17", "anchor": "Return van AM, Venice", "stops": [], "timed": false, "done": false }
+  ],
+
+  "bookings_to_make": [],
+
+  "budget": {
+    "estimated": false,
+    "per_person_eur": null,
+    "breakdown": {}
+  },
+
+  "checklists": {
+    "pre_trip": false,
+    "per_day": false
+  },
+
+  "clean_pass_counter": 0
+}

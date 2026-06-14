@@ -2,3 +2,10 @@ __pycache__/
 *.pyc
 server/.venv/
 pipeline/sync.log
+
+# trip-planner loop dev-tooling (Playwright) — never shipped to the browser
+node_modules/
+package.json
+package-lock.json
+loop/shots/
+loop/steps/
