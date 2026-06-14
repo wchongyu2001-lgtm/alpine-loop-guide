@@ -411,6 +411,7 @@
   },
   {
    "id": "jungfraujoch",
+   "lift": { "name": "Jungfraujoch railway", "alt": 3454, "ll": [46.547, 7.98] },
    "date": "TUE 4 AUG",
    "drive": 0,
    "region": "swiss",
@@ -512,6 +513,7 @@
   },
   {
    "id": "first",
+   "lift": { "name": "Grindelwald First & Schilthorn", "alt": 2970, "ll": [46.659, 8.057] },
    "date": "WED 5 AUG",
    "drive": 0,
    "region": "swiss",
@@ -750,6 +752,7 @@
   },
   {
    "id": "matterhorn",
+   "lift": { "name": "Gornergrat railway", "alt": 3089, "ll": [45.976, 7.658] },
    "date": "FRI 7 AUG",
    "drive": 0,
    "region": "swiss",
@@ -942,6 +945,7 @@
   },
   {
    "id": "innsbruck2",
+   "lift": { "name": "Nordkettenbahn", "alt": 2256, "ll": [47.269, 11.394] },
    "date": "SUN 9 AUG",
    "drive": 0,
    "region": "austria",
@@ -1475,6 +1479,7 @@
   },
   {
    "id": "braies",
+   "lift": { "name": "Tre Cime di Lavaredo", "alt": 2454, "ll": [46.694, 12.085] },
    "date": "FRI 14 AUG",
    "drive": 0,
    "region": "dolomites",
@@ -1583,6 +1588,7 @@
   },
   {
    "id": "seceda",
+   "lift": { "name": "Seceda & Alpe di Siusi", "alt": 2519, "ll": [46.566, 11.674] },
    "date": "SAT 15 AUG",
    "drive": 0,
    "region": "dolomites",

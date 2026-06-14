@@ -305,6 +305,59 @@ export function replanNudge(plan, weather) {
   return { outdoor, total: stops.length, suggest: INDOOR_SUGGEST };
 }
 
+// F2: weather-smart lift-day optimizer (extends the B19 pattern). A "lift day" is
+// one whose plan hinges on an expensive, weather-dependent cable-car/railway/summit
+// (Jungfraujoch, Gornergrat, First/Schilthorn, Nordkette, Seceda, Tre Cime …).
+// liftInfo() detects one — preferring an explicit `day.lift` data mark, falling back
+// to name/tag keywords — and returns { name, alt, ll } or null. Pure → testable.
+const LIFT_RE = /joch|bahn|gornergrat|seceda|schilthorn|nordkette|funicular|gondola|cable ?car|cog ?(?:wheel|railway)|piz gloria|tre cime|alpe di siusi/i;
+export function liftInfo(day) {
+  if (!day) return null;
+  if (day.lift && day.lift.name) {
+    return { name: day.lift.name, alt: day.lift.alt != null ? day.lift.alt : null, ll: day.lift.ll || day.ll || null };
+  }
+  // keyword fallback over the day's plan/stops
+  const items = (day.plan && day.plan.length ? day.plan : day.stops) || [];
+  const hit = items.find(p => p && LIFT_RE.test(`${p.n || ''} ${p.t || ''}`));
+  if (!hit) return null;
+  return { name: hit.n || day.short || 'Lift', alt: null, ll: hit.ll || day.ll || null };
+}
+
+// F2: verdict for a lift day given its forecast `w` (from open-meteo, or null when
+// out of range / unavailable). Pure → testable. `swapCandidates` is an optional list
+// of { date, label, weather } for OTHER days in the trip window, used to suggest a
+// clearer day when this one looks poor. Returns one of:
+//   { state:'pending' }                      — no/out-of-range forecast → neutral
+//   { state:'good' }                         — clear enough; protect the booking
+//   { state:'poor', reason, swap? }          — bad at altitude; swap = best clearer day
+// "Poor" = high rain probability, or an overcast/precip weather_code, or a low daily
+// max temp at altitude (proxy for a socked-in summit). Degrades gracefully: missing
+// fields never throw; absent forecast → 'pending', never an error.
+export function liftScore(w) {
+  if (!w) return null;
+  let bad = 0;
+  if (w.precip != null && w.precip >= 40) bad += w.precip >= 60 ? 2 : 1;
+  if (w.code != null && w.code >= 45) bad += w.code >= 51 ? 2 : 1; // 45/48 fog, 51+ precip
+  if (w.tmax != null && w.tmax <= 2) bad += 1; // very cold max → likely cloud/snow up top
+  return bad; // 0 = clear; >=2 = poor
+}
+export function liftAdvice(w, swapCandidates) {
+  if (!w) return { state: 'pending' };
+  const score = liftScore(w);
+  if (score < 2) return { state: 'good' };
+  const reason = (w.precip != null && w.precip >= 40)
+    ? `${w.precip}% chance of rain`
+    : (w.code != null && w.code >= 51 ? 'rain/snow forecast' : 'low cloud likely at altitude');
+  let swap = null;
+  for (const c of (swapCandidates || [])) {
+    if (!c || !c.weather) continue;
+    const s = liftScore(c.weather);
+    if (s != null && s < 2 && (swap == null || s < swap._s)) swap = { date: c.date, label: c.label, _s: s };
+  }
+  if (swap) delete swap._s;
+  return swap ? { state: 'poor', reason, swap } : { state: 'poor', reason };
+}
+
 export const convert = (amt, rate) => amt == null ? null : Math.round(amt * rate * 100) / 100;
 
 // Two-way currency conversion using a rate = units of home per 1 unit of base.

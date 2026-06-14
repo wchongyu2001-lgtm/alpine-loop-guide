@@ -1,7 +1,7 @@
 /* Mobile "Today" view — a single, thumb-friendly screen: today's date, the day's
    ordered plan with times, the next upcoming booking, and today's weather.
    Auto-selected when the open trip's date range contains today (see app.js). */
-import { esc, splitTime, wmoIcon, pickTodayDay, nextBooking, effectivePlans, gmapsPlaceUrl, planProgress, nextUpcoming, fmtCountdown, replanNudge } from './core.js';
+import { esc, splitTime, wmoIcon, pickTodayDay, nextBooking, effectivePlans, gmapsPlaceUrl, planProgress, nextUpcoming, fmtCountdown, replanNudge, liftInfo, liftAdvice } from './core.js';
 import { tripBookings } from './data.js';
 import { dayWeather } from './weather.js';
 
@@ -17,6 +17,12 @@ const STYLE = `
   .t-nudge{display:flex;gap:9px;align-items:flex-start;background:rgba(70,110,150,.12);border:1px solid rgba(70,110,150,.4);border-radius:10px;padding:9px 12px;margin:0 0 12px;font-size:.88rem;line-height:1.4}
   .t-nudge .ti{font-size:1.1rem;line-height:1.2}
   .t-nudge b{font-weight:600}
+  .t-lift{display:flex;gap:9px;align-items:flex-start;border-radius:10px;padding:9px 12px;margin:0 0 12px;font-size:.88rem;line-height:1.4}
+  .t-lift .ti{font-size:1.1rem;line-height:1.2}
+  .t-lift b{font-weight:600}
+  .t-lift.pending{background:rgba(128,128,128,.1);border:1px solid rgba(128,128,128,.3)}
+  .t-lift.good{background:rgba(70,140,80,.12);border:1px solid rgba(70,140,80,.4)}
+  .t-lift.poor{background:rgba(184,90,40,.14);border:1px solid rgba(184,90,40,.45)}
   .t-head{margin:0 0 14px}
   .t-kick{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#b8860b;font-weight:600}
   .t-date{font-size:1.5rem;margin:2px 0 0;line-height:1.2}
@@ -120,6 +126,7 @@ export function render(root, ctx) {
     <style>${STYLE}</style>
     <div class="today">
       ${banner}
+      <div id="t-lift"></div>
       <div id="t-nudge"></div>
       <div class="t-head">
         <div class="t-kick">${esc(kicker)}</div>
@@ -146,6 +153,45 @@ export function render(root, ctx) {
         <div>Rain's forecast and most of today is outdoors. Consider indoor swaps nearby — <b>${esc(n.suggest.join(', '))}</b>.</div>
       </div>`;
   });
+
+  // F2: weather-smart lift-day optimizer. If the open day hinges on an expensive,
+  // weather-dependent lift/summit, read its forecast (at the lift's own location) and
+  // either confirm it's a clear day to protect, or — if it looks socked-in — suggest
+  // swapping to a clearer nearby day in the trip. Degrades to a neutral "forecast
+  // available closer to the trip" state when the day is out of open-meteo's ~16-day
+  // range (the trip is Aug 2026), never an error.
+  const lift = day ? liftInfo(day) : null;
+  if (lift && lift.ll && day._date) {
+    (async () => {
+      const slot = root.querySelector('#t-lift');
+      if (!slot) return;
+      const w = await dayWeather(lift.ll, day._date);
+      // Gather clearer-day candidates: other dated days in the trip, ±3 around this
+      // one, that are NOT themselves lift days. Forecast each at its own location.
+      const idx = state.days.indexOf(day);
+      const cands = state.days
+        .map((d, i) => ({ d, i }))
+        .filter(({ d, i }) => i !== idx && Math.abs(i - idx) <= 3 && d.ll && (d._date || d.date) && !liftInfo(d))
+        .map(({ d }) => d);
+      const swapWx = await Promise.all(cands.map(d => dayWeather(d.ll, d._date).catch(() => null)));
+      const swapCandidates = cands.map((d, k) => ({ date: d.date, label: d.short || d.date, weather: swapWx[k] }));
+      const a = liftAdvice(w, swapCandidates);
+      const alt = lift.alt ? ` (${lift.alt}m)` : '';
+      let icon, body;
+      if (a.state === 'pending') {
+        icon = '🚠';
+        body = `<b>${esc(lift.name)}</b>${alt} is a weather-dependent splurge — forecast available closer to the trip (~16 days out). Check the live webcams and pick a bluebird morning.`;
+      } else if (a.state === 'good') {
+        icon = '🚠';
+        body = `Clear skies forecast for <b>${esc(lift.name)}</b>${alt} — a good day to go. Catch the first ascent before cloud builds.`;
+      } else {
+        const swap = a.swap ? ` Consider swapping to <b>${esc(a.swap.label)}</b> (${esc(a.swap.date)}), which looks clearer.` : ' Watch the webcams and keep a flexible day in reserve.';
+        icon = '⚠️';
+        body = `Poor forecast for <b>${esc(lift.name)}</b>${alt} — ${esc(a.reason)}. Don't burn the expensive ticket on a socked-in summit.${swap}`;
+      }
+      slot.innerHTML = `<div class="t-lift ${a.state}"><span class="ti">${icon}</span><div>${body}</div></div>`;
+    })();
+  }
 
   // Tick the countdowns each minute; self-stops once this view is gone (re-rendered/navigated away).
   if (cdTimer) { clearInterval(cdTimer); cdTimer = null; }

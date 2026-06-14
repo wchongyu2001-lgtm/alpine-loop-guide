@@ -10,7 +10,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, fuelEstimate, transportContinuity, bookingIcs, tripIcs,
-  nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials, tripOverview,
+  nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, liftInfo, liftScore, liftAdvice, countryEssentials, tripOverview,
   mapTypeChoice, tripTotals, daysToDeparture, dayNote, parseDayHours, openStatus,
   cycleTheme, effectiveTheme, gmapsRouteUrl } from '../js/core.js';
 
@@ -521,6 +521,41 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(replanNudge(outdoorDay, null), null, 'replanNudge: no weather → no nudge');
   eq(replanNudge([{ t: 'view' }, { t: 'view' }], { code: 45, precip: 10 }), null,
     'replanNudge: fog/no-rain code → no nudge');
+}
+
+// ---- F2: weather-smart lift-day optimizer (pure) ----
+{
+  // liftInfo: explicit data mark wins
+  eq(liftInfo({ lift: { name: 'Jungfraujoch railway', alt: 3454, ll: [46.5, 8] } }),
+    { name: 'Jungfraujoch railway', alt: 3454, ll: [46.5, 8] }, 'liftInfo: explicit lift mark');
+  // liftInfo: keyword fallback over plan names/tags
+  eq(liftInfo({ short: 'Gornergrat', ll: [46, 7.6], plan: [{ n: 'Gornergrat railway', t: 'view', ll: [46, 7.6] }] }).name,
+    'Gornergrat railway', 'liftInfo: keyword fallback (Gornergrat)');
+  eq(liftInfo({ ll: [47, 11], stops: [{ n: 'Nordkettenbahn', t: 'view' }] }).name,
+    'Nordkettenbahn', 'liftInfo: keyword fallback (bahn) over stops');
+  eq(liftInfo({ short: 'Lake Garda', plan: [{ n: 'Jamaica Beach swim', t: 'swim' }] }), null,
+    'liftInfo: non-lift day → null');
+  eq(liftInfo(null), null, 'liftInfo: null day → null');
+
+  // liftScore
+  eq(liftScore({ precip: 70, code: 61, tmax: 4 }) >= 2, true, 'liftScore: rainy+precip → poor (>=2)');
+  eq(liftScore({ precip: 5, code: 0, tmax: 18 }), 0, 'liftScore: bluebird → 0');
+  eq(liftScore({ precip: 20, code: 45, tmax: 6 }) >= 1, true, 'liftScore: fog code adds risk');
+  eq(liftScore(null), null, 'liftScore: no weather → null');
+
+  // liftAdvice: out-of-range / no forecast → pending (graceful, never error)
+  eq(liftAdvice(null, []), { state: 'pending' }, 'liftAdvice: no forecast → pending');
+  // good day
+  eq(liftAdvice({ precip: 5, code: 0, tmax: 16 }, []), { state: 'good' }, 'liftAdvice: clear → good');
+  // poor day, no candidates → poor without swap
+  eq(liftAdvice({ precip: 80, code: 63, tmax: 3 }, []).state, 'poor', 'liftAdvice: bad → poor');
+  // poor day with a clearer candidate → swap suggested
+  const poorWithSwap = liftAdvice({ precip: 80, code: 63, tmax: 3 }, [
+    { date: 'WED 5 AUG', label: 'Grindelwald', weather: { precip: 60, code: 61, tmax: 5 } },
+    { date: 'THU 6 AUG', label: 'Zermatt', weather: { precip: 5, code: 1, tmax: 17 } },
+  ]);
+  eq(poorWithSwap.state, 'poor', 'liftAdvice: poor day flagged');
+  eq(poorWithSwap.swap.date, 'THU 6 AUG', 'liftAdvice: suggests the clearest nearby day');
 }
 
 // ---- B21: manual quick-add booking (pure) ----
