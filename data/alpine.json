@@ -241,7 +241,52 @@
      "cost": "Lido ~CHF 7 / free spots"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-luc-drive",
+     "n": "Garda → Lucerne via Gotthard",
+     "t": "act",
+     "ll": [
+      46.5667,
+      8.5911
+     ],
+     "time": "08:30–12:30",
+     "d": "Early roll-out to beat the Gotthard tunnel queue (or scenic Susten/Gotthard pass if the tunnel is jammed). ~4h. Buy the CHF 40 motorway vignette at the border. Stretch + coffee at Andermatt."
+    },
+    {
+     "id": "wl-fraki",
+     "n": "Fräkigaudi toboggan (Pilatus)",
+     "t": "act",
+     "ll": [
+      46.978,
+      8.262
+     ],
+     "time": "13:30–15:00",
+     "d": "Switzerland's longest summer toboggan run at Fräkmüntegg, ~CHF 9/run — do two. Park the van free at the Kriens valley station; ride the gondola up. Great-value adrenaline before the city."
+    },
+    {
+     "id": "wl-chapel",
+     "n": "Chapel Bridge & Lion Monument",
+     "t": "town",
+     "ll": [
+      47.052,
+      8.308
+     ],
+     "time": "16:00–18:00",
+     "d": "Walk the wooden Kapellbrücke, the old town squares and the Lion Monument — all free. Self-cater dinner at the van to offset Swiss restaurant prices."
+    },
+    {
+     "id": "wl-lido",
+     "n": "Lake Lucerne swim (Lido)",
+     "t": "swim",
+     "ll": [
+      47.044,
+      8.33
+     ],
+     "time": "18:30–19:30",
+     "d": "MUST-DO. Golden-hour swim off Lido Luzern (~CHF 7) or a free shoreline spot, steps from the campsite. Cool off, then grill at the pitch."
+    }
+   ]
   },
   {
    "id": "jungfrau1",
@@ -317,7 +362,52 @@
      "cost": "Cable car ~CHF 12 · fondue ~CHF 28pp"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-jf-drive",
+     "n": "Lucerne → Lauterbrunnen + pitch the van",
+     "t": "act",
+     "ll": [
+      46.593,
+      7.909
+     ],
+     "time": "08:30–10:00",
+     "d": "~1h drive over the Brünig Pass to Camping Jungfrau. Check in, level the van, then go car-free for the valley — paid parking in Lauterbrunnen is dear."
+    },
+    {
+     "id": "wl-staubbach",
+     "n": "Staubbach Falls walk",
+     "t": "view",
+     "ll": [
+      46.591,
+      7.906
+     ],
+     "time": "10:15–11:00",
+     "d": "Free 297m free-falling waterfall right behind the village; short path lets you walk behind the spray. Easy warm-up with the Jungfrau wall ahead."
+    },
+    {
+     "id": "wl-trummel",
+     "n": "Trümmelbach Falls",
+     "t": "gem",
+     "ll": [
+      46.583,
+      7.899
+     ],
+     "time": "11:15–12:30",
+     "d": "Ten glacier-fed falls thundering INSIDE the mountain, reached by tunnel-lift (CHF 14pp). Genuinely unique and weatherproof. Light lunch from the van after."
+    },
+    {
+     "id": "wl-murren",
+     "n": "Mürren cliff village + fondue",
+     "t": "town",
+     "ll": [
+      46.559,
+      7.892
+     ],
+     "time": "15:30–20:00",
+     "d": "MUST-DO. Cable car from Stechelberg/Lauterbrunnen (~CHF 12) up to car-free Mürren for the classic Eiger-Mönch-Jungfrau balcony view; stay for a sunset fondue (~CHF 28pp) before the last cable car down."
+    }
+   ]
   },
   {
    "id": "jungfraujoch",
@@ -384,7 +474,41 @@
      "cost": "Free"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-jjoch",
+     "n": "Jungfraujoch — Top of Europe",
+     "t": "view",
+     "ll": [
+      46.547,
+      7.98
+     ],
+     "time": "08:00–13:30",
+     "d": "MUST-DO splurge (~CHF 230pp return; book the FIRST train + a Half-Fare/GA discount to soften it). Cog railway from Lauterbrunnen via Kleine Scheidegg to the 3454m saddle — Aletsch Glacier, Ice Palace, snow even in August. Go early before cloud builds."
+    },
+    {
+     "id": "wl-bachalpsee",
+     "n": "First → Bachalpsee hike",
+     "t": "hike",
+     "ll": [
+      46.659,
+      8.057
+     ],
+     "time": "14:30–17:00",
+     "d": "If energy + budget allow: Grindelwald-First gondola (~CHF 75pp) then the easy 1h walk to the mirror-still Bachalpsee. Skip without guilt if Jungfraujoch already maxed the day — it repeats tomorrow's region."
+    },
+    {
+     "id": "wl-iseltwald",
+     "n": "Lake Brienz swim (Iseltwald)",
+     "t": "swim",
+     "ll": [
+      46.706,
+      7.974
+     ],
+     "time": "18:00–19:30",
+     "d": "MUST-DO and FREE. Drive the van 30min to Iseltwald for a turquoise glacier-melt swim off the jetty as the light goes gold. Pay-park at the village lot; perfect reset after the railway crowds."
+    }
+   ]
   },
   {
    "id": "first",
@@ -457,7 +581,52 @@
      "cost": "Free"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-cliffwalk",
+     "n": "First Cliff Walk & Flyer",
+     "t": "act",
+     "ll": [
+      46.659,
+      8.057
+     ],
+     "time": "09:00–11:00",
+     "d": "First gondola up from Grindelwald-Grund (walkable from Camping Eigernordwand). Free Tissot Cliff Walk over the void, then the First Flyer zipline (~CHF 31) screaming back toward the valley. Go early for clear Eiger views."
+    },
+    {
+     "id": "wl-trotti",
+     "n": "Trottibike scooter descent",
+     "t": "act",
+     "ll": [
+      46.645,
+      8.054
+     ],
+     "time": "11:15–12:30",
+     "d": "MUST-DO and great value (~CHF 19). Grab a Trottibike at Bort and carve the 4.5km back-road down to Grindelwald — the best fun-per-franc on the whole loop."
+    },
+    {
+     "id": "wl-schilthorn",
+     "n": "Schilthorn / Piz Gloria (optional)",
+     "t": "view",
+     "ll": [
+      46.558,
+      7.835
+     ],
+     "time": "13:30–16:30",
+     "d": "Only if you skipped Jungfraujoch — the cheaper 360° Bond-film summit above Mürren. Otherwise drop it and head straight to the lake; two big lift days back-to-back is overkill on budget and legs."
+    },
+    {
+     "id": "wl-thun",
+     "n": "Lake Thun swim (Spiez)",
+     "t": "swim",
+     "ll": [
+      46.686,
+      7.68
+     ],
+     "time": "17:30–19:30",
+     "d": "MUST-DO and FREE. End the Berner Oberland with a warm lake swim and a vineyard-castle backdrop at Spiez. Cook dinner lakeside before the last night under the Eiger."
+    }
+   ]
   },
   {
    "id": "zermatt",
@@ -532,7 +701,52 @@
      "cost": "~CHF 35pp"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-zer-drive",
+     "n": "Grindelwald → Randa + train to Zermatt",
+     "t": "act",
+     "ll": [
+      46.099,
+      7.785
+     ],
+     "time": "08:30–12:30",
+     "d": "~2.5h drive to Camping Attermenzen, Randa (Zermatt is car-free). Pitch the van, then take the train from Randa/Täsch into Zermatt (~20min, ~CHF 7 from Täsch P+R). Lunch from the camp shop to save on Zermatt prices."
+    },
+    {
+     "id": "wl-kirch",
+     "n": "Kirchbrücke Matterhorn view",
+     "t": "view",
+     "ll": [
+      46.02,
+      7.748
+     ],
+     "time": "13:30–14:15",
+     "d": "FREE. The iconic photo of the Matterhorn framed down the church-bridge in the village centre. Grab it on arrival before afternoon cloud caps the peak."
+    },
+    {
+     "id": "wl-sunnegga",
+     "n": "Sunnegga & Leisee",
+     "t": "swim",
+     "ll": [
+      46.027,
+      7.766
+     ],
+     "time": "14:30–17:00",
+     "d": "MUST-DO. Underground funicular (~CHF 27pp) up to Leisee — a small alpine lake with a flawless Matterhorn reflection and a free swim/paddle. The best-value high view in Zermatt."
+    },
+    {
+     "id": "wl-raclette",
+     "n": "Raclette night in Zermatt",
+     "t": "food",
+     "ll": [
+      46.02,
+      7.747
+     ],
+     "time": "18:30–20:30",
+     "d": "Splurge-but-worth-it Valais raclette (~CHF 35pp) before the last evening train back to Randa. Check the train timetable so you don't miss the connection to the van."
+    }
+   ]
   },
   {
    "id": "matterhorn",
