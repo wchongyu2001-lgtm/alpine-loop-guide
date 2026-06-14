@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B23",
+      "title": "Booking timeline — every reservation in one chronological, day-by-day view",
+      "pillar": "bookings",
+      "date": "2026-06-14T13:00:00Z",
+      "what": "A new ⏱ Timeline tab gives every booking for the trip its own dedicated, read-only chronological view: grouped by day and sorted by start time, each row shows the type icon, the time (start–end), provider, confirmation # and price. Time conflicts are surfaced two ways — a header banner counts how many bookings overlap, and any clashing entry is highlighted inline with an “overlap” tag — so a double-booked window jumps out at a glance. It reuses the same overlap detection as the Bookings warnings, so flags stay consistent across the app. On the seeded Alpine data the reservations render in time order under each day with no false conflicts; a deliberately overlapping pair flags both entries.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge 3041b71 on origin/main (bookingTimeline in js/core.js, new js/timeline.js, timeline view registered in js/app.js, precached in sw.js). node tools/test-core.mjs exits 0 with 6 new bookingTimeline guards (date-sort, within-day time-sort, overlap flagging, empty/undated edge cases). A throwaway import fed two overlapping flights → both overlap:true. Local + live served checks 200 with marker 'Booking timeline'.",
+      "commit": "3041b71",
+      "deploy": "live"
+    },
+    {
       "id": "B22",
       "title": "“Still to book” — auto-spots the nights and travel legs you haven't booked",
       "pillar": "bookings",
