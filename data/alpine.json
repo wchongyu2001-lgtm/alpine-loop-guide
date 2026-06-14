@@ -2837,6 +2837,84 @@
     { "t": "Hohensalzburg Fortress + funicular ~€36/2 — buy online to skip queue", "done": false },
     { "t": "Hallstatt skip-the-line ferry / early village — no booking; arrive before 09:30", "done": false }
    ]
+  },
+  {
+   "id": "pre-trip",
+   "title": "✈️ Pre-trip — pack & prep (2 people, fly into Venice Aug 2026)",
+   "items": [
+    { "t": "DOCUMENTS & ENTRY", "done": false },
+    { "t": "Passports valid ≥6 months beyond return (check both travellers' expiry now)", "done": false },
+    { "t": "ETIAS travel authorisation — apply online IF it's live by Aug 2026 (€7, ~3yr validity); not required if not yet enforced — check europa.eu travel-info before flying", "done": false },
+    { "t": "Travel insurance (medical + mountain rescue + cancellation) — confirm covers hiking to 3000m+ and campervan", "done": false },
+    { "t": "International Driving Permit (IDP) for BOTH potential drivers + physical driving licences", "done": false },
+    { "t": "Indie Campers van rental voucher / booking confirmation (printed + offline copy)", "done": false },
+    { "t": "Credit card in lead driver's name for the van security deposit (check the hold amount, ~€1000-2500)", "done": false },
+    { "t": "Offline copies of ALL campsite reservations (16 nights) + flight + insurance", "done": false },
+    { "t": "DRIVING & TOLLS", "done": false },
+    { "t": "Swiss motorway vignette (~€38 / CHF 40) — buy at border OR confirm Indie Campers van already has it stuck on", "done": false },
+    { "t": "Austrian digital vignette (~€12, 10-day) — buy online before border OR confirm van is covered", "done": false },
+    { "t": "Cash float for tolls/markets: Tre Cime ~€30 + Grossglockner ~€38 + Italian autostrada — keep €150-200 cash", "done": false },
+    { "t": "Breakdown / emergency numbers saved offline — EU emergency 112; Indie Campers 24/7 assistance line; van insurance/recovery number", "done": false },
+    { "t": "CONNECTIVITY & NAV", "done": false },
+    { "t": "Offline maps downloaded for CH, AT, IT (Google Maps regions or Organic Maps) — Alpine valleys have dead zones", "done": false },
+    { "t": "EU data eSIM installed & tested (e.g. Airalo/Holafly EU regional) for both phones", "done": false },
+    { "t": "Power: Swiss Type J adapter (CH sockets differ from EU!) + EU adapter; USB chargers + power bank", "done": false },
+    { "t": "VAN KIT (confirm what Indie Campers includes vs BYO)", "done": false },
+    { "t": "Gas bottle present & not empty (for hob/heater)", "done": false },
+    { "t": "Levelling ramps (Alpine pitches are rarely flat)", "done": false },
+    { "t": "EHU electric hookup cable (CEE 16A) for campsite power posts", "done": false },
+    { "t": "Fresh-water filler hose + watering-can spout", "done": false },
+    { "t": "Toilet cassette chemicals (blue/green) + spare toilet roll", "done": false },
+    { "t": "CLOTHING (cold high + warm low + lake swims)", "done": false },
+    { "t": "Warm layers for 3000m+ (Jungfraujoch/Gornergrat can be near-freezing) — fleece, hat, gloves", "done": false },
+    { "t": "Waterproof rain shell (Alpine weather flips fast)", "done": false },
+    { "t": "Hiking boots / sturdy shoes for both", "done": false },
+    { "t": "Swimwear + quick-dry towels for lake swims (Lucerne Lido, Iseltwald, Thun, Blindsee, Dobbiaco, Braies)", "done": false },
+    { "t": "Sunglasses + high-SPF sunscreen (glacier/altitude UV)", "done": false },
+    { "t": "HEALTH", "done": false },
+    { "t": "Personal medications (enough for 17 days + buffer) in original packaging", "done": false },
+    { "t": "Basic first-aid kit (plasters, blister care, painkillers, antihistamine, motion-sickness for mountain roads)", "done": false }
+   ]
+  },
+  {
+   "id": "perday-d4-jungfraujoch",
+   "title": "📅 Day 4 (Aug 4) — Jungfraujoch prep",
+   "items": [
+    { "t": "Reserve Jungfraujoch railway TIMESLOT online (mandatory in Aug; first train cheapest)", "done": false },
+    { "t": "Pack warm layers — Top of Europe is ~3454m, near-freezing even in August", "done": false },
+    { "t": "Sunglasses + sunscreen (glacier glare at altitude)", "done": false },
+    { "t": "Leave van at Lauterbrunnen pitch; take first train up to beat crowds", "done": false }
+   ]
+  },
+  {
+   "id": "perday-d12-grossglockner",
+   "title": "📅 Day 12 (Aug 12) — Grossglockner High Alpine Road",
+   "items": [
+    { "t": "Cash/card for the toll ~€38 (single-day car pass)", "done": false },
+    { "t": "Fuel up BEFORE the climb — no stations on the high road", "done": false },
+    { "t": "Check brakes & use low gear / engine braking on the long descent (van is heavy)", "done": false },
+    { "t": "Start early — road gates close around dusk; weather best in the morning", "done": false }
+   ]
+  },
+  {
+   "id": "perday-d14-braies-trecime",
+   "title": "📅 Day 14 (Aug 14) — Lago di Braies + Tre Cime",
+   "items": [
+    { "t": "Arrive Lago di Braies BEFORE the 09:30 daytime vehicle ban (or park-and-shuttle later)", "done": false },
+    { "t": "Tre Cime di Lavaredo toll road ~€30 — bring CASH for the gate", "done": false },
+    { "t": "Early start: both anchors fill by mid-morning in Aug; chain them before the crowds", "done": false },
+    { "t": "Hiking boots + water + layers for the Tre Cime loop", "done": false }
+   ]
+  },
+  {
+   "id": "perday-earlystart-swim",
+   "title": "📅 Early-start & lake-swim days (D2/D3/D11/D13)",
+   "items": [
+    { "t": "D2 Lucerne — swimwear + towel for Lido Luzern swim after the Gotthard drive", "done": false },
+    { "t": "D3 Iseltwald — swimwear for the Brienzersee swim stop", "done": false },
+    { "t": "D11 Hallstatt — arrive before 09:30 to beat tour buses; Gosausee swimwear", "done": false },
+    { "t": "D13 Toblach — swimwear + towel for Lago di Dobbiaco swim on arrival", "done": false }
+   ]
   }
  ]
 }
