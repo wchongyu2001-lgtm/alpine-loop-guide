@@ -7,7 +7,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
   legGapMins, legFeasibility, dayLoad,
-  overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress } from '../js/core.js';
+  overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -372,6 +372,29 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(planProgress(plan, ''), ['', '', '', '', ''], 'planProgress: unparseable now → all neutral');
   eq(planProgress([], '10:00'), [], 'planProgress: empty plan → []');
   eq(planProgress(null, '10:00'), [], 'planProgress: null plan → []');
+}
+
+// ---- B12: packing list suggestion (pure) ----
+{
+  const wet = [
+    { weather: { tmax: 14, tmin: 8, precip: 80, code: 61 }, text: 'Funicular up the mountain; lakeside walk' },
+    { weather: { tmax: 22, tmin: 14, precip: 10, code: 1 }, text: 'Swim in the lake' },
+  ];
+  const got = suggestPacking(wet);
+  eq(got.includes('Rain shell / jacket'), true, 'suggestPacking: rain forecast → rain shell');
+  eq(got.includes('Warm layer (fleece/down)'), true, 'suggestPacking: alpine lows → warm layer');
+  eq(got.includes('Hiking boots'), true, 'suggestPacking: funicular/mountain plan → hiking boots');
+  eq(got.includes('Swimwear'), true, 'suggestPacking: lake swim → swimwear');
+  eq(got.includes('Passport / ID'), true, 'suggestPacking: always includes base essentials');
+  eq(new Set(got).size, got.length, 'suggestPacking: no duplicate items');
+
+  const dry = [{ weather: { tmax: 30, tmin: 20, precip: 5, code: 0 }, text: 'Museum visit' }];
+  const g2 = suggestPacking(dry);
+  eq(g2.includes('Rain shell / jacket'), false, 'suggestPacking: dry day → no rain shell');
+  eq(g2.includes('Sun hat'), true, 'suggestPacking: hot day → sun hat');
+  eq(g2.includes('Hiking boots'), false, 'suggestPacking: no outdoor activity → no boots');
+  eq(suggestPacking([{ weather: null, text: '' }]).includes('Reusable water bottle'), true,
+    'suggestPacking: no weather → still base essentials');
 }
 
 process.exit(fails ? 1 : 0);
