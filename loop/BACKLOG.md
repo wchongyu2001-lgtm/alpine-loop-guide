@@ -57,7 +57,7 @@ type with a correct grand total; integrates with the existing budget figures.
 location should be where the next leg departs, no impossible same-time jumps, and a flagged "no return"
 when an outbound has no matching return. Accept: a deliberately broken chain flags; a clean chain passes.
 
-### B28 · status: todo · pillar: bookings
+### B28 · status: wip · pillar: bookings
 **Booking detail drawer.** Tap any booking to expand a detail view: all fields, confirmation # with a
 one-tap Copy, any attachment link, a map link for the location, and add-to-calendar for that single
 booking. Accept: opening an Alpine booking shows its full details and the Copy/map/calendar actions work.
