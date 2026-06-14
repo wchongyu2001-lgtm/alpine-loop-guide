@@ -176,3 +176,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: e1ae08d
+
+### 2026-06-14T17:00Z · B26 Booking cost rollup vs budget
+- status: done
+- pillar: bookings
+- what: Bookings view now has a 💶 "Committed so far" card — total priced reservation spend, broken down by type (flights/stays/transport/activities/other) with FX conversion into the trip base currency, shown as % of the guide budget via a shared tripEstimate helper (budget.js now uses it too).
+- verified: PASS — independent agent confirmed merge baf738f on origin/main, node tools/test-core.mjs exits 0 with new bookingRollup/tripEstimate guards (priced-only sum, group mapping, FX via toBase), live served checks 200 with markers bookingRollup + rollupHtml. Live already propagated.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: baf738f
