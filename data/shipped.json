@@ -428,6 +428,17 @@
       "verify_note": "Independent agent: merge 99310dd on origin/main (optimizePreview/data-undo/.optundo present), test-core exits 0 with new optimizePreview guards (saves ~433km, already-shortest→0), live served checks 200 with marker optimizePreview.",
       "commit": "99310dd",
       "deploy": "live"
+    },
+    {
+      "id": "F2",
+      "title": "Weather-smart lift-day optimizer",
+      "pillar": "weather",
+      "date": "2026-06-14T00:00:00Z",
+      "what": "The Today view now protects the expensive, weather-dependent lift/summit days (Jungfraujoch, Gornergrat, Grindelwald First/Schilthorn, Innsbruck Nordkette, Seceda/Alpe di Siusi, Tre Cime). It detects a lift day via a data mark + name/tag keyword fallback, reads that lift's forecast at altitude, and either confirms a clear go-day or — if it looks socked-in (high rain %, overcast/precip code, or very cold summit max) — flags it and suggests swapping to a clearer nearby day in the trip window. Extends the B19 re-plan nudge pattern.",
+      "verified": true,
+      "verify_note": "Green-gate passed: node --check js/core.js+js/today.js, JSON.parse data/alpine.json, test-core exits 0 with 14 new liftInfo/liftScore/liftAdvice cases, local served-check 200+marker. Playwright re-drive ok:true/pageErrors:[] with in-browser eval confirming liftInfo detects Jungfraujoch(3454m), out-of-range forecast degrades to {state:pending}, and a poor forecast returns {state:poor, swap:THU 6 AUG}.",
+      "commit": "b93c1fb",
+      "deploy": "live"
     }
   ]
 }

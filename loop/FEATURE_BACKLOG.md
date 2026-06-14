@@ -18,7 +18,7 @@ Per-day driving summary + running total for the whole loop.
 - Data source: day.drive + leg distances (routing.js / OSRM already present) or authored
   per-day km. Don't add new deps. Acceptance: every day shows a drive line; total renders.
 
-## F2 · Weather-smart lift-day optimizer — status: wip
+## F2 · Weather-smart lift-day optimizer — status: done (commit b93c1fb)
 Protect the expensive weather-dependent lift days (Jungfraujoch, Gornergrat, Seceda, Tre Cime).
 - Near the trip, read the forecast (weather.js / Open-Meteo already present) for the lift-day
   location + altitude and flag a bad-weather day with a suggested swap to a clearer day.
