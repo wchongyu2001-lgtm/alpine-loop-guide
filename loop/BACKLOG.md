@@ -116,3 +116,53 @@ per booking/timed stop; opens in a calendar app without errors.
 stop and any key booking, so the whole trip is visible without scrolling day cards. Accept: renders
 all Alpine days with date + first place + booking marker; tapping a day jumps to it.
 New "Overview" view tab; pure tripOverview() in core.js; taps scroll to it-day-<id> in Itinerary.
+
+---
+
+## Batch 4 — road-trip / campervan polish (build these next)
+
+> Owner's real trip is a 2-person campervan Grand Loop (value-optimized). Map now runs on Google
+> Maps (a key is set in js/config.js). These lean into the road-trip + the new map. Frontend-only,
+> no new deps, no backend/secrets. Build on existing modules; reuse core.js helpers + open-meteo/fx.
+
+### B29 · status: todo · pillar: maps
+**Satellite view + remembered map layer.** On the Google Maps backend, let the user switch map type
+(roadmap / satellite / terrain) and remember the choice in localStorage so it sticks across reloads;
+default to satellite for the campervan scenery. Accept: switching to Satellite persists across reload;
+no effect / no error on the Leaflet fallback.
+
+### B30 · status: todo · pillar: logistics
+**Campervan fuel cost estimator.** Per driving leg (between consecutive day bases) estimate fuel cost
+from the leg distance and the trip's fuel figure (meta.fuelPerH) at a user-editable price/litre, and
+show a trip total. Pure compute in core.js, shown in the Itinerary or a Budget card. Accept: a sensible
+per-leg + total fuel estimate for the route; editing the price updates it; guarded test in test-core.
+
+### B31 · status: todo · pillar: polish
+**Trip totals + departure countdown.** A compact stats strip: total driving distance & time across the
+route, number of nights / planned stops / bookings, and "X days to departure" from today to the trip
+start. Pure compute, offline. Accept: correct totals + countdown for the trip; reads from loaded data.
+
+### B32 · status: todo · pillar: mobile/live
+**Daylight per day.** Show sunrise / sunset (and a golden-hour hint) for each day, pulled from the
+open-meteo daily endpoint weather.js already uses (cached for offline). Useful for driving + photos.
+Accept: each day shows plausible sunrise/sunset; degrades gracefully offline from cache.
+
+### B33 · status: todo · pillar: polish
+**Free-form day notes.** A per-day notes field (plain text) saved to the itinerary overlay, so the owner
+can jot reminders ("fill water at…", "ZTL zone — don't drive in") on any day. Accept: typing a note on a
+day persists across reload via the overlay; renders in the day card.
+
+### B34 · status: todo · pillar: discovery
+**"Open now" badges.** Where a place has opening-hours from enrichment (places.js), show an Open now /
+Closed badge (and next-open time if closed) on the itinerary place. Accept: a place with hours shows the
+correct badge for the current time; places without hours show nothing (no false state).
+
+### B35 · status: todo · pillar: polish
+**Dark mode.** A theme toggle (light / dark / auto) saved to localStorage, with a dark palette for the
+app chrome + cards (and the map staying legible). Accept: toggling to dark restyles the UI and persists;
+auto follows the OS preference.
+
+### B36 · status: todo · pillar: maps
+**One-tap "Open in Google Maps" full route.** A button that opens the real Google Maps app/site with the
+whole trip as multi-stop driving directions (origin → day bases → destination), no extra API needed.
+Accept: the button opens a valid Google Maps directions URL covering the day bases in order.
