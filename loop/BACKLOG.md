@@ -36,7 +36,7 @@ missing transport legs; a fully-covered stretch shows nothing (no false positive
 day, with type icon, time, provider, confirmation #, and price — visually flagging overlaps and gaps.
 Accept: the Alpine bookings render in time order grouped by day; an overlap is visibly flagged.
 
-### B24 · status: todo · pillar: bookings
+### B24 · status: wip · pillar: bookings
 **Accommodation coverage strip.** A per-night strip across the trip dates showing which nights are
 covered by a hotel/stay booking and which are uncovered (tap an uncovered night → quick-add). Accept:
 nights with a hotel show covered, nights without show a clear gap, for the seeded trip.
