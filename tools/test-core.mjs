@@ -8,7 +8,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
   legGapMins, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
-  buildManualBooking, coverageGaps } from '../js/core.js';
+  buildManualBooking, coverageGaps, bookingTimeline } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -280,6 +280,27 @@ w = bookingWarnings([
   { id: 'h2', type: 'flight', title: 'Y · London (LHR) → New York (JFK)', start: '2026-08-10T08:00', end: '2026-08-10T18:00' },
 ], alpineTrip);
 eq(w.filter(x => x.kind === 'leg').length, 0, 'bookingWarnings: connected chain → no leg warning');
+
+// ---- B23: bookingTimeline ----
+{
+  const tl = bookingTimeline([
+    { id: 'b', type: 'activity', title: 'Boat', start: '2026-08-05T15:00', end: '2026-08-05T16:00' },
+    { id: 'a', type: 'flight', title: 'A (AAA) → B (BBB)', start: '2026-08-05T09:00', end: '2026-08-05T12:00' },
+    { id: 'c', type: 'hotel', title: 'Stay', start: '2026-08-04' },
+  ], alpineTrip);
+  eq(tl.map(g => g.date), ['2026-08-04', '2026-08-05'], 'bookingTimeline: days sorted ascending');
+  eq(tl[1].items.map(i => i.booking.id), ['a', 'b'], 'bookingTimeline: within a day, time-sorted');
+  eq(tl[1].items.every(i => !i.overlap), true, 'bookingTimeline: non-overlapping day → no flags');
+
+  const ov = bookingTimeline([
+    { id: 'f1', type: 'flight', title: 'A (AAA) → B (BBB)', start: '2026-08-05T09:00', end: '2026-08-05T12:00' },
+    { id: 'f2', type: 'flight', title: 'B (BBB) → A (AAA)', start: '2026-08-05T11:00', end: '2026-08-05T14:00' },
+  ], alpineTrip);
+  eq(ov[0].items.every(i => i.overlap), true, 'bookingTimeline: overlapping pair both flagged');
+  eq(bookingTimeline([], alpineTrip), [], 'bookingTimeline: no bookings → empty');
+  eq(bookingTimeline([{ id: 'x', type: 'hotel', title: 'No date' }], alpineTrip), [],
+    'bookingTimeline: undated booking skipped');
+}
 
 // ---- offline PWA shell: sw.js must precache every js/ module the app loads ----
 import { readdirSync, readFileSync } from 'fs';
