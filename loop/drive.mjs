@@ -13,7 +13,8 @@
  *   --wait <ms>        extra settle wait after load (default 600)
  *   --click <selector> click one selector after load
  *   --steps <file>     JSON file: array of {action,selector?,text?,ms?,path?}
- *                      actions: click | type | wait | goto | screenshot
+ *                      actions: click | type | wait | goto | screenshot | eval
+ *                      ({action:"eval", code:"<expr>"} -> result appended to note)
  *
  * Prints a compact JSON report to stdout:
  *   {url, ok, consoleErrors, pageErrors, title, visibleViewTabs, note}
@@ -105,6 +106,11 @@ try {
         else if (s.action === 'screenshot') {
           mkdirSync(dirname(s.path || shot), { recursive: true });
           await page.screenshot({ path: s.path || shot, fullPage: true });
+        }
+        else if (s.action === 'eval') {
+          // run an expression in page context for DOM inspection; result -> note
+          const r = await page.evaluate(new Function('return (' + (s.code ?? 'null') + ')'));
+          note += `eval=${JSON.stringify(r)}; `;
         }
       } catch (e) { note += `step ${s.action} failed: ${e.message}; `; }
     }
