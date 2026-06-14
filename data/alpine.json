@@ -808,7 +808,40 @@
      "cost": "~CHF 120pp"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-mat-restart",
+     "n": "Slow camp morning at Randa",
+     "t": "act",
+     "ll": [46.099, 7.785],
+     "time": "07:30–08:30",
+     "d": "Van stays put (2nd night at Camping Attermenzen, drive=0). Lazy breakfast, fill water, pack a picnic from the camp shop, then walk to Randa/Täsch station for the P+R train up to Zermatt — no teardown today."
+    },
+    {
+     "id": "wl-gornergrat",
+     "n": "Gornergrat cog railway",
+     "t": "view",
+     "ll": [45.983, 7.786],
+     "time": "09:00–11:30",
+     "d": "First trains up from Zermatt; sit on the RIGHT going up for the Matterhorn. Best value = one-way up (~CHF 66pp) with Swiss Travel Pass ~50% off, then walk down. Glacier-ringed summit terrace at 3,089m."
+    },
+    {
+     "id": "wl-riffelsee",
+     "n": "Riffelsee reflection walk-down",
+     "t": "hike",
+     "ll": [45.991, 7.77],
+     "time": "11:30–13:30",
+     "d": "FREE once up. Hop off at Rotenboden and walk the short trail to the Riffelsee tarn for the mirror-Matterhorn postcard, then continue the easy descent to Riffelberg for the train back — saves a full return fare."
+    },
+    {
+     "id": "wl-zer-afternoon",
+     "n": "Zermatt village + raclette",
+     "t": "food",
+     "ll": [46.02, 7.747],
+     "time": "15:00–18:30",
+     "d": "Stroll car-free Bahnhofstrasse, photo from Kirchbrücke, then a value Valais raclette/rösti (~CHF 30pp) before the last evening train back to Randa. Check the timetable so you don't miss the connection to the van."
+    }
+   ]
   },
   {
    "id": "innsbruck1",
@@ -872,7 +905,40 @@
      "cost": "Free"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-zer-innsbruck",
+     "n": "Drive Zermatt → Innsbruck via Liechtenstein",
+     "t": "act",
+     "ll": [47.141, 9.521],
+     "time": "08:30–13:00",
+     "d": "The long haul east (~4.5h total). Roll out early; coffee-and-strudel stop in Vaduz, Liechtenstein — tick a whole country, €3 passport stamp at the tourist office. Re-stock cheap groceries before the Austrian border."
+    },
+    {
+     "id": "wl-blindsee",
+     "n": "Blindsee / Fernsteinsee swim + picnic",
+     "t": "swim",
+     "ll": [47.366, 10.882],
+     "time": "14:00–15:30",
+     "d": "MUST-DO. Jewel-turquoise lakes right by the Fernpass road — the perfect free mid-drive swim and van picnic. Small parking fee only; the cold clear water is the best break on the whole transit."
+    },
+    {
+     "id": "wl-innsbruck-arrive",
+     "n": "Pitch at Innsbruck Kranebitten",
+     "t": "act",
+     "ll": [47.259, 11.341],
+     "time": "16:30–17:30",
+     "d": "Arrive Camping Innsbruck Kranebitten on the Inn under the Nordkette (2-night base, van stays put tomorrow). Pitch, plug in, book the bus O/J into town (~15min)."
+    },
+    {
+     "id": "wl-innsbruck-eve",
+     "n": "Old Town wander + first beer",
+     "t": "town",
+     "ll": [47.269, 11.393],
+     "time": "18:30–21:00",
+     "d": "FREE stroll: Golden Roof, medieval lanes, Inn-bridge sunset on the painted houses. Cheap first-night dinner at a bräustübl before the proper Tyrolean food night tomorrow."
+    }
+   ]
   },
   {
    "id": "innsbruck2",
@@ -943,7 +1009,40 @@
      "cost": "~€25pp"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-nordkette",
+     "n": "Nordkettenbahn to the ridge",
+     "t": "view",
+     "ll": [47.308, 11.385],
+     "time": "09:00–12:00",
+     "d": "Van stays put (drive=0). Zaha Hadid funicular from downtown straight up: best value = just the Hungerburg terrace (~€10pp) for the city-over-mountains view; splurge all the way to Hafelekar ridge at 2,256m (~€44pp) only on a clear morning."
+    },
+    {
+     "id": "wl-golden-roof",
+     "n": "Golden Roof & Old Town",
+     "t": "town",
+     "ll": [47.269, 11.393],
+     "time": "12:30–14:30",
+     "d": "FREE wander — gilded oriel, Hofkirche, medieval lanes. Grab a cheap leberkäse or market lunch instead of a sit-down to keep the day value-optimised."
+    },
+    {
+     "id": "wl-bergisel",
+     "n": "Bergisel ski-jump tower (optional)",
+     "t": "view",
+     "ll": [47.249, 11.4],
+     "time": "15:00–16:30",
+     "d": "Glide up the futuristic Olympic jump tower (~€11pp) for a panorama and coffee at the top — skip if Nordkette already gave you the big view and save the cash."
+    },
+    {
+     "id": "wl-stiftskeller",
+     "n": "Tyrolean food night",
+     "t": "food",
+     "ll": [47.269, 11.393],
+     "time": "18:30–21:00",
+     "d": "MUST-DO Austria food night — Stiftskeller beer garden: schnitzel, kaspressknödel and a Tyrolean beer (~€25pp). Walk back to the bus; van is already pitched at Kranebitten."
+    }
+   ]
   },
   {
    "id": "salzburg",
@@ -1012,7 +1111,40 @@
      "cost": "~€13pp"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-innsbruck-salzburg",
+     "n": "Drive Innsbruck → Salzburg",
+     "t": "act",
+     "ll": [47.795, 13.047],
+     "time": "08:30–11:00",
+     "d": "Easy ~2h A1 roll-in. Pitch first at Camping Nord-Sam (pool, bus 6/21 ~20min to old town), then bus into the centre so the van is parked for the day."
+    },
+    {
+     "id": "wl-hohensalzburg",
+     "n": "Hohensalzburg Fortress",
+     "t": "view",
+     "ll": [47.795, 13.047],
+     "time": "11:30–13:30",
+     "d": "Clifftop castle over the city — ramparts, princely rooms and rooftop panoramas (~€16pp incl. funicular). Best value = walk up the path and pay the cheaper walk-up ticket if your legs are willing."
+    },
+    {
+     "id": "wl-getreidegasse",
+     "n": "Old Town & Getreidegasse",
+     "t": "town",
+     "ll": [47.8, 13.043],
+     "time": "13:30–16:00",
+     "d": "FREE to roam — wrought-iron signs, Mozart's birthplace, Domquartier squares, Mirabell gardens for the Sound of Music shot. Picnic lunch in the gardens to save."
+    },
+    {
+     "id": "wl-augustiner",
+     "n": "Augustiner Bräustübl beer garden",
+     "t": "food",
+     "ll": [47.806, 13.03],
+     "time": "18:00–20:30",
+     "d": "MUST-DO locked Austria beer-garden night — pour your own stein from the barrel and pick cheap deli food from the stalls under the chestnut trees (~€20pp). Bus back to Nord-Sam."
+    }
+   ]
   },
   {
    "id": "hallstatt",
@@ -1088,7 +1220,40 @@
      "cost": "Cable car ~€40pp"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-hallstatt-early",
+     "n": "Salzburg → Hallstatt, beat the crowds",
+     "t": "act",
+     "ll": [47.561, 13.649],
+     "time": "07:30–09:30",
+     "d": "Short ~1.5h drive; arrive Lake Hallstatt early and ferry/cycle in before the tour buses. Pitch is at Camping am See, Obertraun (own swim beach) — drop the van there first, the village is car-restricted."
+    },
+    {
+     "id": "wl-hallstatt-village",
+     "n": "Hallstatt village & Classic view",
+     "t": "town",
+     "ll": [47.561, 13.649],
+     "time": "09:30–11:30",
+     "d": "FREE. Wander the lanes and hit the famous Classic Hallstatt viewpoint while it's still quiet — the whole reason to come early. Bakery breakfast beats the pricey cafés."
+    },
+    {
+     "id": "wl-gosausee",
+     "n": "Gosausee mirror-lake swim",
+     "t": "swim",
+     "ll": [47.534, 13.49],
+     "time": "12:30–15:00",
+     "d": "MUST-DO. Short drive to the Vorderer Gosausee — a mirror lake reflecting the Dachstein glacier, a stunning quiet FREE swim and lakeside picnic. The best-value highlight of the day."
+    },
+    {
+     "id": "wl-fivefingers",
+     "n": "Five Fingers viewpoint (optional)",
+     "t": "view",
+     "ll": [47.527, 13.692],
+     "time": "16:00–18:00",
+     "d": "From Obertraun, Krippenstein cable car (~€40pp) to the hand-shaped platform over a sheer drop — splurge only on a clear afternoon, otherwise swim from the camp beach for free and save it."
+    }
+   ]
   },
   {
    "id": "grossglockner",
@@ -1162,7 +1327,40 @@
      "cost": "Free swim"
     }
    ],
-   "plan": []
+   "plan": [
+    {
+     "id": "wl-glockner-start",
+     "n": "Salzkammergut → Grossglockner toll road",
+     "t": "act",
+     "ll": [47.207, 12.174],
+     "time": "08:00–10:30",
+     "d": "Drive south to the Grossglockner High Alpine Road. ~€40/car toll — but it's the day's whole point, so it's the value pick. Optional first stop: Krimml Waterfalls (~€8pp), Europe's tallest, a misty forest trail beside 380m of falls."
+    },
+    {
+     "id": "wl-franz-josefs",
+     "n": "Franz-Josefs-Höhe",
+     "t": "view",
+     "ll": [47.075, 12.751],
+     "time": "11:30–13:00",
+     "d": "The road's climax — stare straight at the Pasterze glacier and the Grossglockner summit (toll-incl., parking on site). Picnic from the van with the glacier in front of you; marmots in the meadows below."
+    },
+    {
+     "id": "wl-edelweiss",
+     "n": "Edelweissspitze & hairpins",
+     "t": "view",
+     "ll": [47.125, 12.831],
+     "time": "13:30–14:30",
+     "d": "Toll-incl. short cobbled spur to the road's highest point (2,571m) — a 360° sea of peaks. Then descend the 36 famous hairpins toward Zell am See."
+    },
+    {
+     "id": "wl-zellersee",
+     "n": "Zell am See lakefront swim",
+     "t": "swim",
+     "ll": [47.323, 12.794],
+     "time": "16:00–18:30",
+     "d": "MUST-DO. Pitch at Seecamp Zell am See, Thumersbach (swim jetty), then end the day with a FREE swim and a lakeside dinner on the Zeller See — glacier sunset over the water."
+    }
+   ]
   },
   {
    "id": "toblach",
