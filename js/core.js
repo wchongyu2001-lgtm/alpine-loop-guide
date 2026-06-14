@@ -349,6 +349,49 @@ export function bookingWarnings(bookings, trip) {
   return out;
 }
 
+// ---- B22: "still to book" coverage gaps (pure) ----
+// From a trip's dated days + its bookings, surface what isn't booked yet:
+//   • lodging: a night with no accommodation covering it
+//   • transport: an overnight base change (your `sleep` differs) with no transport
+//     covering the move.
+// A campervan / motorhome counts as the bed while you hold it, and ANY vehicle you
+// hold (it spans the dates) covers the driving legs — so a road trip on one van
+// booking raises nothing. Hotels cover nights start..end (checkout exclusive); a
+// relocation is covered by a flight/train/bus/ferry dated on the arrival day. The
+// final day is a departure day, so it needs no night. Pure: date-only ISO compares.
+const dOnly = s => String(s || '').slice(0, 10);
+const isCamperBed = b => b.type === 'car' && /camper|campervan|motorhome|caravan|\brv\b/i.test(String(b.title || ''));
+
+export function coverageGaps(days, bookings) {
+  const dated = (days || []).filter(d => d._date).sort((a, b) => a._date.localeCompare(b._date));
+  const bks = bookings || [];
+  const lodging = bks.filter(b => b.type === 'hotel' || isCamperBed(b));
+  const vehicles = bks.filter(b => b.type === 'car');
+  const transit = bks.filter(b => ['flight', 'train', 'bus', 'ferry'].includes(b.type));
+
+  const nightCovered = date =>
+    lodging.some(b => dOnly(b.start) <= date && date < dOnly(b.end || b.start));
+  const legCovered = (from, to) =>
+    transit.some(b => dOnly(b.start) === to) ||
+    vehicles.some(b => dOnly(b.start) <= from && to <= dOnly(b.end || b.start));
+
+  const gaps = [];
+  for (let i = 0; i + 1 < dated.length; i++) {              // nights: all but the last (departure) day
+    const date = dated[i]._date;
+    if (!nightCovered(date))
+      gaps.push({ kind: 'lodging', date, detail: `No accommodation booked for the night of ${date}.` });
+  }
+  const base = d => String(d.sleep || '').trim().toLowerCase();
+  for (let i = 0; i + 1 < dated.length; i++) {              // relocations: overnight base changes
+    const a = dated[i], c = dated[i + 1];
+    if (!base(a) || !base(c) || base(a) === base(c)) continue;
+    if (!legCovered(a._date, c._date))
+      gaps.push({ kind: 'transport', date: c._date, from: a.sleep, to: c.sleep,
+        detail: `No transport booked from ${a.sleep} to ${c.sleep}.` });
+  }
+  return gaps.sort((a, b) => a.date.localeCompare(b.date) || a.kind.localeCompare(b.kind));
+}
+
 // ---- B06: "Can I make it?" timing feasibility (pure) ----
 const hhmm = s => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(s || '').trim()); return m ? +m[1] * 60 + +m[2] : null; };
 

@@ -3,7 +3,7 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, orphanBookings } from './core.js';
+import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, orphanBookings } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
@@ -62,6 +62,7 @@ export function render(root, ctx) {
       <div id="bksuggest">${suggestionsHtml(state)}</div>
     </div>
     ${warningsHtml(state, list)}
+    ${stillToBookHtml(state, list)}
     ${Object.keys(byDate).sort().map(d => `
       <div class="bk-group">
         <div class="bk-date">${prettyDate(d)}</div>
@@ -292,6 +293,29 @@ function warningsHtml(state, list) {
           <div class="bk-warn-detail">${esc(w.detail)}</div>
         </div>
         <button class="bk-warn-x" data-dismwarn="${esc(warnSig(w))}" title="Dismiss">✕</button>
+      </div>`).join('')}
+  </div>`;
+}
+
+/* ---------- "still to book" coverage gaps (B22) ---------- */
+
+const TOBOOK_LABEL = { lodging: 'No stay', transport: 'No transport' };
+
+function stillToBookHtml(state, list) {
+  const gaps = coverageGaps(state.days, list);
+  if (!gaps.length) return '';
+  const byDate = {};
+  gaps.forEach(g => { (byDate[g.date] = byDate[g.date] || []).push(g); });
+  return `<div class="bk-tobook">
+    <h3>🧳 Still to book (${gaps.length})</h3>
+    ${Object.keys(byDate).sort().map(d => `
+      <div class="bk-tobook-day">
+        <div class="bk-tobook-date">${prettyDate(d)}</div>
+        ${byDate[d].map(g => `
+          <div class="bk-tobook-row">
+            <span class="bk-tobook-kind">${TOBOOK_LABEL[g.kind] || 'Missing'}</span>
+            <span class="bk-tobook-detail">${esc(g.detail)}</span>
+          </div>`).join('')}
       </div>`).join('')}
   </div>`;
 }
