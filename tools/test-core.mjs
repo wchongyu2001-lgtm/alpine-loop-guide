@@ -10,7 +10,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, transportContinuity, bookingIcs, tripIcs,
-  nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials } from '../js/core.js';
+  nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials, tripOverview } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -782,6 +782,31 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(fxConvert(NaN, 1.08, 'toHome'), null, 'fxConvert: NaN amount → null');
   eq(fxConvert(100, 0, 'toBase'), null, 'fxConvert: zero rate → null (avoids div-by-0)');
   eq(fxConvert(50, 1, 'toHome'), 50, 'fxConvert: rate 1 is identity');
+}
+
+// ---- B20: trip overview rows (date · headline · first stop · booking markers) ----
+{
+  const days = [
+    { id: 'd1', _n: 1, _date: '2026-08-01', _label: 'Sat 1 Aug', short: 'Arrive Peschiera', plan: [{ n: 'Sirmione' }, { n: 'Lake walk' }] },
+    { id: 'd2', _n: 2, _date: '2026-08-02', _label: 'Sun 2 Aug', short: '', plan: [{ n: 'Verona' }] },
+    { id: 'd3', _n: 3, _date: '2026-08-03', _label: 'Mon 3 Aug', short: 'Travel north', plan: [] },
+  ];
+  const bookings = [
+    { type: 'hotel', title: 'Butterfly Camping', start: '2026-08-01T15:00' },
+    { type: 'train', title: 'Verona → Bolzano', start: '2026-08-03T09:10' },
+    { type: 'activity', title: 'Other trip', start: '2026-08-01T10:00', trip: 'x' },
+  ];
+  const ov = tripOverview(days, { d1: days[0].plan, d2: days[1].plan, d3: days[2].plan }, bookings);
+  eq(ov.length, 3, 'tripOverview: one row per day');
+  eq(ov[0], { id: 'd1', n: 1, date: 'Sat 1 Aug', headline: 'Arrive Peschiera', firstStop: 'Sirmione',
+    bookings: [{ type: 'hotel', title: 'Butterfly Camping' }, { type: 'activity', title: 'Other trip' }] },
+    'tripOverview: headline + first stop + that day\'s bookings (matched by date)');
+  eq(ov[1].headline, 'Verona', 'tripOverview: falls back to first stop when no short headline');
+  eq(ov[1].bookings, [], 'tripOverview: a day with no bookings → empty markers');
+  eq(ov[2].firstStop, '', 'tripOverview: empty plan → no first stop');
+  eq(ov[2].bookings.map(b => b.title), ['Verona → Bolzano'], 'tripOverview: booking lands on its date');
+  eq(tripOverview(null), [], 'tripOverview: null days → []');
+  eq(tripOverview(days)[0].bookings, [], 'tripOverview: no bookings arg → empty markers');
 }
 
 process.exit(fails ? 1 : 0);
