@@ -970,6 +970,64 @@ export function daysToDeparture(startISO, todayISO) {
   return Math.round((b - a) / 86400000);
 }
 
+// ---- F3: booking countdown tracker (pure) ----
+// Turn the structured bookings_to_make list into deadline-driven cards:
+// derive a concrete book-by date from each item's prose `book_by` (relative to
+// the trip start), compute days-left vs today, and sort by sell-out risk.
+// Inputs:
+//   items     : [{what, category, price_eur_2, book_by, note}]  (alpine.json)
+//   startISO  : trip start YYYY-MM-DD (e.g. '2026-08-01')
+//   todayISO  : countdown baseline YYYY-MM-DD (the app passes live new Date())
+//   booked    : { [what]: true } map of already-booked items (from overlay)
+// Output: array sorted urgent-first, each:
+//   {what, category, note, price, book_by, bookByISO|null, daysLeft|null,
+//    status:'booked'|'open', dayOf:bool, urgency:'overdue'|'urgent'|'soon'|'ok'|'none', risk}
+const addDays = (iso, n) => {
+  const t = Date.parse(iso + 'T00:00:00Z');
+  if (Number.isNaN(t)) return null;
+  return new Date(t + n * 86400000).toISOString().slice(0, 10);
+};
+// Sell-out risk weight by category: campsites sell out first, then the
+// Jungfraujoch timeslot, then time-sensitive bookings, then day-of items.
+const RISK = { campsite: 0, railway: 1, restaurant: 2, experience: 3, cablecar: 4, toll: 5 };
+// Map prose deadlines to a concrete book-by date relative to the trip start.
+// Returns ISO string, or null for "no deadline / buy day-of".
+function deriveBookBy(bookBy, startISO) {
+  const p = String(bookBy || '').toLowerCase();
+  if (/day-of|pay-as-you-go|pay at|at the border/.test(p)) return null;
+  if (/may 2026/.test(p)) return '2026-05-15';            // campsites: mid-May, ~2.5mo ahead
+  if (/2-3 ?mo|2-3mo|months? ahead/.test(p)) return addDays(startISO, -75);
+  if (/1-2 ?wk|1-2wk|week/.test(p)) return addDays(startISO, -10); // Jungfraujoch timeslot
+  if (/few days/.test(p)) return addDays(startISO, -4);
+  if (/online (before|to)/.test(p)) return addDays(startISO, -1);  // vignette / skip-queue
+  return null;
+}
+export function bookingCountdown(items, startISO, todayISO, booked = {}) {
+  return (items || []).map(it => {
+    const bookByISO = deriveBookBy(it.book_by, startISO);
+    const dayOf = !bookByISO;
+    const daysLeft = bookByISO ? daysToDeparture(bookByISO, todayISO) : null;
+    const status = booked[it.what] ? 'booked' : 'open';
+    let urgency = 'none';
+    if (status === 'booked') urgency = 'ok';
+    else if (daysLeft != null) {
+      urgency = daysLeft < 0 ? 'overdue' : daysLeft <= 7 ? 'urgent' : daysLeft <= 21 ? 'soon' : 'ok';
+    }
+    const risk = RISK[it.category] != null ? RISK[it.category] : 9;
+    return {
+      what: it.what, category: it.category, note: it.note || '', price: it.price_eur_2 || 0,
+      book_by: it.book_by || '', bookByISO, daysLeft, status, dayOf, urgency, risk,
+    };
+  }).sort((a, b) => {
+    // booked items drop to the bottom; then by sell-out risk; then by deadline.
+    if ((a.status === 'booked') !== (b.status === 'booked')) return a.status === 'booked' ? 1 : -1;
+    if (a.risk !== b.risk) return a.risk - b.risk;
+    const ad = a.daysLeft == null ? Infinity : a.daysLeft;
+    const bd = b.daysLeft == null ? Infinity : b.daysLeft;
+    return ad - bd;
+  });
+}
+
 // ---- B26: committed booking spend rolled up by type, for "vs budget" (pure) ----
 // Sum every priced booking into the trip base currency via toBase(amount, currency)
 // — pass the same FX-aware converter the Budget view uses; default is identity.

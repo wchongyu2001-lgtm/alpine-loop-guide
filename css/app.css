@@ -252,6 +252,30 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .bk-rollup-bar{display:grid;grid-template-columns:80px 1fr 80px;gap:8px;align-items:center;font-size:.8em;margin:3px 0}
 .bk-rollup-bar i{display:block;height:8px;border-radius:4px;background:var(--pine);min-width:2px}
 .bk-rollup-bar b{text-align:right;font-family:'JetBrains Mono',monospace;font-weight:400}
+/* F3 · booking countdown tracker */
+.bk-countdown{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:12px 0}
+.bk-countdown h3{font-size:.86em;color:var(--ink);margin:0 0 2px}
+.bk-cd-urgent{color:var(--terra);font-weight:600}
+.bk-countdown>p{font-size:.78em;margin:0 0 8px}
+.bk-cd-card{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;
+  background:var(--card);border:1px solid var(--line);border-left-width:3px;border-radius:9px;padding:8px 11px;margin:6px 0}
+.bk-cd-card.u-overdue{border-left-color:var(--terra)}
+.bk-cd-card.u-urgent{border-left-color:var(--terra)}
+.bk-cd-card.u-soon{border-left-color:var(--gold)}
+.bk-cd-card.u-ok{border-left-color:var(--pine)}
+.bk-cd-card.u-none{border-left-color:var(--line)}
+.bk-cd-card.done{opacity:.55}
+.bk-cd-card.done .bk-cd-what{text-decoration:line-through}
+.bk-cd-check input{width:17px;height:17px;margin-top:2px;cursor:pointer}
+.bk-cd-main{min-width:0}
+.bk-cd-what{font-weight:600;font-size:.88em}
+.bk-cd-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;margin-top:2px}
+.bk-cd-cat{font-family:'JetBrains Mono',monospace;font-size:.62em;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-soft);background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.bk-cd-by{font-size:.78em;color:var(--ink-soft)}
+.bk-cd-note{font-size:.76em;margin-top:3px;line-height:1.35}
+.bk-cd-left{font-family:'JetBrains Mono',monospace;font-size:.74em;white-space:nowrap;align-self:center;color:var(--ink-soft)}
+.bk-cd-card.u-overdue .bk-cd-left,.bk-cd-card.u-urgent .bk-cd-left{color:var(--terra);font-weight:600}
 .tl-intro p{font-size:.9em;color:var(--ink-soft)}
 .tl-overlap-lead{color:var(--terra)}
 .tl-day{margin:16px 0;border-left:2px solid var(--line);padding-left:14px}

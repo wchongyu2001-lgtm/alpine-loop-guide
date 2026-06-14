@@ -3,7 +3,7 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, gmapsPlaceUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, transportContinuity, bookingIcs, tripIcs, effectivePlans, convert } from './core.js';
+import { esc, gmapsUrl, gmapsPlaceUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, transportContinuity, bookingIcs, tripIcs, effectivePlans, convert, bookingCountdown } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
@@ -70,6 +70,7 @@ export function render(root, ctx) {
       <div id="bksuggest">${suggestionsHtml(state)}</div>
     </div>
     ${remindersHtml(list)}
+    ${countdownHtml(state)}
     ${rollupHtml(state, list)}
     ${warningsHtml(state, list)}
     ${continuityHtml(list)}
@@ -111,6 +112,14 @@ export function render(root, ctx) {
       </form>
     </details>
     <input type="file" id="bkfile" accept="application/pdf,image/*" multiple hidden />`;
+
+  root.querySelectorAll('[data-cdbook]').forEach(cb => cb.onchange = () => {
+    const ov = bkOv(state);
+    ov.bookedToMake = { ...(ov.bookedToMake || {}) };
+    if (cb.checked) ov.bookedToMake[cb.dataset.cdbook] = true;
+    else delete ov.bookedToMake[cb.dataset.cdbook];
+    ctx.save('bookings', ov); ctx.rerender();
+  });
 
   root.querySelectorAll('[data-dismwarn]').forEach(b => b.onclick = () => {
     const ov = bkOv(state);
@@ -361,6 +370,54 @@ function remindersHtml(list) {
   </div>`;
 }
 
+/* ---------- F3: booking countdown tracker ---------- */
+
+// Live-date baseline (local), YYYY-MM-DD — countdowns recompute every render.
+const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+
+const CAT_LABEL = { campsite: '🏕 Campsite', railway: '🚞 Railway', cablecar: '🚠 Cable car', toll: '🛣 Toll / vignette', restaurant: '🍽 Restaurant', experience: '🎟 Experience' };
+
+function daysLeftLabel(c) {
+  if (c.status === 'booked') return 'booked ✓';
+  if (c.dayOf) return 'buy day-of';
+  if (c.daysLeft == null) return '';
+  if (c.daysLeft < 0) return `${-c.daysLeft}d overdue`;
+  if (c.daysLeft === 0) return 'book today';
+  return `${c.daysLeft}d left`;
+}
+
+function countdownHtml(state) {
+  const items = state.tripData?.bookings_to_make || [];
+  if (!items.length) return '';
+  const start = state.tripData?.meta?.start;
+  const startIso = Array.isArray(start) ? `${start[0]}-${pad(start[1] + 1)}-${pad(start[2])}` : String(start || '');
+  const booked = bkOv(state).bookedToMake || {};
+  const cards = bookingCountdown(items, startIso, todayIso(), booked);
+  const open = cards.filter(c => c.status !== 'booked');
+  const urgent = open.filter(c => c.urgency === 'overdue' || c.urgency === 'urgent').length;
+  return `<div class="bk-countdown">
+    <h3>⏳ Booking countdown — ${open.length} to book${urgent ? ` · <span class="bk-cd-urgent">${urgent} urgent</span>` : ''}</h3>
+    <p class="muted">Sorted by sell-out risk — campsites first, then the Jungfraujoch timeslot. Tick when booked.</p>
+    <div class="bk-cd-list">
+      ${cards.map(c => `
+        <div class="bk-cd-card ${c.status === 'booked' ? 'done' : 'u-' + c.urgency}">
+          <label class="bk-cd-check"><input type="checkbox" data-cdbook="${esc(c.what)}" ${c.status === 'booked' ? 'checked' : ''}/></label>
+          <div class="bk-cd-main">
+            <div class="bk-cd-what">${esc(c.what)}${c.price ? ` <span class="muted">~€${c.price}</span>` : ''}</div>
+            <div class="bk-cd-meta">
+              <span class="bk-cd-cat">${CAT_LABEL[c.category] || esc(c.category)}</span>
+              <span class="bk-cd-by">${c.bookByISO ? `book by ${cdDate(c.bookByISO)}` : esc(c.book_by)}</span>
+            </div>
+            ${c.note ? `<div class="bk-cd-note muted">${esc(c.note)}</div>` : ''}
+          </div>
+          <span class="bk-cd-left">${daysLeftLabel(c)}</span>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+const cdDate = iso => new Date(iso + 'T12:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
 /* ---------- committed cost rollup vs budget (B26) ---------- */
 
 function rollupHtml(state, list) {
@@ -586,4 +643,4 @@ function syncLabel(state) {
   return `Pipeline last sync: ${new Date(u).toLocaleString()}${ageH > 48 ? ' ⚠ stale' : ''}`;
 }
 
-const bkOv = state => ({ overrides: {}, manual: [], attachments: {}, emailSeen: [], warnSeen: [], ...(state.overlay.bookings || {}) });
+const bkOv = state => ({ overrides: {}, manual: [], attachments: {}, emailSeen: [], warnSeen: [], bookedToMake: {}, ...(state.overlay.bookings || {}) });

@@ -11,7 +11,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, fuelEstimate, transportContinuity, bookingIcs, tripIcs,
   nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, liftInfo, liftScore, liftAdvice, countryEssentials, tripOverview,
-  mapTypeChoice, tripTotals, daysToDeparture, dayNote, parseDayHours, openStatus,
+  mapTypeChoice, tripTotals, daysToDeparture, bookingCountdown, dayNote, parseDayHours, openStatus,
   cycleTheme, effectiveTheme, gmapsRouteUrl } from '../js/core.js';
 
 let fails = 0;
@@ -956,6 +956,38 @@ eq(effectiveTheme('auto', false), 'light', 'effectiveTheme: auto follows OS ligh
   eq(gmapsRouteUrl([]), null, 'gmapsRouteUrl: no days → null');
   eq(gmapsRouteUrl(null), null, 'gmapsRouteUrl: null days → null');
   eq(gmapsRouteUrl([{ ll: [1, 1] }, { ll: [1, 1] }]), null, 'gmapsRouteUrl: all-same base → one stop → null');
+}
+
+// ---- F3: booking countdown tracker (pure) ----
+{
+  const items = [
+    { what: 'Campsites', category: 'campsite', price_eur_2: 775, book_by: 'early-mid May 2026 (~2-3mo ahead)', note: 'first to sell' },
+    { what: 'Jungfraujoch', category: 'railway', price_eur_2: 224, book_by: '1-2wk ahead — reserve timeslot' },
+    { what: 'Gornergrat', category: 'railway', price_eur_2: 176, book_by: 'day-of' },
+    { what: 'Swiss vignette', category: 'toll', price_eur_2: 38, book_by: 'at the border' },
+    { what: 'Austrian vignette', category: 'toll', price_eur_2: 12, book_by: 'online before border' },
+  ];
+  const start = '2026-08-01';
+  // today = 2026-06-14: campsite book-by 2026-05-15 → overdue; Jungfrau 07-22 → 38d ok
+  const cd = bookingCountdown(items, start, '2026-06-14', {});
+  eq(cd[0].what, 'Campsites', 'countdown: campsite ranks first (highest sell-out risk)');
+  eq(cd[0].bookByISO, '2026-05-15', 'countdown: "May 2026" prose → mid-May date');
+  eq(cd[0].daysLeft, -30, 'countdown: campsite book-by is 30d overdue on 2026-06-14');
+  eq(cd[0].urgency, 'overdue', 'countdown: past book-by → overdue');
+  eq(cd[1].what, 'Jungfraujoch', 'countdown: railway timeslot ranks after campsites');
+  eq(cd[1].bookByISO, '2026-07-22', 'countdown: "1-2wk ahead" → start − 10d');
+  eq(cd[1].daysLeft, 38, 'countdown: Jungfrau 38d left');
+  const vig = cd.find(c => c.what === 'Austrian vignette');
+  eq(vig.bookByISO, '2026-07-31', 'countdown: "online before border" → start − 1d');
+  eq(vig.dayOf, false, 'countdown: online vignette has a deadline');
+  const gorn = cd.find(c => c.what === 'Gornergrat');
+  eq(gorn.dayOf, true, 'countdown: "day-of" → no deadline');
+  eq(gorn.daysLeft, null, 'countdown: day-of has no days-left');
+  // booked items sink to the bottom and flip to ok
+  const cd2 = bookingCountdown(items, start, '2026-06-14', { Campsites: true });
+  eq(cd2[cd2.length - 1].what, 'Campsites', 'countdown: booked item sinks to bottom');
+  eq(cd2[0].status, 'open', 'countdown: top item is still open after one booked');
+  eq(bookingCountdown([], start, '2026-06-14', {}), [], 'countdown: no items → empty');
 }
 
 process.exit(fails ? 1 : 0);
