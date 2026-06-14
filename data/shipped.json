@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B35",
+      "title": "Dark mode (light / dark / auto theme toggle)",
+      "pillar": "polish",
+      "date": "2026-06-15T05:00:00.000Z",
+      "what": "A theme toggle now sits in the header (🌗 Auto / ☀️ Light / 🌙 Dark) — tap to cycle and your choice sticks across reloads via localStorage. Dark mode restyles the whole app chrome and cards through a single dark palette (only the CSS colour variables change), while map tiles are left untouched so they stay legible. 'Auto' follows your phone's OS preference live, flipping with the system as it changes. To avoid a flash of the wrong theme, the saved choice is applied by a tiny inline script before first paint. Two pure helpers in core.js — cycleTheme() (auto→light→dark→auto) and effectiveTheme(choice, prefersDark) — are guarded by tests. Frontend-only, no backend, no new deps.",
+      "verified": true,
+      "verify_note": "Independent agent PASS — artifacts on origin/main 3522d11 (cycleTheme/effectiveTheme in core.js, #themetoggle + v2:theme early script in index.html, html[data-theme=dark] in app.css); node tools/test-core.mjs exits 0 with 8 B35 assertions; live Pages served-checks 200 with markers effectiveTheme / themetoggle / data-theme.",
+      "commit": "3522d119970286fe1af369d7d7956d3f297e7dd1",
+      "deploy": "live"
+    },
+    {
       "id": "B34",
       "title": "\"Open now\" badges on itinerary places",
       "pillar": "discovery",
