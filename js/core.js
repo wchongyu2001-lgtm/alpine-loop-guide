@@ -177,13 +177,28 @@ export const wlShareValid = url => /^https?:\/\/(www\.)?wanderlog\.com\/\S+/i.te
 
 /* ---- Weather (open-meteo), FX, settle-up ---- */
 export const weatherUrl = ll =>
-  `https://api.open-meteo.com/v1/forecast?latitude=${ll[0]}&longitude=${ll[1]}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`;
+  `https://api.open-meteo.com/v1/forecast?latitude=${ll[0]}&longitude=${ll[1]}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset&timezone=auto&forecast_days=16`;
 export const weatherCacheKey = ll => `wx:${ll ? ll.map(n => n.toFixed(2)).join(',') : ''}`;
 export function pickDaily(j, iso) {
   const t = j && j.daily && j.daily.time; if (!t) return null;
   const i = t.indexOf(iso); if (i < 0) return null;
-  return { code: j.daily.weather_code[i], tmax: j.daily.temperature_2m_max[i],
-    tmin: j.daily.temperature_2m_min[i], precip: j.daily.precipitation_probability_max[i] };
+  const d = j.daily;
+  return { code: d.weather_code[i], tmax: d.temperature_2m_max[i],
+    tmin: d.temperature_2m_min[i], precip: d.precipitation_probability_max[i],
+    sunrise: d.sunrise && d.sunrise[i], sunset: d.sunset && d.sunset[i] };
+}
+// B32: daylight summary from open-meteo sunrise/sunset ISO strings ("2026-06-15T05:38").
+// Pure → testable. Returns null when sunrise/sunset are absent (e.g. older cache) so it degrades.
+export function daylight(w) {
+  if (!w) return null;
+  const hm = s => (String(s).match(/T(\d{2}:\d{2})/) || [])[1] || null;
+  const rise = hm(w.sunrise), set = hm(w.sunset);
+  if (!rise || !set) return null;
+  const mins = s => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+  const len = mins(set) - mins(rise);
+  if (len <= 0 || len >= 24 * 60) return { rise, set, length: null, golden: null };
+  const fmt = t => `${String(Math.floor(t / 60) % 24).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+  return { rise, set, length: `${Math.floor(len / 60)}h ${len % 60}m`, golden: fmt(mins(set) - 60) };
 }
 export function wmoIcon(c) {
   if (c === 0) return '☀️'; if (c <= 3) return '⛅'; if (c <= 48) return '🌫️';
