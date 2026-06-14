@@ -11,7 +11,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, fuelEstimate, transportContinuity, bookingIcs, tripIcs,
   nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials, tripOverview,
-  mapTypeChoice } from '../js/core.js';
+  mapTypeChoice, tripTotals, daysToDeparture } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -833,6 +833,37 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(mapTypeChoice(null), 'satellite', 'mapTypeChoice: null → satellite default');
   eq(mapTypeChoice(''), 'satellite', 'mapTypeChoice: empty → satellite default');
   eq(mapTypeChoice('bogus'), 'satellite', 'mapTypeChoice: unknown value → satellite default');
+}
+
+// ---- B31: trip totals + departure countdown ----
+{
+  const days = [
+    { id: 'd1', drive: 2, sleep: 'Camping Garda', ll: [45.55, 10.62], plan: [{ n: 'a' }, { n: 'b' }] },
+    { id: 'd2', drive: 4, sleep: 'Aire Bolzano', ll: [46.50, 11.35], plan: [{ n: 'c' }] },
+    { id: 'd3', drive: 0, sleep: '', ll: [46.62, 11.16], plan: [] },
+  ];
+  const bookings = [{ id: 'b1' }, { id: 'b2' }];
+  const t = tripTotals(days, bookings);
+  eq(t.days, 3, 'tripTotals: day count');
+  eq(t.driveHours, 6, 'tripTotals: sums authored drive hours');
+  eq(t.nights, 2, 'tripTotals: counts only days with a sleep base');
+  eq(t.stops, 3, 'tripTotals: sums planned stops across days');
+  eq(t.bookings, 2, 'tripTotals: booking count');
+  eq(t.km, routeStats(days.map(d => d.ll)).km, 'tripTotals: km = road-scaled route over bases');
+  eq(t.km > 0, true, 'tripTotals: positive distance for a real route');
+
+  const ov = tripTotals(days, bookings, { plans: { d3: [{ n: 'x' }, { n: 'y' }] } });
+  eq(ov.stops, 5, 'tripTotals: overlay plans override base plan in stop count');
+
+  const empty = tripTotals([], []);
+  eq(empty, { days: 0, km: 0, driveHours: 0, nights: 0, stops: 0, bookings: 0 }, 'tripTotals: empty trip → zeros');
+  eq(tripTotals(null), { days: 0, km: 0, driveHours: 0, nights: 0, stops: 0, bookings: 0 }, 'tripTotals: null days → zeros');
+
+  eq(daysToDeparture('2026-08-01', '2026-07-25'), 7, 'daysToDeparture: 7 days out');
+  eq(daysToDeparture('2026-08-01', '2026-08-01'), 0, 'daysToDeparture: leaves today → 0');
+  eq(daysToDeparture('2026-08-01', '2026-08-03'), -2, 'daysToDeparture: under way → negative');
+  eq(daysToDeparture(null, '2026-08-01'), null, 'daysToDeparture: missing start → null');
+  eq(daysToDeparture('2026-08-01', 'nope'), null, 'daysToDeparture: bad today → null');
 }
 
 process.exit(fails ? 1 : 0);
