@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B34",
+      "title": "\"Open now\" badges on itinerary places",
+      "pillar": "discovery",
+      "date": "2026-06-15T04:00:00.000Z",
+      "what": "Itinerary places that carry opening-hours from live enrichment now show a colour-coded Open now / Closed badge right next to the name — and when a spot is shut but opens later today, the badge tells you when (\"Closed · opens 9:00 AM\"). Crucially the badge is computed for the current time on your phone, not a stale cached snapshot: a new pure openStatus()/parseDayHours() in core.js parses today's hours string (handling \"Mon: 9:00 AM – 6:00 PM\", split lunch breaks like \"9 AM – 12 PM, 1 – 6 PM\", \"Open 24 hours\", \"Closed\", and overnight ranges that cross midnight) into minute-of-day ranges and checks the clock. Places with no/unknown hours show nothing at all — no false \"closed\" state. Frontend-only, no backend change, covered by guarded tests.",
+      "verified": true,
+      "verify_note": "Independent agent: origin/main merge 0388334 has openStatus()/parseDayHours() in js/core.js and the .pbadge span + open-now/closed-now classes in itinerary.js + app.css. node tools/test-core.mjs exits 0 with all new B34 guards ok. Sanity: openStatus('9:00 AM – 6:00 PM',600)=open, at 480=Closed·opens 9:00 AM, null hours→null (no false state), parseDayHours('Sunday: Closed')=[]. Live GitHub Pages served-checks 200 with markers 'openStatus' (core.js) and 'pbadge' (itinerary.js).",
+      "commit": "0388334",
+      "deploy": "live"
+    },
+    {
       "id": "B33",
       "title": "Free-form day notes",
       "pillar": "polish",
