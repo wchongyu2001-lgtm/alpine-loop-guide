@@ -1,7 +1,7 @@
 /* Mobile "Today" view — a single, thumb-friendly screen: today's date, the day's
    ordered plan with times, the next upcoming booking, and today's weather.
    Auto-selected when the open trip's date range contains today (see app.js). */
-import { esc, splitTime, wmoIcon, pickTodayDay, nextBooking, effectivePlans, gmapsPlaceUrl, planProgress } from './core.js';
+import { esc, splitTime, wmoIcon, pickTodayDay, nextBooking, effectivePlans, gmapsPlaceUrl, planProgress, nextUpcoming, fmtCountdown } from './core.js';
 import { tripBookings } from './data.js';
 import { dayWeather } from './weather.js';
 
@@ -40,7 +40,27 @@ const STYLE = `
   .t-pill{display:inline-block;margin-left:8px;vertical-align:middle;font-size:.62rem;font-weight:700;letter-spacing:.06em;padding:1px 6px;border-radius:999px;line-height:1.5}
   .t-pill-now{background:#b8860b;color:#fff}
   .t-pill-next{background:rgba(184,134,11,.16);color:#b8860b;border:1px solid rgba(184,134,11,.4)}
+  .t-up{display:flex;flex-direction:column;gap:8px}
+  .t-cd{display:flex;gap:10px;align-items:center;border:1px solid rgba(184,134,11,.35);border-radius:12px;padding:10px 14px;background:rgba(184,134,11,.08)}
+  .t-cd .ti{font-size:1.2rem;line-height:1}
+  .t-cd .cd-b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .t-cd .cd-b span{color:#5d564a;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;margin-right:6px}
+  .t-cd .cd-t{flex:0 0 auto;font-variant-numeric:tabular-nums;font-weight:700;color:#b8860b}
   @media (max-width:430px){.t-date{font-size:1.3rem}.t-plan li{padding:11px 12px}.t-time{flex-basis:46px}}`;
+
+let cdTimer = null;
+function cdHtml(plan, bookings) {
+  const { stop, booking } = nextUpcoming(plan, bookings, nowIso());
+  const row = (kind, icon, label, name, mins) => `<div class="t-cd">
+      <span class="ti">${icon}</span>
+      <div class="cd-b"><span>${label}</span>${esc(name)}</div>
+      <span class="cd-t">${esc(fmtCountdown(mins))}</span>
+    </div>`;
+  const rows = [];
+  if (stop) rows.push(row('stop', '📍', 'Next stop', stop.name, stop.mins));
+  if (booking) rows.push(row('booking', TYPE_ICON[booking.type] || '📌', 'Next booking', booking.name, booking.mins));
+  return rows.length ? rows.join('') : `<p class="t-empty">Nothing left scheduled today.</p>`;
+}
 
 export function render(root, ctx) {
   const { state } = ctx;
@@ -79,6 +99,10 @@ export function render(root, ctx) {
       }).join('')}</ul>`
     : `<p class="t-empty">No stops planned for this day yet.</p>`;
 
+  // Live "next up" countdowns — only meaningful when the open day is actually today.
+  const upHtml = rel === 'today'
+    ? `<div class="t-sec">Next up</div><div class="t-up" id="t-up">${cdHtml(plan, bookings)}</div>` : '';
+
   const nextHtml = nb
     ? `<div class="t-next">
         <span class="ti">${TYPE_ICON[nb.type] || '📌'}</span>
@@ -98,6 +122,7 @@ export function render(root, ctx) {
         <h2 class="t-date">${esc(day ? (day._label || day.date || '') : 'No itinerary')}${wx}</h2>
         ${day && day.short ? `<div class="t-short">${esc(day.short)}</div>` : ''}
       </div>
+      ${upHtml}
       <div class="t-sec">Next booking</div>
       ${nextHtml}
       <div class="t-sec">Today's plan</div>
@@ -110,4 +135,14 @@ export function render(root, ctx) {
     const w = await dayWeather(ll, el.dataset.date);
     if (w) el.textContent = `${wmoIcon(w.code)} ${Math.round(w.tmax)}°/${Math.round(w.tmin)}°${w.precip ? ' · ' + w.precip + '%' : ''}`;
   });
+
+  // Tick the countdowns each minute; self-stops once this view is gone (re-rendered/navigated away).
+  if (cdTimer) { clearInterval(cdTimer); cdTimer = null; }
+  if (rel === 'today') {
+    cdTimer = setInterval(() => {
+      const el = root.querySelector('#t-up');
+      if (!el || !el.isConnected) { clearInterval(cdTimer); cdTimer = null; return; }
+      el.innerHTML = cdHtml(plan, bookings);
+    }, 60000);
+  }
 }

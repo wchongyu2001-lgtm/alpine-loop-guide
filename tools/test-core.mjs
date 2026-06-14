@@ -9,7 +9,8 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   legGapMins, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
-  bookingRollup, tripEstimate, transportContinuity, bookingIcs } from '../js/core.js';
+  bookingRollup, tripEstimate, transportContinuity, bookingIcs,
+  nextUpcoming, fmtCountdown } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -395,6 +396,38 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(planProgress(plan, ''), ['', '', '', '', ''], 'planProgress: unparseable now → all neutral');
   eq(planProgress([], '10:00'), [], 'planProgress: empty plan → []');
   eq(planProgress(null, '10:00'), [], 'planProgress: null plan → []');
+}
+
+// ---- B16: next-up countdown (pure) ----
+{
+  const plan = [
+    { n: 'Breakfast', time: '08:00' },
+    { n: 'Funicular', time: '10:30–11:00' },
+    { n: 'Lakeside walk', time: '14:00' },
+    { n: 'Free time' },
+  ];
+  const bk = [
+    { id: 'h', type: 'hotel', title: 'Hotel Bellagio', start: '2026-06-15T15:00' },
+    { id: 't', type: 'train', title: 'Train to Milan', start: '2026-06-16T09:00' },
+  ];
+  const a = nextUpcoming(plan, bk, '2026-06-15T09:10');
+  eq(a.stop.name, 'Funicular', 'nextUpcoming: soonest future timed stop');
+  eq(a.stop.mins, 80, 'nextUpcoming: minutes until that stop');
+  eq(a.booking.name, 'Hotel Bellagio', 'nextUpcoming: next upcoming booking');
+  eq(a.booking.mins, 350, 'nextUpcoming: minutes until that booking');
+
+  const b = nextUpcoming(plan, bk, '2026-06-15T16:00');
+  eq(b.stop, null, 'nextUpcoming: no timed stops left today → null stop');
+  eq(b.booking.name, 'Train to Milan', 'nextUpcoming: rolls to next-day booking');
+
+  const c = nextUpcoming(plan, [], '2026-06-15T23:00');
+  eq(c.stop, null, 'nextUpcoming: nothing left → null stop');
+  eq(c.booking, null, 'nextUpcoming: no bookings → null booking');
+
+  eq(fmtCountdown(80), '1h 20m', 'fmtCountdown: hours and minutes');
+  eq(fmtCountdown(45), '45m', 'fmtCountdown: minutes only');
+  eq(fmtCountdown(120), '2h', 'fmtCountdown: whole hours drop minutes');
+  eq(fmtCountdown(0), 'now', 'fmtCountdown: zero → now');
 }
 
 // ---- B12: packing list suggestion (pure) ----

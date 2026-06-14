@@ -788,6 +788,43 @@ export function planProgress(plan, nowHHMM) {
   });
 }
 
+// ---- B16: live "next up" countdown on the Today view (pure) ----
+// Minutes for a "YYYY-MM-DDTHH:MM" local datetime via fixed UTC arithmetic
+// (deterministic, timezone-free). null if it can't be parsed.
+const isoMinutes = iso => {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{1,2}):(\d{2})/.exec(String(iso || '').trim());
+  return m ? Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) / 60000 : null;
+};
+
+// The soonest still-upcoming timed stop in today's plan, plus the next upcoming
+// booking — each with whole-minutes-until `mins` (> 0). Either may be null when
+// nothing remains. `nowIso` is "YYYY-MM-DDTHH:MM"; its date scopes the stops.
+export function nextUpcoming(plan, bookings, nowIso) {
+  const now = isoMinutes(nowIso);
+  const date = String(nowIso || '').slice(0, 10);
+  let stop = null;
+  if (now != null) for (const p of (plan || [])) {
+    const t0 = splitTime(p && p.time)[0];
+    if (hhmm(t0) == null) continue;
+    const mins = isoMinutes(`${date}T${t0}`) - now;
+    if (mins > 0 && (!stop || mins < stop.mins)) stop = { name: p.n, mins };
+  }
+  const nb = nextBooking(bookings, nowIso);
+  let booking = null;
+  if (nb && now != null) {
+    const mins = isoMinutes(String(nb.start).slice(0, 16)) - now;
+    if (mins > 0) booking = { name: nb.title, type: nb.type, mins };
+  }
+  return { stop, booking };
+}
+
+// Human "1h 20m" / "45m" / "now" from whole minutes-until.
+export function fmtCountdown(mins) {
+  if (mins == null || mins <= 0) return 'now';
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return h ? (m ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
+}
+
 export function fmtMoney(n, cur = '€') {
   if (n == null || isNaN(n)) return '—';
   const v = Math.round(Number(n));
