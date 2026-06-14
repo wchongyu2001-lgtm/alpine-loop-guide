@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B20",
+      "title": "Trip overview timeline",
+      "pillar": "polish",
+      "date": "2026-06-14T08:05:00Z",
+      "what": "A new \"Overview\" tab gives the whole trip at a glance: one compact row per day showing its date, the day's headline (or first planned stop), the first stop as a subline, and a marker icon for each booking that day — so you can see the entire trip without scrolling through the big day cards. Tap any day to jump straight to it in the Itinerary view (it scrolls that day's card into view). Read-only and fully offline: it works off already-loaded data via a new pure tripOverview() in core.js.",
+      "verified": true,
+      "verify_note": "Independent agent PASS: overview.js + app.js 'overview' view + core.js tripOverview + itinerary daycard id anchor all on origin/main (merge 1f6aad0); node tools/test-core.mjs exits 0 with 8 new tripOverview assertions; local + GitHub Pages served checks 200 with markers (Travel Companion, tripOverview, overview) on first try.",
+      "commit": "1f6aad0",
+      "deploy": "live"
+    },
+    {
       "id": "B17",
       "title": "Calendar export (.ics)",
       "pillar": "bookings",
