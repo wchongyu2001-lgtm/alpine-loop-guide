@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B27",
+      "title": "Transport continuity check — does your travel chain actually connect?",
+      "pillar": "bookings",
+      "date": "2026-06-14T18:30:00Z",
+      "what": "The Bookings view now runs a 🔗 Transport continuity check across your flights, trains, buses and ferries. It parses each leg's origin→destination from the booking title (airport IATA codes for flights, station/city names for ground transit) and flags three kinds of problem: a same-time jump (two timed legs overlap but depart different places — you can't be in two places at once), a broken connection (you land somewhere but the next same-day leg departs a different place), and a one-way rental (a car picked up in one city but dropped in another, with no return to where you started). It's deliberately conservative: legs days apart aren't flagged (an unbooked local transfer is normal), round-trip “↔” car rentals are treated as self-returning, and city matching is lenient on station detail — so a clean multi-city itinerary like the seeded Alpine/Iceland trip raises nothing, while a deliberately broken chain surfaces immediately.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge 75e8e3d on origin/main (transportContinuity in js/core.js, continuityHtml in js/bookings.js, .bk-cont styles in css/app.css). node tools/test-core.mjs exits 0 with new guards: clean chain + round-trip van → none, same-day arrive≠depart → break, overlapping legs → jump, one-way car → noreturn, legs days apart → no false break. Independent module-mode exercise reproduced each verdict and confirmed seeded data/bookings.json raises [] (no false positives). Live served checks 200 with markers transportContinuity (core.js) + continuityHtml (bookings.js).",
+      "commit": "75e8e3d",
+      "deploy": "live"
+    },
+    {
       "id": "B26",
       "title": "Committed so far — booking spend rolled up by type vs the trip budget",
       "pillar": "bookings",
