@@ -158,3 +158,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 3041b71
+
+### 2026-06-14T14:00:00Z · B24 Accommodation coverage strip
+- status: done
+- pillar: bookings
+- what: Per-night 🛏 coverage strip in the Bookings view — one cell per night (departure day excluded), green+stay-name when a hotel/campervan spans the night (checkout-exclusive), dashed terracotta gap otherwise; tap a gap → manual add form pre-filled as a hotel for that date.
+- verified: PASS — independent agent confirmed merge 568f4b2 on origin/main (accommodationStrip in core.js, stripHtml/data-booknight in bookings.js, .bk-night CSS), node tools/test-core.mjs EXIT=0 with 9 new accommodationStrip guards ok, live GitHub Pages fetch 200 with markers Travel Companion + accommodationStrip + bk-strip (no lag).
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 568f4b2
