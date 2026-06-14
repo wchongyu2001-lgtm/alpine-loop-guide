@@ -311,3 +311,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: d6118cb
+
+### 2026-06-15T03:00:00Z · B33 Free-form day notes
+- status: done
+- pillar: polish
+- what: Each Itinerary day card now has a plain-text notes textarea, saved on blur to the itinerary overlay's `dayNotes` map (via setDayNote → ctx.save) and seeded back on render from new pure helper `dayNote(overlay, dayId)` in core.js, so notes persist across reload and work offline. Empty clears the note.
+- verified: PASS (independent agent) — merge 1dbf735 on origin/main has dayNote() in core.js + data-daynote textarea/setDayNote in itinerary.js (read-back round-trip confirmed); node tools/test-core.mjs exits 0 with all 5 new dayNote guards; live js/core.js & js/itinerary.js served 200 with markers 'function dayNote' / 'data-daynote'.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 1dbf735
