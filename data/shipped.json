@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B31",
+      "title": "Trip totals + departure countdown",
+      "pillar": "polish",
+      "date": "2026-06-15T01:10:00.000Z",
+      "what": "The Overview tab now opens with a live departure countdown (\"X days to departure\" from today to the trip start — and \"Today the trip begins\" / \"trip under way\" once it starts) plus a compact stats strip summarising the whole trip at a glance: total driving distance (road-scaled km across the day bases), total driving time (the sum of each day's drive hours), number of nights, planned stops and bookings, and the day count. Two new pure functions in core.js — tripTotals() and daysToDeparture() — power it; both read only already-loaded data so it works fully offline. The stops figure is overlay-aware (your re-ordered/edited day plans are counted), and the countdown is UTC-anchored so it never drifts by a day across timezones.",
+      "verified": true,
+      "verify_note": "Independent agent: origin/main 4d49f62 has tripTotals + daysToDeparture in core.js, imported+used in overview.js (ov-count countdown + ov-stats grid). node tools/test-core.mjs exits 0 with all 15 B31 assertions ok; logic confirmed correct (driveHours sums day.drive, nights counts sleep bases, stops overlay-aware, km via routeStats, countdown UTC-anchored). Live GitHub Pages served-checks 200 with markers present after propagation.",
+      "commit": "4d49f62",
+      "deploy": "live"
+    },
+    {
       "id": "B30",
       "title": "Campervan fuel cost estimator",
       "pillar": "logistics",
