@@ -167,3 +167,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 568f4b2
+
+### 2026-06-14T15:32Z · B25 Booking action reminders
+- status: done
+- pillar: bookings
+- what: New pure `bookingReminders()` + a ⏰ "Needs attention" list in the Bookings view — flight online check-in window (derived from departure, horizon-limited), free-cancellation deadlines, and hotel check-in/out times, sorted by urgency; nothing spurious when fields are absent. Added real fields to the Rialto Venice stay so it renders live.
+- verified: PASS — independent agent confirmed merge e1ae08d on origin/main, `node tools/test-core.mjs` exit 0 (7 new guards), reproduced correct sort/urgency/no-spurious in a throwaway run, live served checks 200 with markers `bookingReminders` + `Needs attention`.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: e1ae08d
