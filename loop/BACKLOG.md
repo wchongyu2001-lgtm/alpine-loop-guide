@@ -157,7 +157,7 @@ day persists across reload via the overlay; renders in the day card.
 Closed badge (and next-open time if closed) on the itinerary place. Accept: a place with hours shows the
 correct badge for the current time; places without hours show nothing (no false state).
 
-### B35 · status: todo · pillar: polish
+### B35 · status: wip · pillar: polish
 **Dark mode.** A theme toggle (light / dark / auto) saved to localStorage, with a dark palette for the
 app chrome + cards (and the map staying legible). Accept: toggling to dark restyles the UI and persists;
 auto follows the OS preference.
