@@ -149,3 +149,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: f06ba5c
+
+### 2026-06-14T05:27Z · B23 Booking timeline view
+- status: done
+- pillar: bookings
+- what: New ⏱ Timeline tab — all of a trip's bookings in one read-only chronological view, grouped by day and time-sorted, each row with type icon, time, provider, conf # and price. Time overlaps flagged via a header count + inline "overlap" tag (reuses bookingWarnings detection). New pure `bookingTimeline` in core.js with 6 guards.
+- verified: PASS — independent agent confirmed merge 3041b71 on origin/main (js/timeline.js, view registered in app.js, precached in sw.js); test-core exits 0 with new bookingTimeline guards; throwaway import flagged both overlapping flights; local + live served checks 200 with marker "Booking timeline".
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 3041b71

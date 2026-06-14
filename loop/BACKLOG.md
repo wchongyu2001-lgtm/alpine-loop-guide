@@ -31,7 +31,7 @@ and moves between consecutive places/cities with no transport booking. Render a 
 checklist grouped by date with what's missing. Accept: on the seeded data it lists uncovered nights /
 missing transport legs; a fully-covered stretch shows nothing (no false positives).
 
-### B23 · status: wip · pillar: bookings
+### B23 · status: done (3041b71) · pillar: bookings
 **Booking timeline view.** A dedicated chronological timeline of all of a trip's bookings grouped by
 day, with type icon, time, provider, confirmation #, and price — visually flagging overlaps and gaps.
 Accept: the Alpine bookings render in time order grouped by day; an overlap is visibly flagged.
