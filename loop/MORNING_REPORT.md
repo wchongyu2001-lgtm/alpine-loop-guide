@@ -230,3 +230,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 99310dd
+
+### 2026-06-14T22:30:00Z · B15 Quick currency converter
+- status: done
+- pillar: money
+- what: Live two-way converter in the Budget view using fx.js cached ECB rates — EUR⇄home currency (selectable, persisted), works offline once cached.
+- verified: PASS — independent agent confirmed merge 0bd7adc on origin/main, test-core.mjs exit 0 with 8 new fxConvert guards (both-direction round-trip + edge cases), live js/budget.js & js/core.js 200 with markers on GitHub Pages.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 0bd7adc
