@@ -131,7 +131,7 @@ New "Overview" view tab; pure tripOverview() in core.js; taps scroll to it-day-<
 default to satellite for the campervan scenery. Accept: switching to Satellite persists across reload;
 no effect / no error on the Leaflet fallback.
 
-### B30 · status: todo · pillar: logistics
+### B30 · status: wip · pillar: logistics
 **Campervan fuel cost estimator.** Per driving leg (between consecutive day bases) estimate fuel cost
 from the leg distance and the trip's fuel figure (meta.fuelPerH) at a user-editable price/litre, and
 show a trip total. Pure compute in core.js, shown in the Itinerary or a Budget card. Accept: a sensible
