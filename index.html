@@ -26,7 +26,18 @@
 <script type="module" src="js/app.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  // Auto-apply new deploys: when an updated SW takes control, reload once so the
+  // fresh shell shows immediately (no manual hard-refresh needed).
+  let _reloaded;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (_reloaded) return; _reloaded = true; location.reload();
+  });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.update().catch(() => {});
+      setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000); // re-check hourly
+    }).catch(() => {});
+  });
 }
 </script>
 </body>

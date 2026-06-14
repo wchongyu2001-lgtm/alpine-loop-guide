@@ -117,11 +117,15 @@ function renderLeaflet(mapEl, sel, state) {
 
 // ================= Google Maps backend (key set) =================
 const MAP_TYPE_KEY = 'v2:mapType'; // remembered roadmap/satellite/terrain/hybrid choice
-let gmap, gmarkers = [], gline, ginfo;
+let gmap, gmarkers = [], gline, ginfo, gGen = 0;
 function renderGoogle(mapEl, sel, state) {
   const td = state.tripData;
+  const myGen = ++gGen; // only the latest render may init — guards against double-render
   mapEl.innerHTML = '<p class="muted" style="padding:1rem">Loading Google Maps…</p>';
+  // Real auth failure (bad key / referrer / billing) → fall back to Leaflet.
+  window.gm_authFailure = () => { if (myGen !== gGen) return; mapEl.innerHTML = ''; renderLeaflet(mapEl, sel, state); };
   loadGoogle(MAPS_KEY).then(() => {
+    if (myGen !== gGen) return; // a newer render superseded this one — don't double-init Leaflet/Google
     mapEl.innerHTML = '';
     let stored = null; try { stored = localStorage.getItem(MAP_TYPE_KEY); } catch {}
     gmap = new google.maps.Map(mapEl, {
@@ -162,7 +166,8 @@ function renderGoogle(mapEl, sel, state) {
     sel.onchange = () => draw(sel.value);
     draw('trip');
   }).catch(() => {
-    // Bad key / referrer / offline → fall back to Leaflet so the map still works.
+    if (myGen !== gGen) return; // superseded — let the newer render own the element
+    // Script load failure (offline / blocked) → fall back to Leaflet so the map still works.
     mapEl.innerHTML = '';
     renderLeaflet(mapEl, sel, state);
   });
