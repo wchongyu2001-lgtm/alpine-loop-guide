@@ -70,7 +70,7 @@ types in the plan, generate a suggested packing checklist into the Checklists vi
 Accept: a "Suggest packing list" action adds weather-appropriate items for the Alpine trip (e.g. rain
 layer if rain forecast, warm layer for alpine temps); items land in the existing checklist overlay.
 
-### B16 · status: todo · pillar: mobile/live
+### B16 · status: wip · pillar: mobile/live
 **Next-up countdown on the Today view.** Show a live countdown to the next timed stop and the next
 upcoming booking ("Next: Funicular in 1h 20m"). Updates each minute. Accept: on the current Alpine
 day the Today view shows a correct countdown to the next stop/booking; degrades gracefully if none left.
