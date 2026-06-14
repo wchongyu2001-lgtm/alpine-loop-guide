@@ -3,7 +3,7 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, convert } from './core.js';
+import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, transportContinuity, convert } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
@@ -68,6 +68,7 @@ export function render(root, ctx) {
     ${remindersHtml(list)}
     ${rollupHtml(state, list)}
     ${warningsHtml(state, list)}
+    ${continuityHtml(list)}
     ${stripHtml(state, list)}
     ${stillToBookHtml(state, list)}
     ${Object.keys(byDate).sort().map(d => `
@@ -359,6 +360,26 @@ function warningsHtml(state, list) {
           <div class="bk-warn-detail">${esc(w.detail)}</div>
         </div>
         <button class="bk-warn-x" data-dismwarn="${esc(warnSig(w))}" title="Dismiss">✕</button>
+      </div>`).join('')}
+  </div>`;
+}
+
+/* ---------- transport continuity check (B27) ---------- */
+
+const CONT_LABEL = { jump: 'Same-time jump', break: 'Broken connection', noreturn: 'One-way rental' };
+
+function continuityHtml(list) {
+  const issues = transportContinuity(list);
+  if (!issues.length) return '';
+  return `<div class="bk-cont">
+    <h3>🔗 Transport continuity — ${issues.length} to check</h3>
+    ${issues.map(c => `
+      <div class="bk-cont-row">
+        <span class="bk-cont-kind">${CONT_LABEL[c.kind] || 'Check'}</span>
+        <div class="bk-cont-main">
+          <span class="bk-cont-title">${esc(c.title)}</span>
+          <div class="bk-cont-detail">${esc(c.detail)}</div>
+        </div>
       </div>`).join('')}
   </div>`;
 }

@@ -373,6 +373,67 @@ export function bookingTimeline(bookings, trip) {
   }));
 }
 
+// ---- B27: transport continuity check (pure) ----
+// Parse each transit booking's origin→destination from its title and verify the
+// chain makes sense. Returns [{ kind, id, title, detail, otherId? }]:
+//   • jump:     two timed legs overlap in time but depart different places — you
+//               can't be in two places at once.
+//   • break:    a same-day onward connection where you land at A but the next leg
+//               departs B≠A — a broken tight connection (far-apart legs are left
+//               alone; an unbooked local transfer is normal).
+//   • noreturn: a one-way vehicle rental (pickup A, drop-off B≠A, no "↔") — the
+//               outbound has no matching return to where you picked it up.
+// Conservative: only flight/train/bus/ferry legs chain; round-trip "↔" notation is
+// treated as self-returning; place keys compare on the leading city word so a
+// "Milan Rogoredo → Genova" style mismatch in station detail isn't flagged.
+const transitRoute = b => {
+  const t = String(b.title || '');
+  if (b.type === 'flight') {
+    const r = flightRoute(t);
+    if (r) return { from: r.from.toLowerCase(), to: r.to.toLowerCase(), fromLabel: r.from, toLabel: r.to, round: false };
+  }
+  const seg = t.split('·').pop();
+  const parts = seg.split(/↔|→|->|–|—/);
+  if (parts.length < 2) return null;
+  const clean = s => s.replace(/\([A-Za-z0-9]{2,4}\)/g, '').replace(/[()'"]/g, '').trim();
+  const key = s => clean(s).toLowerCase().split(/[\s,]+/)[0];
+  const fromLabel = clean(parts[0]), toLabel = clean(parts[1]);
+  const from = key(parts[0]), to = key(parts[1]);
+  return from && to ? { from, to, fromLabel, toLabel, round: /↔/.test(seg) } : null;
+};
+
+export function transportContinuity(bookings) {
+  const TRANSIT = new Set(['flight', 'train', 'bus', 'ferry']);
+  const legs = (bookings || []).map(b => { const r = transitRoute(b); return r ? { ...r, b } : null; }).filter(Boolean);
+  const out = [];
+
+  const timed = legs.filter(l => TRANSIT.has(l.b.type)
+    && /T\d/.test(String(l.b.start)) && /T\d/.test(String(l.b.end)));
+  for (let i = 0; i < timed.length; i++)
+    for (let j = i + 1; j < timed.length; j++) {
+      const a = timed[i], c = timed[j];
+      if (String(a.b.start) < String(c.b.end) && String(c.b.start) < String(a.b.end) && a.from !== c.from)
+        out.push({ kind: 'jump', id: c.b.id, title: c.b.title, otherId: a.b.id,
+          detail: `Departs ${c.fromLabel} while “${a.b.title}” is still under way — you can't be in two places at once.` });
+    }
+
+  const seq = timed.slice().sort((a, b) => String(a.b.start).localeCompare(String(b.b.start)));
+  for (let i = 0; i + 1 < seq.length; i++) {
+    const a = seq[i], n = seq[i + 1];
+    if (dOnly(a.b.end || a.b.start) !== dOnly(n.b.start)) continue;   // only flag tight same-day connections
+    if (a.to !== n.from)
+      out.push({ kind: 'break', id: n.b.id, title: n.b.title, otherId: a.b.id,
+        detail: `Land in ${a.toLabel} but the next leg departs ${n.fromLabel} the same day — broken connection?` });
+  }
+
+  for (const l of legs)
+    if (l.b.type === 'car' && !l.round && l.from !== l.to)
+      out.push({ kind: 'noreturn', id: l.b.id, title: l.b.title,
+        detail: `Picked up in ${l.fromLabel} but dropped in ${l.toLabel} — one-way, no return to ${l.fromLabel}.` });
+
+  return out;
+}
+
 // ---- B22: "still to book" coverage gaps (pure) ----
 // From a trip's dated days + its bookings, surface what isn't booked yet:
 //   • lodging: a night with no accommodation covering it
