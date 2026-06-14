@@ -1113,6 +1113,13 @@ export function mapTypeChoice(stored) {
   return MAP_TYPES.includes(v) ? v : 'satellite';
 }
 
+// B33 · Free-form day notes — read a day's note from the itinerary overlay's
+// `dayNotes` map, trimmed. Missing/blank → ''. Pure; used by the Itinerary view.
+export function dayNote(overlay, dayId) {
+  const notes = (overlay && overlay.dayNotes) || {};
+  return String(notes[dayId] || '').trim();
+}
+
 // B18 · Offline trip search — pure, network-free filter over already-loaded records.
 // Each record carries a `text` haystack; every whitespace token of the query must
 // appear (case-insensitive substring) for the record to match. Empty query → [].

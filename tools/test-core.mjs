@@ -11,7 +11,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, fuelEstimate, transportContinuity, bookingIcs, tripIcs,
   nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials, tripOverview,
-  mapTypeChoice, tripTotals, daysToDeparture } from '../js/core.js';
+  mapTypeChoice, tripTotals, daysToDeparture, dayNote } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -871,5 +871,12 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(daysToDeparture(null, '2026-08-01'), null, 'daysToDeparture: missing start → null');
   eq(daysToDeparture('2026-08-01', 'nope'), null, 'daysToDeparture: bad today → null');
 }
+
+// ---- B33: free-form day notes (pure overlay read) ----
+eq(dayNote({ dayNotes: { d1: '  fill water  ' } }, 'd1'), 'fill water', 'dayNote: returns trimmed note for the day');
+eq(dayNote({ dayNotes: { d1: 'x' } }, 'd2'), '', 'dayNote: missing day → empty string');
+eq(dayNote({}, 'd1'), '', 'dayNote: no dayNotes map → empty string');
+eq(dayNote(null, 'd1'), '', 'dayNote: null overlay → empty string');
+eq(dayNote({ dayNotes: { d1: '   ' } }, 'd1'), '', 'dayNote: blank note → empty string');
 
 process.exit(fails ? 1 : 0);
