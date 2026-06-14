@@ -2,7 +2,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, thumbCacheKey,
   gmapsPlaceUrl, amapsPlaceUrl, splitTime, joinTime, matchBooking, pickSummaryExtract, factCacheKey,
   placeProxyUrl, placePhotoUrl, placeCacheKey, fmtRating, priceTier, parsePlace,
-  modeProfile, osrmUrl, legFallback, fmtDuration, parseOsrm,
+  modeProfile, osrmUrl, legFallback, fmtDuration, parseOsrm, parseOsrmRoute,
   iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl, wlShareValid,
   weatherUrl, weatherCacheKey, pickDaily, wmoIcon, daylight, convert, simplifyDebts,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
@@ -220,6 +220,10 @@ eq(fmtDuration(12), '12 min', 'fmtDuration <60');
 eq(fmtDuration(65), '1 h 5 min', 'fmtDuration >60');
 eq(parseOsrm({ routes: [{ distance: 8400, duration: 720 }] }), { km: 8.4, mins: 12 }, 'parseOsrm m→km s→min');
 eq(parseOsrm({ routes: [] }), null, 'parseOsrm empty → null');
+eq(parseOsrmRoute({ routes: [{ distance: 12000, duration: 1800, geometry: { coordinates: [[10, 45], [11, 46]] }, legs: [{ distance: 12000, duration: 1800 }] }] }),
+  { coords: [[45, 10], [46, 11]], km: 12, mins: 30, legs: [{ km: 12, mins: 30 }] }, 'parseOsrmRoute geometry+legs ([lng,lat]→[lat,lng])');
+eq(parseOsrmRoute({ routes: [{ distance: 1, duration: 1 }] }), null, 'parseOsrmRoute no geometry → null');
+eq(parseOsrmRoute({ routes: [] }), null, 'parseOsrmRoute empty → null');
 
 // ---- logos ----
 eq(iataFromFlight('EK353'), 'EK', 'iata EK'); eq(iataFromFlight('W6 4551'), 'W6', 'iata W6');

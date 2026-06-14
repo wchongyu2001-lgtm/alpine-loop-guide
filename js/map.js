@@ -1,9 +1,12 @@
 /* Map view — Google Maps when a key is set in config.js, else Leaflet/OpenStreetMap.
    Both backends share collectMapData() so the whole-trip / per-day / per-category views,
    coloured numbered pins, popups and deep links are identical either way. */
-import { esc, gmapsUrl, amapsUrl, gmapsPlaceUrl, amapsPlaceUrl, effectivePlans, mapTypeChoice, MAP_TYPES } from './core.js';
+import { esc, gmapsUrl, amapsUrl, gmapsPlaceUrl, amapsPlaceUrl, effectivePlans, mapTypeChoice, MAP_TYPES, fmtDuration } from './core.js';
 import { tripBookings } from './data.js';
 import { MAPS_KEY } from './config.js';
+import { routeGeometry } from './routing.js';
+
+let routeGen = 0; // guards async road-geometry draws against view changes
 
 // ---- popups (shared) ----
 const popup = (name, desc, ll) => popupWith(name, desc, gmapsUrl(ll, name), amapsUrl(ll, name));
@@ -80,6 +83,7 @@ function barHtml(state) {
           ${Object.entries(cats).map(([k, v]) => `<option value="cat:${k}">${esc(v)}</option>`).join('')}
         </optgroup>
       </select>
+      <span id="maproute" class="muted maproute"></span>
     </div>
     <div id="map"></div>`;
 }
@@ -89,13 +93,14 @@ export function render(root, ctx) {
   root.innerHTML = barHtml(state);
   const mapEl = root.querySelector('#map');
   const sel = root.querySelector('#mapview');
-  if (MAPS_KEY) renderGoogle(mapEl, sel, state);
-  else renderLeaflet(mapEl, sel, state);
+  const readout = root.querySelector('#maproute');
+  if (MAPS_KEY) renderGoogle(mapEl, sel, state, readout);
+  else renderLeaflet(mapEl, sel, state, readout);
 }
 
 // ================= Leaflet backend (fallback / no key) =================
 let lmap, llayer;
-function renderLeaflet(mapEl, sel, state) {
+function renderLeaflet(mapEl, sel, state, readout) {
   const td = state.tripData;
   if (lmap) { lmap.remove(); lmap = null; }
   lmap = L.map(mapEl).setView(td.meta.mapCenter, td.meta.mapZoom);
@@ -103,13 +108,25 @@ function renderLeaflet(mapEl, sel, state) {
   llayer = L.layerGroup().addTo(lmap);
   const draw = view => {
     llayer.clearLayers();
+    if (readout) readout.textContent = '';
     const { markers, route, bounds } = collectMapData(state, view);
     markers.forEach(m => {
       const icon = L.divIcon({ className: 'pin' + (m.cls ? ' ' + m.cls : ''), html: `<span style="background:${m.color || '#5a6342'}">${m.label || '•'}</span>`, iconSize: [26, 26], iconAnchor: [13, 13] });
       L.marker(m.ll, { icon }).bindPopup(m.html, { maxWidth: 260 }).addTo(llayer);
     });
-    if (route) L.polyline(route.ll, { color: route.color, weight: 3, opacity: route.dashed ? .6 : .7, dashArray: route.dashed ? '6 6' : null }).addTo(llayer);
+    let straight = null;
+    if (route) straight = L.polyline(route.ll, { color: route.color, weight: 3, opacity: route.dashed ? .6 : .7, dashArray: route.dashed ? '6 6' : null }).addTo(llayer);
     if (bounds.length) lmap.fitBounds(bounds, { padding: [30, 30] });
+    // Upgrade the straight line to the real road-following route (async, cached, offline-safe).
+    if (route && route.ll.length > 1) {
+      const gen = ++routeGen;
+      routeGeometry(route.ll).then(geo => {
+        if (gen !== routeGen || !geo || !geo.coords || !geo.coords.length) return;
+        if (straight) llayer.removeLayer(straight);
+        L.polyline(geo.coords, { color: route.color, weight: 4, opacity: .85 }).addTo(llayer);
+        if (readout) readout.textContent = `🚗 ${geo.km} km · ${fmtDuration(geo.mins)}`;
+      });
+    }
   };
   sel.onchange = () => draw(sel.value);
   draw('trip');
@@ -118,12 +135,12 @@ function renderLeaflet(mapEl, sel, state) {
 // ================= Google Maps backend (key set) =================
 const MAP_TYPE_KEY = 'v2:mapType'; // remembered roadmap/satellite/terrain/hybrid choice
 let gmap, gmarkers = [], gline, ginfo, gGen = 0;
-function renderGoogle(mapEl, sel, state) {
+function renderGoogle(mapEl, sel, state, readout) {
   const td = state.tripData;
   const myGen = ++gGen; // only the latest render may init — guards against double-render
   mapEl.innerHTML = '<p class="muted" style="padding:1rem">Loading Google Maps…</p>';
   // Real auth failure (bad key / referrer / billing) → fall back to Leaflet.
-  window.gm_authFailure = () => { if (myGen !== gGen) return; mapEl.innerHTML = ''; renderLeaflet(mapEl, sel, state); };
+  window.gm_authFailure = () => { if (myGen !== gGen) return; mapEl.innerHTML = ''; renderLeaflet(mapEl, sel, state, readout); };
   loadGoogle(MAPS_KEY).then(() => {
     if (myGen !== gGen) return; // a newer render superseded this one — don't double-init Leaflet/Google
     mapEl.innerHTML = '';
@@ -142,6 +159,7 @@ function renderGoogle(mapEl, sel, state) {
     const draw = view => {
       gmarkers.forEach(m => m.setMap(null)); gmarkers = [];
       if (gline) { gline.setMap(null); gline = null; }
+      if (readout) readout.textContent = '';
       const { markers, route, bounds } = collectMapData(state, view);
       const b = new google.maps.LatLngBounds();
       markers.forEach(m => {
@@ -162,6 +180,19 @@ function renderGoogle(mapEl, sel, state) {
       });
       bounds.forEach(ll => b.extend({ lat: ll[0], lng: ll[1] }));
       if (!b.isEmpty()) gmap.fitBounds(b, 40);
+      // Upgrade the straight line to the real road-following route (async, cached, offline-safe).
+      if (route && route.ll.length > 1) {
+        const gen = ++routeGen;
+        routeGeometry(route.ll).then(geo => {
+          if (gen !== routeGen || !geo || !geo.coords || !geo.coords.length || !gmap) return;
+          if (gline) gline.setMap(null);
+          gline = new google.maps.Polyline({
+            path: geo.coords.map(c => ({ lat: c[0], lng: c[1] })), map: gmap, geodesic: false,
+            strokeColor: route.color, strokeOpacity: 0.85, strokeWeight: 4,
+          });
+          if (readout) readout.textContent = `🚗 ${geo.km} km · ${fmtDuration(geo.mins)}`;
+        });
+      }
     };
     sel.onchange = () => draw(sel.value);
     draw('trip');
@@ -169,7 +200,7 @@ function renderGoogle(mapEl, sel, state) {
     if (myGen !== gGen) return; // superseded — let the newer render own the element
     // Script load failure (offline / blocked) → fall back to Leaflet so the map still works.
     mapEl.innerHTML = '';
-    renderLeaflet(mapEl, sel, state);
+    renderLeaflet(mapEl, sel, state, readout);
   });
 }
 
