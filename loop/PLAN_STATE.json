@@ -19,7 +19,7 @@
     { "night": 4,  "date": "2026-08-04", "region": "Swiss Alps - Berner Oberland (Jungfrau)", "campsite": "Camping Jungfrau (Hobby 3) — night 2 of 2", "location": "Lauterbrunnen valley floor (stay put, van parked; value swap: Camping Schützenbach 1km south)", "booked_status": "to-book", "done": true },
     { "night": 5,  "date": "2026-08-05", "region": "Swiss Alps - Grindelwald / Interlaken", "campsite": "Camping Eigernordwand", "location": "Grindelwald-Grund (valley-floor van pitch under the Eiger north face, 600m walk to Grindelwald Terminal for First gondola + Eiger Express; book 2-3mo ahead; value swap Camping Gletscherdorf ~CHF 44-58)", "booked_status": "to-book", "done": true },
     { "night": 6,  "date": "2026-08-06", "region": "Swiss Alps - Zermatt / Matterhorn gateway (app route: Aug 6 = Zermatt, not Lucerne — region guess corrected to match data/alpine.json)", "campsite": "Camping Attermenzen", "location": "Randa, between the Randa & Täsch stations (working gateway pitch for car-free Zermatt ~CHF 33-46/night for 2+van Aug, renovated 2021 ~320 sockets + motorhome service; train into Zermatt every ~20min or shuttle-taxi ~CHF 7 each way; book 2-3mo ahead. NB old Camping Alphubel Täsch is permanently closed — rockfall/flood; van base 2 nights)", "booked_status": "to-book", "done": true },
-    { "night": 7,  "date": "2026-08-07", "region": "Swiss Alps - Zermatt / Saas region (Matterhorn)", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 7,  "date": "2026-08-07", "region": "Swiss Alps - Zermatt / Matterhorn (Gornergrat day; app route Aug 7 = matterhorn, drive=0)", "campsite": "Camping Attermenzen — night 2 of 2", "location": "Randa (van stays put from Night 6; teardown-free morning, first train to Gornergrat via Täsch park-and-ride; GGB cog railway ~CHF 88pp return, sit RIGHT going up, Swiss Travel Pass ~50% off; value Riffelberg→Riffelsee walk-down for the reflection shot; cheaper swap Camping Mischabel Saas-Grund ~CHF 30-42)", "booked_status": "to-book", "done": true },
     { "night": 8,  "date": "2026-08-08", "region": "Eastern Switzerland - Engadin / St Moritz (toward Austria)", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
     { "night": 9,  "date": "2026-08-09", "region": "Austria - Tirol / Innsbruck area", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
     { "night": 10, "date": "2026-08-10", "region": "Austria - Tirol / Zillertal or Stubai", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
@@ -64,5 +64,5 @@
     "per_day": false
   },
 
-  "clean_pass_counter": 1
+  "clean_pass_counter": 2
 }
