@@ -1,7 +1,7 @@
 /* Map view — Google Maps when a key is set in config.js, else Leaflet/OpenStreetMap.
    Both backends share collectMapData() so the whole-trip / per-day / per-category views,
    coloured numbered pins, popups and deep links are identical either way. */
-import { esc, gmapsUrl, amapsUrl, gmapsPlaceUrl, amapsPlaceUrl, effectivePlans } from './core.js';
+import { esc, gmapsUrl, amapsUrl, gmapsPlaceUrl, amapsPlaceUrl, effectivePlans, mapTypeChoice, MAP_TYPES } from './core.js';
 import { tripBookings } from './data.js';
 import { MAPS_KEY } from './config.js';
 
@@ -116,15 +116,23 @@ function renderLeaflet(mapEl, sel, state) {
 }
 
 // ================= Google Maps backend (key set) =================
+const MAP_TYPE_KEY = 'v2:mapType'; // remembered roadmap/satellite/terrain/hybrid choice
 let gmap, gmarkers = [], gline, ginfo;
 function renderGoogle(mapEl, sel, state) {
   const td = state.tripData;
   mapEl.innerHTML = '<p class="muted" style="padding:1rem">Loading Google Maps…</p>';
   loadGoogle(MAPS_KEY).then(() => {
     mapEl.innerHTML = '';
+    let stored = null; try { stored = localStorage.getItem(MAP_TYPE_KEY); } catch {}
     gmap = new google.maps.Map(mapEl, {
       center: { lat: td.meta.mapCenter[0], lng: td.meta.mapCenter[1] },
       zoom: td.meta.mapZoom, mapTypeControl: true, streetViewControl: false, fullscreenControl: true,
+      mapTypeId: mapTypeChoice(stored),
+      mapTypeControlOptions: { mapTypeIds: MAP_TYPES },
+    });
+    // Remember the user's map-type choice so it sticks across reloads.
+    gmap.addListener('maptypeid_changed', () => {
+      try { localStorage.setItem(MAP_TYPE_KEY, gmap.getMapTypeId()); } catch {}
     });
     ginfo = new google.maps.InfoWindow();
     const draw = view => {

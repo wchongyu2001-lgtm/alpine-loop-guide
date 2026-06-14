@@ -10,7 +10,8 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, transportContinuity, bookingIcs, tripIcs,
-  nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials, tripOverview } from '../js/core.js';
+  nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials, tripOverview,
+  mapTypeChoice } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -807,6 +808,18 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(ov[2].bookings.map(b => b.title), ['Verona → Bolzano'], 'tripOverview: booking lands on its date');
   eq(tripOverview(null), [], 'tripOverview: null days → []');
   eq(tripOverview(days)[0].bookings, [], 'tripOverview: no bookings arg → empty markers');
+}
+
+// ---- B29: map layer choice (normalise stored Google Maps type, default satellite) ----
+{
+  eq(mapTypeChoice('satellite'), 'satellite', 'mapTypeChoice: keeps satellite');
+  eq(mapTypeChoice('roadmap'), 'roadmap', 'mapTypeChoice: keeps roadmap');
+  eq(mapTypeChoice('terrain'), 'terrain', 'mapTypeChoice: keeps terrain');
+  eq(mapTypeChoice('hybrid'), 'hybrid', 'mapTypeChoice: keeps hybrid');
+  eq(mapTypeChoice('SATELLITE'), 'satellite', 'mapTypeChoice: case-insensitive');
+  eq(mapTypeChoice(null), 'satellite', 'mapTypeChoice: null → satellite default');
+  eq(mapTypeChoice(''), 'satellite', 'mapTypeChoice: empty → satellite default');
+  eq(mapTypeChoice('bogus'), 'satellite', 'mapTypeChoice: unknown value → satellite default');
 }
 
 process.exit(fails ? 1 : 0);

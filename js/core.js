@@ -1034,6 +1034,14 @@ export function countryEssentials(code) {
   return COUNTRY_ESSENTIALS[String(code).toUpperCase()] || null;
 }
 
+// B29 · Map layer choice — normalise a stored Google Maps type to a valid id,
+// defaulting to satellite (campervan scenery). Anything unknown → 'satellite'.
+export const MAP_TYPES = ['roadmap', 'satellite', 'terrain', 'hybrid'];
+export function mapTypeChoice(stored) {
+  const v = String(stored || '').toLowerCase();
+  return MAP_TYPES.includes(v) ? v : 'satellite';
+}
+
 // B18 · Offline trip search — pure, network-free filter over already-loaded records.
 // Each record carries a `text` haystack; every whitespace token of the query must
 // appear (case-insensitive substring) for the record to match. Empty query → [].
