@@ -11,11 +11,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..700&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="css/app.css" />
+<script>
+/* B35 dark mode: apply the saved theme before first paint to avoid a flash. */
+(function () {
+  try {
+    var c = localStorage.getItem('v2:theme') || 'auto';
+    var eff = (c === 'light' || c === 'dark') ? c
+      : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.dataset.theme = eff;
+    document.documentElement.dataset.themeChoice = c;
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
 <header class="top">
   <div class="brand">Travel <em>Companion</em></div>
   <nav id="triptabs"></nav>
+  <button id="themetoggle" class="mini" type="button" title="Switch theme" aria-label="Switch theme"></button>
 </header>
 <section id="hero"></section>
 <nav id="viewtabs"></nav>
