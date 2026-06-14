@@ -7,68 +7,491 @@
     "who": "owner + YX",
     "vehicle": "campervan (Indie Campers, booked)",
     "route": "Venice -> Switzerland -> Austria -> Dolomites -> Venice",
-    "dates": { "start": "2026-08-01", "end": "2026-08-17", "nights": 16 },
+    "dates": {
+      "start": "2026-08-01",
+      "end": "2026-08-17",
+      "nights": 16
+    },
     "optimization": "value-optimized",
     "notes": "Pick up van Fri 1 Aug PM in Venice; return van AM Mon 17 Aug. Regions below are first-pass guesses from the Grand Loop route; the loop refines them with real campsites/stops."
   },
-
   "nights": [
-    { "night": 1,  "date": "2026-08-01", "region": "Lake Garda / Veneto (warm-up)", "campsite": "Camping San Benedetto", "location": "Peschiera del Garda (lakeside, A4-accessible)", "booked_status": "to-book", "done": true },
-    { "night": 2,  "date": "2026-08-02", "region": "Central Switzerland - Lake Lucerne (Gotthard transit)", "campsite": "Camping Lido Luzern", "location": "Lidostrasse 19, Lucerne (lakeside, 2.5km from old town, next to Lido swim)", "booked_status": "to-book", "done": true },
-    { "night": 3,  "date": "2026-08-03", "region": "Swiss Alps - Lauterbrunnen / Berner Oberland", "campsite": "Camping Jungfrau (Hobby 3)", "location": "Lauterbrunnen valley floor, facing Staubbach Falls (walk to village + Wengen/Mürren lifts)", "booked_status": "to-book", "done": true },
-    { "night": 4,  "date": "2026-08-04", "region": "Swiss Alps - Berner Oberland (Jungfrau)", "campsite": "Camping Jungfrau (Hobby 3) — night 2 of 2", "location": "Lauterbrunnen valley floor (stay put, van parked; value swap: Camping Schützenbach 1km south)", "booked_status": "to-book", "done": true },
-    { "night": 5,  "date": "2026-08-05", "region": "Swiss Alps - Grindelwald / Interlaken", "campsite": "Camping Eigernordwand", "location": "Grindelwald-Grund (valley-floor van pitch under the Eiger north face, 600m walk to Grindelwald Terminal for First gondola + Eiger Express; book 2-3mo ahead; value swap Camping Gletscherdorf ~CHF 44-58)", "booked_status": "to-book", "done": true },
-    { "night": 6,  "date": "2026-08-06", "region": "Swiss Alps - Zermatt / Matterhorn gateway (app route: Aug 6 = Zermatt, not Lucerne — region guess corrected to match data/alpine.json)", "campsite": "Camping Attermenzen", "location": "Randa, between the Randa & Täsch stations (working gateway pitch for car-free Zermatt ~CHF 33-46/night for 2+van Aug, renovated 2021 ~320 sockets + motorhome service; train into Zermatt every ~20min or shuttle-taxi ~CHF 7 each way; book 2-3mo ahead. NB old Camping Alphubel Täsch is permanently closed — rockfall/flood; van base 2 nights)", "booked_status": "to-book", "done": true },
-    { "night": 7,  "date": "2026-08-07", "region": "Swiss Alps - Zermatt / Matterhorn (Gornergrat day; app route Aug 7 = matterhorn, drive=0)", "campsite": "Camping Attermenzen — night 2 of 2", "location": "Randa (van stays put from Night 6; teardown-free morning, first train to Gornergrat via Täsch park-and-ride; GGB cog railway ~CHF 88pp return, sit RIGHT going up, Swiss Travel Pass ~50% off; value Riffelberg→Riffelsee walk-down for the reflection shot; cheaper swap Camping Mischabel Saas-Grund ~CHF 30-42)", "booked_status": "to-book", "done": true },
-    { "night": 8,  "date": "2026-08-08", "region": "Austria - Innsbruck / Tirol (app route Aug 8 = innsbruck1, region austria; drives straight Zermatt→Innsbruck via Liechtenstein + Fernpass lakes — region guess Engadin/St Moritz corrected to match data/alpine.json)", "campsite": "Camping Innsbruck Kranebitten", "location": "Kranebitter Allee 214, Innsbruck — the city's only proper campsite, riverside van pitches on the Inn under the Nordkette ~€36-46/night for 2+van Aug; bus O/J ~15min into the old town, on-site bar/restaurant; book ~1-2mo ahead. Value/quiet swap: Stellplatz Völs or Camping Natterer See ~7km SW ~€40-52. NB Innsbruck is a 2-night base (Nights 8+9), van stays put", "booked_status": "to-book", "done": true },
-    { "night": 9,  "date": "2026-08-09", "region": "Austria - Tirol / Innsbruck (app route Aug 9 = innsbruck2, drive=0 — night 2 of the Innsbruck base)", "campsite": "Camping Innsbruck Kranebitten — night 2 of 2", "location": "Kranebitter Allee 214, Innsbruck (van stays put from Night 8; riverside Inn pitches under the Nordkette ~€36-46/night for 2+van Aug, bus O/J ~15min to old town, on-site bar/restaurant; teardown-free Nordkette/Hungerburg morning; book both nights ~1-2mo ahead; value swap Camping Natterer See ~7km SW ~€40-52 lake-swim or Stellplatz Völs)", "booked_status": "to-book", "done": true },
-    { "night": 10, "date": "2026-08-10", "region": "Austria - Salzburg (app route Aug 10 = salzburg; region guess Zillertal/Stubai corrected to match data/alpine.json)", "campsite": "Camping Nord-Sam", "location": "Samstrasse 22A, NE Salzburg (~€38-50/night for 2+van Aug; pool, bus 6/21 ~20min to old town, easy A1 roll-in after Innsbruck; book ~1mo ahead; value swap Panorama Camping Stadtblick ~€36-48 fortress view or bare city Stellplatz)", "booked_status": "to-book", "done": true },
-    { "night": 11, "date": "2026-08-11", "region": "Austria - Hallstatt / Salzkammergut (app route Aug 11 = hallstatt, sleep Obertraun/Bad Goisern; region guess Hohe Tauern corrected to match data/alpine.json)", "campsite": "Camping am See, Obertraun", "location": "Winkl 77, Lake Hallstatt south shore (~€34-46/night for 2+van Aug; own swim beach, Dachstein/Five Fingers cable car ~5min; ferry/cycle into Hallstatt early; book ~1-1.5mo ahead; value swap Bad Goisern Camping Lambichl ~€32-42, or pricier Klausner-Höll in Hallstatt ~€44-56)", "booked_status": "to-book", "done": true },
-    { "night": 12, "date": "2026-08-12", "region": "Austria - Grossglockner / Zell am See (app route Aug 12 = grossglockner, sleep Zell am See)", "campsite": "Seecamp Zell am See, Thumersbach", "location": "Thumersbacher Strasse 34, Lake Zell east shore (~€42-56/night for 2+van Aug; swim jetty + restaurant, glacier sunset view; arrive after Grossglockner High Alpine Road toll ~€40/car; book 1-2mo ahead; value swap Sportcamp Woferlgut Bruck ~€38-50 or Panorama Camp Zell ~€34-44)", "booked_status": "to-book", "done": true },
-    { "night": 13, "date": "2026-08-13", "region": "Dolomites - Toblach/Dobbiaco, South Tyrol (app route Aug 13 = toblach, sleep Toblach/Niederdorf; region guess Alta Badia corrected to match data/alpine.json)", "campsite": "Camping Olympia, Toblach/Dobbiaco", "location": "Via Major 28 (~€40-54/night for 2+van Aug; pool/sauna, shop+restaurant, cycle path to Lago di Dobbiaco; bus 442/445 + Dolomiti SuperSummer card reach Tre Cime/Cortina van-parked; book 1-2mo ahead; value swap Camping Toblacher See ~€36-46)", "booked_status": "to-book", "done": true },
-    { "night": 14, "date": "2026-08-14", "region": "Dolomites - Pragser Wildsee/Tre Cime, base Cortina (app route Aug 14 = braies drive=0, sleep Cortina/Misurina)", "campsite": "Camping Olympic, Cortina d'Ampezzo", "location": "Località Fiames, SS51 ~4km N of Cortina (~€44-58/night for 2+van Aug; riverside pine pitches, bus into Cortina at gate; relocate from Toblach base toward Cortina, arrive Lago di Braies before 9am vehicle ban; book 1-2mo ahead; value swap Camping Cortina/Campo ~€46-60 or Misurina lakeside pitches)", "booked_status": "to-book", "done": true },
-    { "night": 15, "date": "2026-08-15", "region": "Dolomites - Seceda/Val Gardena, base Val di Fassa (app route Aug 15 = seceda drive=0, sleep Val Gardena/Bolzano; region guess Funes corrected to match data/alpine.json)", "campsite": "Camping Marmotta, Pozza di Fassa", "location": "Strada de Sèn Jan, Val di Fassa ~30min S of Ortisei (~€38-52/night for 2+van Aug; riverside pitches + pool, Catinaccio/Vajolet bus; day-trip Seceda cable car + Alpe di Siusi then drop over Pordoi/Sella; book 1-2mo ahead; value swap Camping Vidor Pozza ~€40-54 or Camping Moosbauer Bolzano ~€42-56 city base + easy A22 to Venice)", "booked_status": "to-book", "done": true },
-    { "night": 16, "date": "2026-08-16", "region": "Veneto - return toward Venice, base Mestre (app route Aug 16 = return, sleep Mestre)", "campsite": "Camping Jolly delle Querce, Marghera/Mestre", "location": "Via Giuseppe de Marchi 7 (~€36-50/night for 2+van Aug; closest proper campsite to Indie Campers Venice depot, pool+restaurant, ACTV bus ~15-20min to Piazzale Roma; pre-hand-back night — dump tanks/refill/clean van for 11:00 return; book ~1mo ahead; value swap Camping Venezia Marghera or Camping Fusina ~€34-46 lagoon vaporetto)", "booked_status": "to-book", "done": true }
+    {
+      "night": 1,
+      "date": "2026-08-01",
+      "region": "Lake Garda / Veneto (warm-up)",
+      "campsite": "Camping San Benedetto",
+      "location": "Peschiera del Garda (lakeside, A4-accessible)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 2,
+      "date": "2026-08-02",
+      "region": "Central Switzerland - Lake Lucerne (Gotthard transit)",
+      "campsite": "Camping Lido Luzern",
+      "location": "Lidostrasse 19, Lucerne (lakeside, 2.5km from old town, next to Lido swim)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 3,
+      "date": "2026-08-03",
+      "region": "Swiss Alps - Lauterbrunnen / Berner Oberland",
+      "campsite": "Camping Jungfrau (Hobby 3)",
+      "location": "Lauterbrunnen valley floor, facing Staubbach Falls (walk to village + Wengen/Mürren lifts)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 4,
+      "date": "2026-08-04",
+      "region": "Swiss Alps - Berner Oberland (Jungfrau)",
+      "campsite": "Camping Jungfrau (Hobby 3) — night 2 of 2",
+      "location": "Lauterbrunnen valley floor (stay put, van parked; value swap: Camping Schützenbach 1km south)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 5,
+      "date": "2026-08-05",
+      "region": "Swiss Alps - Grindelwald / Interlaken",
+      "campsite": "Camping Eigernordwand",
+      "location": "Grindelwald-Grund (valley-floor van pitch under the Eiger north face, 600m walk to Grindelwald Terminal for First gondola + Eiger Express; book 2-3mo ahead; value swap Camping Gletscherdorf ~CHF 44-58)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 6,
+      "date": "2026-08-06",
+      "region": "Swiss Alps - Zermatt / Matterhorn gateway (app route: Aug 6 = Zermatt, not Lucerne — region guess corrected to match data/alpine.json)",
+      "campsite": "Camping Attermenzen",
+      "location": "Randa, between the Randa & Täsch stations (working gateway pitch for car-free Zermatt ~CHF 33-46/night for 2+van Aug, renovated 2021 ~320 sockets + motorhome service; train into Zermatt every ~20min or shuttle-taxi ~CHF 7 each way; book 2-3mo ahead. NB old Camping Alphubel Täsch is permanently closed — rockfall/flood; van base 2 nights)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 7,
+      "date": "2026-08-07",
+      "region": "Swiss Alps - Zermatt / Matterhorn (Gornergrat day; app route Aug 7 = matterhorn, drive=0)",
+      "campsite": "Camping Attermenzen — night 2 of 2",
+      "location": "Randa (van stays put from Night 6; teardown-free morning, first train to Gornergrat via Täsch park-and-ride; GGB cog railway ~CHF 88pp return, sit RIGHT going up, Swiss Travel Pass ~50% off; value Riffelberg→Riffelsee walk-down for the reflection shot; cheaper swap Camping Mischabel Saas-Grund ~CHF 30-42)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 8,
+      "date": "2026-08-08",
+      "region": "Austria - Innsbruck / Tirol (app route Aug 8 = innsbruck1, region austria; drives straight Zermatt→Innsbruck via Liechtenstein + Fernpass lakes — region guess Engadin/St Moritz corrected to match data/alpine.json)",
+      "campsite": "Camping Innsbruck Kranebitten",
+      "location": "Kranebitter Allee 214, Innsbruck — the city's only proper campsite, riverside van pitches on the Inn under the Nordkette ~€36-46/night for 2+van Aug; bus O/J ~15min into the old town, on-site bar/restaurant; book ~1-2mo ahead. Value/quiet swap: Stellplatz Völs or Camping Natterer See ~7km SW ~€40-52. NB Innsbruck is a 2-night base (Nights 8+9), van stays put",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 9,
+      "date": "2026-08-09",
+      "region": "Austria - Tirol / Innsbruck (app route Aug 9 = innsbruck2, drive=0 — night 2 of the Innsbruck base)",
+      "campsite": "Camping Innsbruck Kranebitten — night 2 of 2",
+      "location": "Kranebitter Allee 214, Innsbruck (van stays put from Night 8; riverside Inn pitches under the Nordkette ~€36-46/night for 2+van Aug, bus O/J ~15min to old town, on-site bar/restaurant; teardown-free Nordkette/Hungerburg morning; book both nights ~1-2mo ahead; value swap Camping Natterer See ~7km SW ~€40-52 lake-swim or Stellplatz Völs)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 10,
+      "date": "2026-08-10",
+      "region": "Austria - Salzburg (app route Aug 10 = salzburg; region guess Zillertal/Stubai corrected to match data/alpine.json)",
+      "campsite": "Camping Nord-Sam",
+      "location": "Samstrasse 22A, NE Salzburg (~€38-50/night for 2+van Aug; pool, bus 6/21 ~20min to old town, easy A1 roll-in after Innsbruck; book ~1mo ahead; value swap Panorama Camping Stadtblick ~€36-48 fortress view or bare city Stellplatz)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 11,
+      "date": "2026-08-11",
+      "region": "Austria - Hallstatt / Salzkammergut (app route Aug 11 = hallstatt, sleep Obertraun/Bad Goisern; region guess Hohe Tauern corrected to match data/alpine.json)",
+      "campsite": "Camping am See, Obertraun",
+      "location": "Winkl 77, Lake Hallstatt south shore (~€34-46/night for 2+van Aug; own swim beach, Dachstein/Five Fingers cable car ~5min; ferry/cycle into Hallstatt early; book ~1-1.5mo ahead; value swap Bad Goisern Camping Lambichl ~€32-42, or pricier Klausner-Höll in Hallstatt ~€44-56)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 12,
+      "date": "2026-08-12",
+      "region": "Austria - Grossglockner / Zell am See (app route Aug 12 = grossglockner, sleep Zell am See)",
+      "campsite": "Seecamp Zell am See, Thumersbach",
+      "location": "Thumersbacher Strasse 34, Lake Zell east shore (~€42-56/night for 2+van Aug; swim jetty + restaurant, glacier sunset view; arrive after Grossglockner High Alpine Road toll ~€40/car; book 1-2mo ahead; value swap Sportcamp Woferlgut Bruck ~€38-50 or Panorama Camp Zell ~€34-44)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 13,
+      "date": "2026-08-13",
+      "region": "Dolomites - Toblach/Dobbiaco, South Tyrol (app route Aug 13 = toblach, sleep Toblach/Niederdorf; region guess Alta Badia corrected to match data/alpine.json)",
+      "campsite": "Camping Olympia, Toblach/Dobbiaco",
+      "location": "Via Major 28 (~€40-54/night for 2+van Aug; pool/sauna, shop+restaurant, cycle path to Lago di Dobbiaco; bus 442/445 + Dolomiti SuperSummer card reach Tre Cime/Cortina van-parked; book 1-2mo ahead; value swap Camping Toblacher See ~€36-46)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 14,
+      "date": "2026-08-14",
+      "region": "Dolomites - Pragser Wildsee/Tre Cime, base Cortina (app route Aug 14 = braies drive=0, sleep Cortina/Misurina)",
+      "campsite": "Camping Olympic, Cortina d'Ampezzo",
+      "location": "Località Fiames, SS51 ~4km N of Cortina (~€44-58/night for 2+van Aug; riverside pine pitches, bus into Cortina at gate; relocate from Toblach base toward Cortina, arrive Lago di Braies before 9am vehicle ban; book 1-2mo ahead; value swap Camping Cortina/Campo ~€46-60 or Misurina lakeside pitches)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 15,
+      "date": "2026-08-15",
+      "region": "Dolomites - Seceda/Val Gardena, base Val di Fassa (app route Aug 15 = seceda drive=0, sleep Val Gardena/Bolzano; region guess Funes corrected to match data/alpine.json)",
+      "campsite": "Camping Marmotta, Pozza di Fassa",
+      "location": "Strada de Sèn Jan, Val di Fassa ~30min S of Ortisei (~€38-52/night for 2+van Aug; riverside pitches + pool, Catinaccio/Vajolet bus; day-trip Seceda cable car + Alpe di Siusi then drop over Pordoi/Sella; book 1-2mo ahead; value swap Camping Vidor Pozza ~€40-54 or Camping Moosbauer Bolzano ~€42-56 city base + easy A22 to Venice)",
+      "booked_status": "to-book",
+      "done": true
+    },
+    {
+      "night": 16,
+      "date": "2026-08-16",
+      "region": "Veneto - return toward Venice, base Mestre (app route Aug 16 = return, sleep Mestre)",
+      "campsite": "Camping Jolly delle Querce, Marghera/Mestre",
+      "location": "Via Giuseppe de Marchi 7 (~€36-50/night for 2+van Aug; closest proper campsite to Indie Campers Venice depot, pool+restaurant, ACTV bus ~15-20min to Piazzale Roma; pre-hand-back night — dump tanks/refill/clean van for 11:00 return; book ~1mo ahead; value swap Camping Venezia Marghera or Camping Fusina ~€34-46 lagoon vaporetto)",
+      "booked_status": "to-book",
+      "done": true
+    }
   ],
-
   "days": [
-    { "day": 1,  "date": "2026-08-01", "anchor": "Lake Garda warm-up (Sirmione)", "stops": ["Sirmione 09:00–11:00","Jamaica Beach 11:00–12:30","Borghetto 15:00–16:30","Bardolino dinner 19:30–21:00"], "timed": true, "done": true },
-    { "day": 2,  "date": "2026-08-02", "anchor": "Lucerne & Pilatus toboggan", "stops": ["Garda→Lucerne drive 08:30–12:30","Fräkigaudi toboggan 13:30–15:00","Chapel Bridge & Lion 16:00–18:00","Lido swim 18:30–19:30"], "timed": true, "done": true },
-    { "day": 3,  "date": "2026-08-03", "anchor": "Lauterbrunnen Valley + Mürren fondue", "stops": ["Lucerne→Lauterbrunnen 08:30–10:00","Staubbach Falls 10:15–11:00","Trümmelbach Falls 11:15–12:30","Mürren + fondue 15:30–20:00"], "timed": true, "done": true },
-    { "day": 4,  "date": "2026-08-04", "anchor": "Jungfraujoch — Top of Europe", "stops": ["Jungfraujoch railway 08:00–13:30","First→Bachalpsee hike 14:30–17:00","Lake Brienz swim (Iseltwald) 18:00–19:30"], "timed": true, "done": true },
-    { "day": 5,  "date": "2026-08-05", "anchor": "Grindelwald First adventure", "stops": ["First Cliff Walk & Flyer 09:00–11:00","Trottibike descent 11:15–12:30","Schilthorn optional 13:30–16:30","Lake Thun swim (Spiez) 17:30–19:30"], "timed": true, "done": true },
-    { "day": 6,  "date": "2026-08-06", "anchor": "Zermatt & Matterhorn arrival", "stops": ["Grindelwald→Randa + train 08:30–12:30","Kirchbrücke Matterhorn view 13:30–14:15","Sunnegga & Leisee 14:30–17:00","Raclette night 18:30–20:30"], "timed": true, "done": true },
-    { "day": 7,  "date": "2026-08-07", "anchor": "Gornergrat & Matterhorn finale (Zermatt 2nd day, van put)", "stops": ["Slow camp morning 07:30–08:30","Gornergrat cog railway 09:00–11:30","Riffelsee reflection walk-down 11:30–13:30","Zermatt village + raclette 15:00–18:30"], "timed": true, "done": true },
-    { "day": 8,  "date": "2026-08-08", "anchor": "Drive east → Innsbruck (via Liechtenstein + Fernpass)", "stops": ["Zermatt→Innsbruck via Vaduz 08:30–13:00","Blindsee/Fernsteinsee swim 14:00–15:30","Pitch Innsbruck Kranebitten 16:30–17:30","Old Town wander + beer 18:30–21:00"], "timed": true, "done": true },
-    { "day": 9,  "date": "2026-08-09", "anchor": "Innsbruck & Nordkette (van put)", "stops": ["Nordkettenbahn to ridge 09:00–12:00","Golden Roof & Old Town 12:30–14:30","Bergisel ski-jump opt 15:00–16:30","Tyrolean food night 18:30–21:00"], "timed": true, "done": true },
-    { "day": 10, "date": "2026-08-10", "anchor": "Salzburg — fortress & beer garden", "stops": ["Innsbruck→Salzburg drive 08:30–11:00","Hohensalzburg Fortress 11:30–13:30","Old Town & Getreidegasse 13:30–16:00","Augustiner Bräustübl 18:00–20:30"], "timed": true, "done": true },
-    { "day": 11, "date": "2026-08-11", "anchor": "Hallstatt & Salzkammergut (early)", "stops": ["Salzburg→Hallstatt early 07:30–09:30","Village & Classic view 09:30–11:30","Gosausee mirror-lake swim 12:30–15:00","Five Fingers viewpoint opt 16:00–18:00"], "timed": true, "done": true },
-    { "day": 12, "date": "2026-08-12", "anchor": "Grossglockner High Alpine Road → Zell am See", "stops": ["Toll road + Krimml opt 08:00–10:30","Franz-Josefs-Höhe 11:30–13:00","Edelweissspitze & hairpins 13:30–14:30","Zell am See lakefront swim 16:00–18:30"], "timed": true, "done": true },
-    { "day": 13, "date": "2026-08-13", "anchor": "Into the Dolomites (Toblach base)", "stops": ["Zell am See→Dolomites drive 08:30–12:00","Pitch Camping Olympia Toblach 12:15–13:30","Lago di Dobbiaco swim 14:30–16:30","San Candido/Innichen 16:45–18:15","First Südtirol dinner 19:30–21:00"], "timed": true, "done": true },
-    { "day": 14, "date": "2026-08-14", "anchor": "Lago di Braies + Tre Cime di Lavaredo (relocate to Cortina)", "stops": ["Lago di Braies dawn (beat 9:30 ban) 07:00–09:00","Tre Cime di Lavaredo loop (toll road) 10:00–14:30","Misurina/Antorno golden hour 15:00–16:30","Relocate+pitch Camping Olympic Cortina 17:00–18:30"], "timed": true, "done": true },
-    { "day": 15, "date": "2026-08-15", "anchor": "Seceda & Val Gardena (Sella/Pordoi passes)", "stops": ["Ortisei→Seceda cable car 08:30–11:30","Alpe di Siusi meadow walk 12:00–14:00","Sella/Pordoi drive + Lago di Carezza 14:30–16:30","Pitch Camping Marmotta Pozza 16:45–18:15","South Tyrol wine dinner 19:30–21:30"], "timed": true, "done": true },
-    { "day": 16, "date": "2026-08-16", "anchor": "Back to Venice (Prosecco hills → Mestre)", "stops": ["Slow mountain morning + descend 08:30–11:00","Prosecco Hills lunch Valdobbiadene 12:30–14:30","Treviso wander 15:30–17:00","Mestre pitch + van prep 17:30–19:00","Venice last evening (opt) 19:30–22:30"], "timed": true, "done": true },
-    { "day": 17, "date": "2026-08-17", "anchor": "Return van AM, Venice (no in-app stops — hand-back logistics)", "stops": ["Final van clean/refuel at Mestre 08:00–10:00","Indie Campers Venice/Mestre hand-back 11:00","Venice on foot/vaporetto then onward 12:00+"], "timed": true, "done": true }
+    {
+      "day": 1,
+      "date": "2026-08-01",
+      "anchor": "Lake Garda warm-up (Sirmione)",
+      "stops": [
+        "Sirmione 09:00–11:00",
+        "Jamaica Beach 11:00–12:30",
+        "Borghetto 15:00–16:30",
+        "Bardolino dinner 19:30–21:00"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 2,
+      "date": "2026-08-02",
+      "anchor": "Lucerne & Pilatus toboggan",
+      "stops": [
+        "Garda→Lucerne drive 08:30–12:30",
+        "Fräkigaudi toboggan 13:30–15:00",
+        "Chapel Bridge & Lion 16:00–18:00",
+        "Lido swim 18:30–19:30"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 3,
+      "date": "2026-08-03",
+      "anchor": "Lauterbrunnen Valley + Mürren fondue",
+      "stops": [
+        "Lucerne→Lauterbrunnen 08:30–10:00",
+        "Staubbach Falls 10:15–11:00",
+        "Trümmelbach Falls 11:15–12:30",
+        "Mürren + fondue 15:30–20:00"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 4,
+      "date": "2026-08-04",
+      "anchor": "Jungfraujoch — Top of Europe",
+      "stops": [
+        "Jungfraujoch railway 08:00–13:30",
+        "First→Bachalpsee hike 14:30–17:00",
+        "Lake Brienz swim (Iseltwald) 18:00–19:30"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 5,
+      "date": "2026-08-05",
+      "anchor": "Grindelwald First adventure",
+      "stops": [
+        "First Cliff Walk & Flyer 09:00–11:00",
+        "Trottibike descent 11:15–12:30",
+        "Schilthorn optional 13:30–16:30",
+        "Lake Thun swim (Spiez) 17:30–19:30"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 6,
+      "date": "2026-08-06",
+      "anchor": "Zermatt & Matterhorn arrival",
+      "stops": [
+        "Grindelwald→Randa + train 08:30–12:30",
+        "Kirchbrücke Matterhorn view 13:30–14:15",
+        "Sunnegga & Leisee 14:30–17:00",
+        "Raclette night 18:30–20:30"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 7,
+      "date": "2026-08-07",
+      "anchor": "Gornergrat & Matterhorn finale (Zermatt 2nd day, van put)",
+      "stops": [
+        "Slow camp morning 07:30–08:30",
+        "Gornergrat cog railway 09:00–11:30",
+        "Riffelsee reflection walk-down 11:30–13:30",
+        "Zermatt village + raclette 15:00–18:30"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 8,
+      "date": "2026-08-08",
+      "anchor": "Drive east → Innsbruck (via Liechtenstein + Fernpass)",
+      "stops": [
+        "Zermatt→Innsbruck via Vaduz 08:30–13:00",
+        "Blindsee/Fernsteinsee swim 14:00–15:30",
+        "Pitch Innsbruck Kranebitten 16:30–17:30",
+        "Old Town wander + beer 18:30–21:00"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 9,
+      "date": "2026-08-09",
+      "anchor": "Innsbruck & Nordkette (van put)",
+      "stops": [
+        "Nordkettenbahn to ridge 09:00–12:00",
+        "Golden Roof & Old Town 12:30–14:30",
+        "Bergisel ski-jump opt 15:00–16:30",
+        "Tyrolean food night 18:30–21:00"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 10,
+      "date": "2026-08-10",
+      "anchor": "Salzburg — fortress & beer garden",
+      "stops": [
+        "Innsbruck→Salzburg drive 08:30–11:00",
+        "Hohensalzburg Fortress 11:30–13:30",
+        "Old Town & Getreidegasse 13:30–16:00",
+        "Augustiner Bräustübl 18:00–20:30"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 11,
+      "date": "2026-08-11",
+      "anchor": "Hallstatt & Salzkammergut (early)",
+      "stops": [
+        "Salzburg→Hallstatt early 07:30–09:30",
+        "Village & Classic view 09:30–11:30",
+        "Gosausee mirror-lake swim 12:30–15:00",
+        "Five Fingers viewpoint opt 16:00–18:00"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 12,
+      "date": "2026-08-12",
+      "anchor": "Grossglockner High Alpine Road → Zell am See",
+      "stops": [
+        "Toll road + Krimml opt 08:00–10:30",
+        "Franz-Josefs-Höhe 11:30–13:00",
+        "Edelweissspitze & hairpins 13:30–14:30",
+        "Zell am See lakefront swim 16:00–18:30"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 13,
+      "date": "2026-08-13",
+      "anchor": "Into the Dolomites (Toblach base)",
+      "stops": [
+        "Zell am See→Dolomites drive 08:30–12:00",
+        "Pitch Camping Olympia Toblach 12:15–13:30",
+        "Lago di Dobbiaco swim 14:30–16:30",
+        "San Candido/Innichen 16:45–18:15",
+        "First Südtirol dinner 19:30–21:00"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 14,
+      "date": "2026-08-14",
+      "anchor": "Lago di Braies + Tre Cime di Lavaredo (relocate to Cortina)",
+      "stops": [
+        "Lago di Braies dawn (beat 9:30 ban) 07:00–09:00",
+        "Tre Cime di Lavaredo loop (toll road) 10:00–14:30",
+        "Misurina/Antorno golden hour 15:00–16:30",
+        "Relocate+pitch Camping Olympic Cortina 17:00–18:30"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 15,
+      "date": "2026-08-15",
+      "anchor": "Seceda & Val Gardena (Sella/Pordoi passes)",
+      "stops": [
+        "Ortisei→Seceda cable car 08:30–11:30",
+        "Alpe di Siusi meadow walk 12:00–14:00",
+        "Sella/Pordoi drive + Lago di Carezza 14:30–16:30",
+        "Pitch Camping Marmotta Pozza 16:45–18:15",
+        "South Tyrol wine dinner 19:30–21:30"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 16,
+      "date": "2026-08-16",
+      "anchor": "Back to Venice (Prosecco hills → Mestre)",
+      "stops": [
+        "Slow mountain morning + descend 08:30–11:00",
+        "Prosecco Hills lunch Valdobbiadene 12:30–14:30",
+        "Treviso wander 15:30–17:00",
+        "Mestre pitch + van prep 17:30–19:00",
+        "Venice last evening (opt) 19:30–22:30"
+      ],
+      "timed": true,
+      "done": true
+    },
+    {
+      "day": 17,
+      "date": "2026-08-17",
+      "anchor": "Return van AM, Venice (no in-app stops — hand-back logistics)",
+      "stops": [
+        "Final van clean/refuel at Mestre 08:00–10:00",
+        "Indie Campers Venice/Mestre hand-back 11:00",
+        "Venice on foot/vaporetto then onward 12:00+"
+      ],
+      "timed": true,
+      "done": true
+    }
   ],
-
   "bookings_to_make": [
-    { "what": "16 campsites/Stellplatz (book ALL nights)", "category": "campsite", "price_eur_2": 775, "book_by": "early-mid May 2026 (~2-3mo ahead; Aug peak)", "note": "First-to-sell: Lauterbrunnen, Grindelwald, Zermatt-Randa, Cortina, Braies area. Per-night ~€40-64 for van+2. Authored as per-night items in app checklist 'bookings-to-make'." },
-    { "what": "Jungfraujoch railway (Top of Europe)", "category": "railway", "price_eur_2": 224, "book_by": "1-2wk ahead — RESERVE TIMESLOT (only lift that needs advance in Aug)", "note": "First train cheapest; Swiss Travel/Half-Fare discount." },
-    { "what": "Grindelwald First gondola+activities (value pick vs Schilthorn)", "category": "cablecar", "price_eur_2": 144, "book_by": "day-of (no advance)", "note": "Cheaper than Schilthorn; Cliff Walk + First Flyer." },
-    { "what": "Gornergrat Bahn, Zermatt", "category": "railway", "price_eur_2": 176, "book_by": "day-of", "note": "Swiss Travel Pass ~50% off; sit RIGHT going up." },
-    { "what": "Innsbruck Nordkettenbahn", "category": "cablecar", "price_eur_2": 88, "book_by": "day-of", "note": "Funicular + cable car to ridge." },
-    { "what": "Seceda cable car, Ortisei", "category": "cablecar", "price_eur_2": 64, "book_by": "day-of", "note": "Dolomiti SuperSummer card if multi-lift." },
-    { "what": "Alpe di Siusi cable car", "category": "cablecar", "price_eur_2": 48, "book_by": "day-of", "note": "Road has 09-17h car-access ban; cable car avoids it." },
-    { "what": "Swiss motorway vignette", "category": "toll", "price_eur_2": 38, "book_by": "at the border", "note": "CHF 40, valid all year." },
-    { "what": "Austrian vignette (10-day digital)", "category": "toll", "price_eur_2": 12, "book_by": "online before border", "note": "" },
-    { "what": "Italian autostrada (A4/A22/A27 segments)", "category": "toll", "price_eur_2": 45, "book_by": "pay-as-you-go", "note": "" },
-    { "what": "Tre Cime di Lavaredo toll road", "category": "toll", "price_eur_2": 30, "book_by": "pay at gate", "note": "Arrive Braies before 09:30 vehicle ban." },
-    { "what": "Grossglockner High Alpine Road (single day/car)", "category": "toll", "price_eur_2": 38, "book_by": "pay at toll booth", "note": "Closes ~dusk." },
-    { "what": "Mürren fondue night", "category": "restaurant", "price_eur_2": 70, "book_by": "few days ahead in Aug", "note": "Stägerstübli or similar." },
-    { "what": "Pilatus Fräkmüntegg toboggan run", "category": "experience", "price_eur_2": 16, "book_by": "day-of", "note": "" },
-    { "what": "Hohensalzburg Fortress + funicular", "category": "experience", "price_eur_2": 36, "book_by": "online to skip queue", "note": "" }
+    {
+      "what": "16 campsites/Stellplatz (book ALL nights)",
+      "category": "campsite",
+      "price_eur_2": 775,
+      "book_by": "early-mid May 2026 (~2-3mo ahead; Aug peak)",
+      "note": "First-to-sell: Lauterbrunnen, Grindelwald, Zermatt-Randa, Cortina, Braies area. Per-night ~€40-64 for van+2. Authored as per-night items in app checklist 'bookings-to-make'."
+    },
+    {
+      "what": "Jungfraujoch railway (Top of Europe)",
+      "category": "railway",
+      "price_eur_2": 224,
+      "book_by": "1-2wk ahead — RESERVE TIMESLOT (only lift that needs advance in Aug)",
+      "note": "First train cheapest; Swiss Travel/Half-Fare discount."
+    },
+    {
+      "what": "Grindelwald First gondola+activities (value pick vs Schilthorn)",
+      "category": "cablecar",
+      "price_eur_2": 144,
+      "book_by": "day-of (no advance)",
+      "note": "Cheaper than Schilthorn; Cliff Walk + First Flyer."
+    },
+    {
+      "what": "Gornergrat Bahn, Zermatt",
+      "category": "railway",
+      "price_eur_2": 176,
+      "book_by": "day-of",
+      "note": "Swiss Travel Pass ~50% off; sit RIGHT going up."
+    },
+    {
+      "what": "Innsbruck Nordkettenbahn",
+      "category": "cablecar",
+      "price_eur_2": 88,
+      "book_by": "day-of",
+      "note": "Funicular + cable car to ridge."
+    },
+    {
+      "what": "Seceda cable car, Ortisei",
+      "category": "cablecar",
+      "price_eur_2": 64,
+      "book_by": "day-of",
+      "note": "Dolomiti SuperSummer card if multi-lift."
+    },
+    {
+      "what": "Alpe di Siusi cable car",
+      "category": "cablecar",
+      "price_eur_2": 48,
+      "book_by": "day-of",
+      "note": "Road has 09-17h car-access ban; cable car avoids it."
+    },
+    {
+      "what": "Swiss motorway vignette",
+      "category": "toll",
+      "price_eur_2": 38,
+      "book_by": "at the border",
+      "note": "CHF 40, valid all year."
+    },
+    {
+      "what": "Austrian vignette (10-day digital)",
+      "category": "toll",
+      "price_eur_2": 12,
+      "book_by": "online before border",
+      "note": ""
+    },
+    {
+      "what": "Italian autostrada (A4/A22/A27 segments)",
+      "category": "toll",
+      "price_eur_2": 45,
+      "book_by": "pay-as-you-go",
+      "note": ""
+    },
+    {
+      "what": "Tre Cime di Lavaredo toll road",
+      "category": "toll",
+      "price_eur_2": 30,
+      "book_by": "pay at gate",
+      "note": "Arrive Braies before 09:30 vehicle ban."
+    },
+    {
+      "what": "Grossglockner High Alpine Road (single day/car)",
+      "category": "toll",
+      "price_eur_2": 38,
+      "book_by": "pay at toll booth",
+      "note": "Closes ~dusk."
+    },
+    {
+      "what": "Mürren fondue night",
+      "category": "restaurant",
+      "price_eur_2": 70,
+      "book_by": "few days ahead in Aug",
+      "note": "Stägerstübli or similar."
+    },
+    {
+      "what": "Pilatus Fräkmüntegg toboggan run",
+      "category": "experience",
+      "price_eur_2": 16,
+      "book_by": "day-of",
+      "note": ""
+    },
+    {
+      "what": "Hohensalzburg Fortress + funicular",
+      "category": "experience",
+      "price_eur_2": 36,
+      "book_by": "online to skip queue",
+      "note": ""
+    }
   ],
-
   "budget": {
     "estimated": true,
     "currency": "EUR",
@@ -95,11 +518,9 @@
       "food": "~€50/day for 2 (van breakfast €4 + lunch €18 + avg dinner €28)"
     }
   },
-
   "checklists": {
-    "pre_trip": false,
-    "per_day": false
+    "pre_trip": true,
+    "per_day": true
   },
-
-  "clean_pass_counter": 9
+  "clean_pass_counter": 10
 }
