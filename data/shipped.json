@@ -241,6 +241,17 @@
       "verify_note": "Independent agent confirmed live: homepage, sw.js and manifest all serve HTTP 200; service worker registered; test-core green with new precache guards.",
       "commit": "1499985",
       "deploy": "live"
+    },
+    {
+      "id": "B13",
+      "title": "Optimize day order",
+      "pillar": "logistics",
+      "date": "2026-06-14T22:30:00.000Z",
+      "what": "The per-day ⚡ optimize button now reorders stops nearest-first AND shows how much it saved (~X km / ~Y h) in an inline banner with a one-tap undo to restore the previous order; the reorder persists via the itinerary overlay.",
+      "verified": true,
+      "verify_note": "Independent agent: merge 99310dd on origin/main (optimizePreview/data-undo/.optundo present), test-core exits 0 with new optimizePreview guards (saves ~433km, already-shortest→0), live served checks 200 with marker optimizePreview.",
+      "commit": "99310dd",
+      "deploy": "live"
     }
   ]
 }
