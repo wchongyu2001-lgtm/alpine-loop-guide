@@ -338,3 +338,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 3522d11
+
+### 2026-06-14T11:56:47Z · B36 One-tap "Open in Google Maps" full route
+- status: done
+- pillar: maps
+- what: Overview tab gets an "Open full route in Google Maps" button that opens the whole trip as one multi-stop driving route (/maps/dir/ deep link from each day base, no API). Pure gmapsRouteUrl(days) in core.js; consecutive same-base nights collapse.
+- verified: PASS — independent agent confirmed artifacts on origin/main 9b24880, test-core exits 0 with 5 B36 assertions, real alpine data → 19-stop /maps/dir/ URL in order, local + live GitHub Pages served-checks 200 with markers.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 9b24880
