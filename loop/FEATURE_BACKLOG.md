@@ -40,7 +40,7 @@ One-tap make-the-trip-work-with-no-signal.
 - Acceptance: button triggers a cache pass + reports done; confirmation numbers persist and
   show offline.
 
-## F5 · Ideas 2.0 — capture inbox → assign to days — status: wip  (frontend part)
+## F5 · Ideas 2.0 — capture inbox → assign to days — status: done (commit 92689d3)  (frontend part)
 Upgrade the Ideas tab into a capture inbox you can plan from.
 - Inbox of captured cards: each has a link (Instagram/TikTok/web), an optional thumbnail
   (OpenGraph/oEmbed best-effort; Instagram may block — fall back to the bare link + manual

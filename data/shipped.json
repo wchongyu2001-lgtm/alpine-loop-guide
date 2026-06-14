@@ -461,6 +461,17 @@
       "verify_note": "Green-gate passed: node --check sw.js+js/essentials.js+js/bookings.js, test-core exits 0 (incl. existing sw.js precache/tile-cache guards still green after CACHE bump v10→v11). Local served-check 200+marker; live served-check 200+marker. Playwright re-drive ok:true/pageErrors:[] with in-browser eval confirming: the offline button renders ('Download trip for offline'); clicking it runs the SW cache pass to completion ('Saved for offline — 36 files cached', cache key tc-shell-v11); 15 per-night conf fields render; a set value persists to localStorage nightConf and survives a full page reload (set 'PERSIST99' → reload → field still 'PERSIST99'). Residual console 504s are pre-existing baseline (sandbox blocks external CDN/FX; SW cross-origin fallback), present identically on pre-change main.",
       "commit": "d60f88f",
       "deploy": "live"
+    },
+    {
+      "id": "F5",
+      "title": "Ideas 2.0 — capture inbox → assign to days",
+      "pillar": "ideas",
+      "date": "2026-06-14T00:00:00Z",
+      "what": "The Ideas tab is now a capture inbox you can plan from. A '📥 Capture inbox' panel sits above the curated idea browser: a paste-a-link box (link + optional note) drops a card into the inbox, and the app is registered as a PWA Web Share Target so 'Share → Travel Companion' from a phone routes the link straight in. Each card shows the clickable link, a thumbnail slot (falls back to a 🔗 tile + the bare domain as a user-editable title when OpenGraph/oEmbed is blocked, which Instagram/TikTok always do), and an editable note. A '＋ add to day…' picker inserts the idea as a stop into that day's itinerary plan (matching the {id,n,t,ll,time,d} plan shape, t:'idea', note → d) and marks the card placed (✓ added to Day N). Captured ideas persist in a new 'ideas' overlay (localStorage cache-first via ctx.save, synced through trips-sync like the bucket). The curated idea grid + shared bucket list are untouched.",
+      "verified": true,
+      "verify_note": "Green-gate passed: node --check js/core.js+data.js+ideas.js+app.js+sw.js, JSON.parse manifest.webmanifest, test-core exits 0 with 11 new cases (ideaDomain strips www+path, buildIdea domain-fallback title / explicit-title-wins / non-http→null, parseShare explicit-url / sniff-url-from-text / no-url→null). Local served-check 200+marker. Playwright re-drive ok:true/pageErrors:[] with in-browser eval confirming the full flow: paste 'https://www.instagram.com/reel/TESTREEL/' via the capture form → 1 inbox card (title 'instagram.com', clickable link, persisted to v2:alpine:ideas); select day 'garda' → itinerary overlay dayPlans.garda gains a {t:'idea', n:'instagram.com', d:'secret swim spot'} stop and the idea flips placed:true; Itinerary view shows the idea stop in that day (ideaStopShown:true); return to Ideas → card persists and renders as placed (afterReloadCards:1, placedShown:true). Share-target route tested: navigating to ?url=…tiktok…&text=epic viewpoint&title=Epic View created an idea (title 'Epic View', domain 'tiktok.com', note 'epic viewpoint'), stripped the query, and opened #alpine/ideas. SW cache bumped v11→v12; sw.js precache + tile-cache test guards stay green. Residual 504s are the pre-existing CDN/trips-sync sandbox baseline (no pageErrors).",
+      "commit": "92689d3",
+      "deploy": "live"
     }
   ]
 }
