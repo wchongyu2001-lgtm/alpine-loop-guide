@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B28",
+      "title": "Campervan pitch-to-book nights",
+      "pillar": "bookings",
+      "date": "2026-06-14T23:15:00.000Z",
+      "what": "On a campervan trip the trip-spanning van rental used to count as the bed for every night, so 'Where you sleep' read 16/16 covered and no night was tappable to book a pitch — a false green hiding the planner's real job (book a Stellplatz each night). The sleep strip now flags van-only nights as pitch-pending, renders them as tappable 'pitch to book' cells (amber, dashed) that pre-fill the booking form, and reports 'X pitches booked · Y to book'. Additive pitch flag on accommodationStrip — covered/name unchanged so the camper-bed gap contract and core tests are untouched.",
+      "verified": true,
+      "verify_note": "Before: click [data-booknight=2026-08-05] timed out (no gap handle, all covered). After: same click succeeds + pre-fills form; drive ok==true, pageErrors==[]; test-core exits 0; served-check 200 marker present. Screenshot shows header '... pitches booked · ... to book' and amber pitch cells.",
+      "commit": "d5bb35a",
+      "deploy": "live"
+    },
+    {
       "id": "B20",
       "title": "Trip overview timeline",
       "pillar": "polish",

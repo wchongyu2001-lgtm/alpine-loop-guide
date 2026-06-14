@@ -17,7 +17,7 @@
     { "night": 2,  "date": "2026-08-02", "region": "Central Switzerland - Lake Lucerne (Gotthard transit)", "campsite": "Camping Lido Luzern", "location": "Lidostrasse 19, Lucerne (lakeside, 2.5km from old town, next to Lido swim)", "booked_status": "to-book", "done": true },
     { "night": 3,  "date": "2026-08-03", "region": "Swiss Alps - Lauterbrunnen / Berner Oberland", "campsite": "Camping Jungfrau (Hobby 3)", "location": "Lauterbrunnen valley floor, facing Staubbach Falls (walk to village + Wengen/Mürren lifts)", "booked_status": "to-book", "done": true },
     { "night": 4,  "date": "2026-08-04", "region": "Swiss Alps - Berner Oberland (Jungfrau)", "campsite": "Camping Jungfrau (Hobby 3) — night 2 of 2", "location": "Lauterbrunnen valley floor (stay put, van parked; value swap: Camping Schützenbach 1km south)", "booked_status": "to-book", "done": true },
-    { "night": 5,  "date": "2026-08-05", "region": "Swiss Alps - Grindelwald / Interlaken", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
+    { "night": 5,  "date": "2026-08-05", "region": "Swiss Alps - Grindelwald / Interlaken", "campsite": "Camping Eigernordwand", "location": "Grindelwald-Grund (valley-floor van pitch under the Eiger north face, 600m walk to Grindelwald Terminal for First gondola + Eiger Express; book 2-3mo ahead; value swap Camping Gletscherdorf ~CHF 44-58)", "booked_status": "to-book", "done": true },
     { "night": 6,  "date": "2026-08-06", "region": "Central Switzerland - Lucerne / Furka-Grimsel passes", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
     { "night": 7,  "date": "2026-08-07", "region": "Swiss Alps - Zermatt / Saas region (Matterhorn)", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
     { "night": 8,  "date": "2026-08-08", "region": "Eastern Switzerland - Engadin / St Moritz (toward Austria)", "campsite": null, "location": null, "booked_status": "to-book", "done": false },
@@ -64,5 +64,5 @@
     "per_day": false
   },
 
-  "clean_pass_counter": 3
+  "clean_pass_counter": 0
 }
