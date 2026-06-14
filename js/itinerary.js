@@ -5,7 +5,8 @@ import { esc, gmapsPlaceUrl, amapsPlaceUrl, gmapsDirUrl, routeStats, optimizeOrd
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, pickSummaryExtract, thumbCacheKey, factCacheKey,
   splitTime, joinTime, matchBooking, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey,
-  fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon, daylight, dayNote, openStatus } from './core.js';
+  fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon, daylight, dayNote, openStatus,
+  drivePlan, fmtMoney } from './core.js';
 import { tripBookings } from './data.js';
 import { BASE } from './sync.js';
 import { enrich } from './places.js';
@@ -27,6 +28,15 @@ export function render(root, ctx) {
   const plans = effectivePlans(state.days, ovPlans(state));
   const bookings = tripBookings(state, state.trip.id);
 
+  // F1: per-day drive legs + whole-loop rollup. Fuel price mirrors the budget view's
+  // overlay (default €1.80/L); tolls/vignettes come from the per-day budget.x figures.
+  const cur = td.meta.curSymbol || '€';
+  const fuelPrice = Number((state.overlay.budget || {}).fuelPrice) > 0
+    ? Number(state.overlay.budget.fuelPrice) : 1.80;
+  const driveOn = (td.meta.fuelPerH || 0) > 0;
+  const dp = driveOn ? drivePlan(state.days, td.meta, td.budget, fuelPrice) : null;
+  const driveRows = dp ? Object.fromEntries(dp.rows.map(r => [r.id, r])) : {};
+
   const presetBar = td.meta.presets ? `
     <div class="presetbar">${td.meta.presets.map(p => `
       <button class="chip ${state.preset === p.key ? 'on' : ''}" data-preset="${p.key}" title="${esc(p.desc || '')}">${p.label}</button>`).join('')}
@@ -35,7 +45,16 @@ export function render(root, ctx) {
   root.innerHTML = `
     ${presetBar}
     <div class="ittools"><button class="printbtn" id="itprint" title="Open the print dialog — one clean page per day for an offline paper backup">🖨 Print day-by-day</button></div>
-    <div class="days">${state.days.map(day => dayCard(day, plans[day.id], bookings, state)).join('')}</div>`;
+    <div class="days">${state.days.map(day => dayCard(day, plans[day.id], bookings, state, driveRows[day.id], cur)).join('')}</div>
+    ${dp ? `<div class="driverollup">
+      <div class="dr-h">🚐 Whole loop</div>
+      <div class="dr-stats">
+        <span><b>${dp.totalKm}</b> km</span>
+        <span>fuel <b>${fmtMoney(dp.totalFuel, cur)}</b></span>
+        ${dp.totalToll ? `<span>tolls/vignettes <b>${fmtMoney(dp.totalToll, cur)}</b></span>` : ''}
+      </div>
+      <div class="muted">fuel @ ${td.meta.fuelPerH} L/100km · ${fmtMoney(fuelPrice, cur)}/L · distances road-scaled from day bases</div>
+    </div>` : ''}`;
 
   // B10: print/share — a clean per-day handout via the print stylesheet.
   const printBtn = root.querySelector('#itprint');
@@ -186,7 +205,7 @@ export function render(root, ctx) {
   });
 }
 
-function dayCard(day, plan, bookings, state) {
+function dayCard(day, plan, bookings, state, drive, cur = '€') {
   const dayBk = bookings.filter(b => String(b.start).slice(0, 10) === day._date);
   const pts = [day.ll, ...plan.map(p => p.ll)].filter(Boolean);
   const stats = pts.length > 1 ? routeStats(pts) : null;
@@ -199,7 +218,7 @@ function dayCard(day, plan, bookings, state) {
     <div class="dayhead">
       <span class="daynum">${day._n}</span>
       <div>
-        <div class="daydate">${esc(day._label || day.date)}${day.drive ? ` · 🚐 ~${day.drive}h leg` : ''}${day.ll && day._date ? `<span class="wx" data-ll="${day.ll[0]},${day.ll[1]}" data-date="${day._date}"></span><span class="dl"></span>` : ''}</div>
+        <div class="daydate">${esc(day._label || day.date)}${day.ll && day._date ? `<span class="wx" data-ll="${day.ll[0]},${day.ll[1]}" data-date="${day._date}"></span><span class="dl"></span>` : ''}</div>
         <h3>${esc(day.short)}</h3>
       </div>
       <div class="dayactions">
@@ -209,6 +228,9 @@ function dayCard(day, plan, bookings, state) {
         ${pts.length > 1 ? `<a class="mini" target="_blank" rel="noopener" href="${gmapsDirUrl(pts.slice(0, 10))}">↗ route</a>` : ''}
       </div>
     </div>
+    ${drive ? (drive.stay
+      ? `<div class="driveleg stay">🅿️ van stays put · no drive today</div>`
+      : `<div class="driveleg">🚐 <b>${drive.km}</b> km${drive.hours ? ` · ~${drive.hours}h` : ''} · fuel <b>${fmtMoney(drive.fuel, cur)}</b>${drive.toll ? ` · tolls/vignettes <b>${fmtMoney(drive.toll, cur)}</b>` : ''}</div>`) : ''}
     ${day.note ? `<p class="note">${esc(day.note)}</p>` : ''}
     ${dayBk.length ? `<div class="bkchips">${dayBk.map(b =>
       `<span class="bkchip">${TYPE_ICON[b.type] || '📌'} ${esc(b.title.split('·')[0].trim())}</span>`).join('')}</div>` : ''}

@@ -852,6 +852,44 @@ export function fuelEstimate(days, meta, pricePerL) {
   };
 }
 
+// ---- F1: per-day drive-leg planner (pure) ----
+// One drive row per day for the itinerary: km/drive-time/fuel/toll for the leg that
+// arrives at that day's base, plus a whole-trip rollup. Distance is the road-scaled
+// haversine (×1.3) from the previous day's base to this day's — the same model as
+// fuelEstimate; fuel uses meta.fuelPerH as litres/100km × pricePerL. Drive time is the
+// authored day.drive (hours). Tolls/vignettes come from budget[dayId].x. A day whose
+// km<1 (van stays put on the same base) is flagged `stay:true` with zeroed numbers.
+// Returns { rows:[{id,n,short,stay,km,hours,litres,fuel,toll}], totalKm, totalFuel,
+// totalToll }.
+export function drivePlan(days, meta, budget = {}, pricePerL) {
+  const lp100 = (meta || {}).fuelPerH || 0;
+  const price = Number(pricePerL) || 0;
+  const ds = days || [];
+  const r2 = n => Math.round(n * 100) / 100, r1 = n => Math.round(n * 10) / 10;
+  let prevLL = null;
+  const rows = ds.map(d => {
+    const ll = Array.isArray(d.ll) ? d.ll : null;
+    const km = (prevLL && ll) ? Math.round(haversineKm(prevLL, ll) * 1.3) : 0;
+    if (ll) prevLL = ll;
+    const toll = +(((budget || {})[d.id] || {}).x) || 0;
+    const stay = km < 1;
+    const litres = stay ? 0 : r1(km / 100 * lp100);
+    const fuel = stay ? 0 : r2(litres * price);
+    return {
+      id: d.id, n: d._n, short: d.short, stay,
+      km: stay ? 0 : km,
+      hours: stay ? 0 : (Number(d.drive) || 0),
+      litres, fuel, toll,
+    };
+  });
+  return {
+    rows,
+    totalKm: rows.reduce((s, r) => s + r.km, 0),
+    totalFuel: r2(rows.reduce((s, r) => s + r.fuel, 0)),
+    totalToll: r2(rows.reduce((s, r) => s + r.toll, 0)),
+  };
+}
+
 // ---- B31: trip totals + departure countdown (pure) ----
 // At-a-glance stats over the loaded trip. Distance is the road-scaled haversine
 // across the day bases (same routeStats the planner uses); driveHours is the sum
