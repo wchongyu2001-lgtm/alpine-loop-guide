@@ -1,6 +1,6 @@
 /* Budget: guide estimates (from v1 data) + actual expenses with splitting,
    multi-currency roll-up (booked items converted to the trip base) + settle-up. */
-import { esc, fmtMoney, computeBalances, convert, simplifyDebts, budgetVsActual, tripEstimate } from './core.js';
+import { esc, fmtMoney, computeBalances, convert, simplifyDebts, budgetVsActual, tripEstimate, fxConvert } from './core.js';
 import { tripBookings } from './data.js';
 import { rates } from './fx.js';
 
@@ -15,6 +15,13 @@ export function render(root, ctx) {
   const toBase = (amt, c) => (!c || c === base || !fxRates || !fxRates[c]) ? amt : convert(amt, 1 / fxRates[c]);
   const ov = exOv(state);
   const mode = ov.mode || 'bu';
+
+  // --- currency converter setup ---
+  const convList = (fxRates ? Object.keys(fxRates).filter(c => c !== base) : ['USD']).sort();
+  let convHome = ov.convHome && convList.includes(ov.convHome) ? ov.convHome
+    : (convList.includes('USD') ? 'USD' : convList[0]);
+  const convReady = !!(fxRates && convHome && fxRates[convHome]);
+  const convRate = convReady ? Math.round(fxRates[convHome] * 1e4) / 1e4 : null;
 
   // --- estimates from guide data ---
   const { rows: est, total: estTotal } = tripEstimate(state.days, td.budget, td.meta, mode);
@@ -100,7 +107,34 @@ export function render(root, ctx) {
           </tr>`).join('') || '<tr><td class="muted" colspan="4">No dated expenses yet — add one to compare against the day budget.</td></tr>'}
         </table>
       </div>
+
+      <div class="budcard">
+        <h3>Currency converter</h3>
+        ${convReady ? `<div class="muted">1 ${base} = ${convRate} ${convHome} · live rate</div>` : `<div class="muted">${fxRates ? 'Rate unavailable offline — open online once to cache it.' : 'Loading live rate…'}</div>`}
+        <div class="convrow">
+          <input id="convA" type="number" step="0.01" inputmode="decimal" placeholder="amount" ${convReady ? '' : 'disabled'} />
+          <span class="convcur">${base}</span>
+        </div>
+        <div class="convswap">⇅</div>
+        <div class="convrow">
+          <input id="convB" type="number" step="0.01" inputmode="decimal" placeholder="amount" ${convReady ? '' : 'disabled'} />
+          <select id="convHomeCur">${convList.map(c => `<option ${c === convHome ? 'selected' : ''}>${c}</option>`).join('')}</select>
+        </div>
+      </div>
     </div>`;
+
+  // --- currency converter (live, no rerender so input focus survives) ---
+  const convA = root.querySelector('#convA'), convB = root.querySelector('#convB');
+  if (convA && convReady) {
+    const r = fxRates[convHome];
+    convA.oninput = () => { const v = fxConvert(parseFloat(convA.value), r, 'toHome'); convB.value = v == null ? '' : v; };
+    convB.oninput = () => { const v = fxConvert(parseFloat(convB.value), r, 'toBase'); convA.value = v == null ? '' : v; };
+  }
+  const homeSel = root.querySelector('#convHomeCur');
+  if (homeSel) homeSel.onchange = () => {
+    const o = exOv(state); o.convHome = homeSel.value;
+    ctx.save('expenses', o); ctx.rerender();
+  };
 
   root.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => {
     const o = exOv(state); o.mode = b.dataset.mode;

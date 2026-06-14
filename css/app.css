@@ -292,6 +292,10 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .exlist li{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dotted var(--line)}
 #exform input[name=title]{flex:2 1 160px}
 #exform input[name=amount]{flex:1 1 70px}
+.convrow{display:flex;gap:8px;align-items:center;margin-top:8px}
+.convrow input{flex:1 1 auto;min-width:0}
+.convrow .convcur,.convrow select{flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-size:.9em}
+.convswap{text-align:center;color:var(--muted);font-size:1.1em;margin:2px 0}
 
 /* checklists */
 .cl-toolbar{display:flex;gap:8px;margin-bottom:12px}

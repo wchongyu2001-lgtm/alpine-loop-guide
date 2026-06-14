@@ -222,6 +222,14 @@ export function suggestPacking(dayInfos) {
 }
 
 export const convert = (amt, rate) => amt == null ? null : Math.round(amt * rate * 100) / 100;
+
+// Two-way currency conversion using a rate = units of home per 1 unit of base.
+// dir 'toHome': base→home (amt*rate). dir 'toBase': home→base (amt/rate). Returns 2dp or null.
+export function fxConvert(amt, rate, dir) {
+  if (amt == null || isNaN(amt) || !rate || isNaN(rate)) return null;
+  const v = dir === 'toBase' ? amt / rate : amt * rate;
+  return Math.round(v * 100) / 100;
+}
 export function simplifyDebts(net) {
   const cred = [], deb = [];
   for (const k in net) { const v = Math.round(net[k] * 100) / 100; if (v > 0) cred.push([k, v]); else if (v < 0) deb.push([k, -v]); }
