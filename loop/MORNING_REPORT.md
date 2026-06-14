@@ -275,3 +275,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 1f6aad0
+
+### 2026-06-14T23:55:00Z · B29 Satellite view + remembered map layer
+- status: done
+- pillar: maps
+- what: Google Maps backend defaults to satellite, lets you switch roadmap/satellite/terrain/hybrid, and remembers the choice in localStorage (v2:mapType) across reloads; Leaflet fallback untouched.
+- verified: PASS — independent agent confirmed origin/main c2125a6 has mapTypeId:mapTypeChoice + maptypeid_changed persistence, test-core exits 0 (8 new tests), all 3 live served-checks 200 with markers.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: c2125a6
