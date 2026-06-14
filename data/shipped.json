@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B16",
+      "title": "Next-up countdown on the Today view — live time to your next stop & booking",
+      "pillar": "mobile/live",
+      "date": "2026-06-14T20:30:00Z",
+      "what": "The Today view now has a live “Next up” section that counts down to whatever's coming, so a glance at your phone tells you how long you've got. It shows the soonest still-upcoming timed stop in today's plan (“📍 Next stop · Funicular — 1h 20m”) and the next upcoming reservation (“🛏 Next booking · Hotel Bellagio — 5h 50m”), each as its own chip with a tabular countdown. The numbers refresh every minute on their own, and the section degrades gracefully — once nothing is left it simply reads “Nothing left scheduled today.” The countdown only appears when the open day really is today, so previewing a future or past day stays clean. All computed from already-loaded data, so it works fully offline.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge b5b0189 on origin/main (nextUpcoming + fmtCountdown in js/core.js, the 'Next up' section + 60s setInterval ticker in js/today.js). node tools/test-core.mjs exits 0 with new guards: soonest future stop, minutes-until, next/next-day booking roll, null-when-none, and fmtCountdown 80→'1h 20m'/45→'45m'/120→'2h'/0→'now'. Live served checks 200 with markers 'Next up' (today.js) + nextUpcoming (core.js). Sanity import: stop {mins:80} + booking selected, past items excluded.",
+      "commit": "b5b0189",
+      "deploy": "live"
+    },
+    {
       "id": "B28",
       "title": "Booking detail drawer — tap a booking for the full picture + add-to-calendar",
       "pillar": "bookings",
