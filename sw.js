@@ -2,7 +2,7 @@
    Cache-first for the shell (html/css/js), network-first-then-cache for trip JSON,
    stale-while-revalidate for CDN assets (Leaflet, fonts, Sortable) so the app opens
    with no signal. Bump CACHE on any shell/data change to invalidate old caches. */
-const CACHE = 'tc-shell-v8';
+const CACHE = 'tc-shell-v9';
 // Map tiles live in their own cache so they survive shell-cache version bumps
 // (a CACHE bump shouldn't wipe the offline map). Tiles are stale-while-revalidate.
 const TILES = 'tc-tiles-v1';

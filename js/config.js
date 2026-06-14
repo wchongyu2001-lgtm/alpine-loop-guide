@@ -13,4 +13,4 @@
 //
 // Until a key is set, the Map view falls back to the existing Leaflet/OpenStreetMap map,
 // so nothing breaks.
-export const MAPS_KEY = '';
+export const MAPS_KEY = 'AIzaSyBMsVpskoYDTAVNXvWRjP39Pq_EyLTMFcM';
