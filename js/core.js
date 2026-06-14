@@ -143,6 +143,57 @@ export function parsePlace(j) {
   };
 }
 
+/* ---- Open-now status from today's hours string (current-time correct) ----
+   Parses a Google weekday_text-style line for ONE day ("Mon: 9:00 AM – 6:00 PM",
+   "9 AM–8 PM", "9:00 AM – 12:00 PM, 1:00 – 6:00 PM", "Open 24 hours", "Closed")
+   into minute-of-day ranges. Returns null when unknown (→ no badge / no false state),
+   [] when explicitly closed today, else [[openMin,closeMin], …]. */
+const _hmToMin = (tok, fallbackMer) => {
+  const m = String(tok).trim().match(/(\d{1,2})(?::(\d{2}))?\s*(a\.?m\.?|p\.?m\.?)?/i);
+  if (!m) return null;
+  let h = +m[1]; const min = m[2] ? +m[2] : 0;
+  const mer = (m[3] || fallbackMer || '').toLowerCase().replace(/\./g, '');
+  if (mer === 'pm' && h !== 12) h += 12;
+  if (mer === 'am' && h === 12) h = 0;
+  return h * 60 + min;
+};
+const _merOf = t => { const m = String(t).match(/(a\.?m\.?|p\.?m\.?)/i); return m ? m[1].toLowerCase().replace(/\./g, '') : null; };
+export function parseDayHours(s) {
+  if (!s) return null;
+  let t = String(s);
+  const ci = t.indexOf(': '); if (ci >= 0) t = t.slice(ci + 2); // strip leading "Monday: "
+  t = t.trim();
+  if (!t) return null;
+  if (/closed/i.test(t)) return [];
+  if (/24\s*hours|open\s*24/i.test(t)) return [[0, 1440]];
+  const ranges = [];
+  for (const part of t.split(',')) {
+    const sides = part.split(/\s*[–—-]\s*/);
+    if (sides.length !== 2) continue;
+    const o = _hmToMin(sides[0], _merOf(sides[0]) || _merOf(sides[1]));
+    const c = _hmToMin(sides[1], _merOf(sides[1]) || _merOf(sides[0]));
+    if (o != null && c != null) ranges.push([o, c]);
+  }
+  return ranges.length ? ranges : null;
+}
+const _fmtMin = m => {
+  let h = Math.floor(m / 60); const mm = m % 60, ap = h < 12 ? 'AM' : 'PM';
+  h = h % 12 || 12;
+  return `${h}:${String(mm).padStart(2, '0')} ${ap}`;
+};
+// → null (unknown) | { open:boolean, label:string }. nowMin = minutes since local midnight.
+export function openStatus(hoursToday, nowMin) {
+  const ranges = parseDayHours(hoursToday);
+  if (ranges == null) return null;
+  if (!ranges.length) return { open: false, label: 'Closed' };
+  let nextOpen = null;
+  for (const [o, c] of ranges) {
+    if (c > o ? (nowMin >= o && nowMin < c) : (nowMin >= o || nowMin < c)) return { open: true, label: 'Open now' };
+    if (nowMin < o && (nextOpen == null || o < nextOpen)) nextOpen = o;
+  }
+  return { open: false, label: nextOpen != null ? `Closed · opens ${_fmtMin(nextOpen)}` : 'Closed' };
+}
+
 /* ---- Per-leg routing (OSRM driving, haversine fallback) ---- */
 const MODE = { drive: { p: 'driving', f: 1.3, kmh: 55 }, walk: { p: 'walking', f: 1.0, kmh: 4.8 }, cycle: { p: 'cycling', f: 1.1, kmh: 15 } };
 export const modeProfile = m => (MODE[m] || MODE.drive).p;

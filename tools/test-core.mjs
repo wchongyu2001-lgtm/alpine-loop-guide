@@ -11,7 +11,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, fuelEstimate, transportContinuity, bookingIcs, tripIcs,
   nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials, tripOverview,
-  mapTypeChoice, tripTotals, daysToDeparture, dayNote } from '../js/core.js';
+  mapTypeChoice, tripTotals, daysToDeparture, dayNote, parseDayHours, openStatus } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -192,6 +192,21 @@ eq(parsePlace({ rating: 4.6, user_ratings_total: 2134, photoRef: 'r', types: ['t
     openNow: true, hoursToday: '9 AM–8 PM', website: 'https://w', phone: '+39 1', placeId: 'p', gmapsUrl: 'https://g' },
   'parsePlace normalizes proxy json');
 eq(parsePlace(null), null, 'parsePlace null → null');
+
+// ---- B34: open-now status from today's hours string ----
+eq(parseDayHours('Monday: 9:00 AM – 6:00 PM'), [[540, 1080]], 'parseDayHours strips day + en-dash');
+eq(parseDayHours('9 AM–8 PM'), [[540, 1200]], 'parseDayHours bare range');
+eq(parseDayHours('9:00 AM – 12:00 PM, 1:00 – 6:00 PM'), [[540, 720], [780, 1080]], 'parseDayHours split ranges + inherited meridiem');
+eq(parseDayHours('Sunday: Closed'), [], 'parseDayHours closed → []');
+eq(parseDayHours('Open 24 hours'), [[0, 1440]], 'parseDayHours 24h');
+eq(parseDayHours(null), null, 'parseDayHours null → null (unknown)');
+eq(parseDayHours('Hours unknown blah'), null, 'parseDayHours unparseable → null');
+eq(openStatus('9:00 AM – 6:00 PM', 600), { open: true, label: 'Open now' }, 'openStatus within hours');
+eq(openStatus('9:00 AM – 6:00 PM', 480), { open: false, label: 'Closed · opens 9:00 AM' }, 'openStatus before opening → next open');
+eq(openStatus('9:00 AM – 6:00 PM', 1140), { open: false, label: 'Closed' }, 'openStatus after closing');
+eq(openStatus('Sunday: Closed', 600), { open: false, label: 'Closed' }, 'openStatus closed day');
+eq(openStatus('6:00 PM – 2:00 AM', 60), { open: true, label: 'Open now' }, 'openStatus overnight after midnight');
+eq(openStatus(null, 600), null, 'openStatus unknown → null (no badge)');
 
 // ---- routing ----
 eq(modeProfile('drive'), 'driving', 'modeProfile drive');

@@ -5,7 +5,7 @@ import { esc, gmapsPlaceUrl, amapsPlaceUrl, gmapsDirUrl, routeStats, optimizeOrd
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, pickSummaryExtract, thumbCacheKey, factCacheKey,
   splitTime, joinTime, matchBooking, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey,
-  fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon, daylight, dayNote } from './core.js';
+  fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon, daylight, dayNote, openStatus } from './core.js';
 import { tripBookings } from './data.js';
 import { BASE } from './sync.js';
 import { enrich } from './places.js';
@@ -244,7 +244,7 @@ function placeRow(day, p, next, mode, dayBk, tag) {
       <span class="grab">⠿</span>
       ${thumb}
       <div class="pbody" data-open="${day.id}|${p.id}" data-enrich="${esc(p.n)}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''} role="button" tabindex="0">
-        <div class="pname">${tag[p.t] || '•'} <b>${esc(p.n)}</b>${p.time ? ` <span class="ptime">${esc(p.time)}</span>` : ''}</div>
+        <div class="pname">${tag[p.t] || '•'} <b>${esc(p.n)}</b>${p.time ? ` <span class="ptime">${esc(p.time)}</span>` : ''}<span class="pbadge"></span></div>
         <div class="pmeta"></div>
         ${p.note || p.d ? `<div class="pdesc">${esc(p.note || p.d)}</div>` : ''}
       </div>
@@ -325,8 +325,14 @@ function hydrateEnrich(root) {
     if (!v) return;
     const meta = el.querySelector('.pmeta');
     if (meta) {
-      const open = v.openNow == null ? '' : (v.openNow ? (v.hoursToday ? 'open · ' + v.hoursToday : 'open now') : 'closed');
-      meta.textContent = [fmtRating(v.rating, v.reviews), v.category, priceTier(v.priceLevel), open].filter(Boolean).join(' · ');
+      const hrs = v.hoursToday ? `hrs: ${v.hoursToday.replace(/^[A-Za-z]+:\s*/, '')}` : '';
+      meta.textContent = [fmtRating(v.rating, v.reviews), v.category, priceTier(v.priceLevel), hrs].filter(Boolean).join(' · ');
+    }
+    const badge = el.querySelector('.pbadge');
+    if (badge) {
+      const now = new Date();
+      const st = openStatus(v.hoursToday, now.getHours() * 60 + now.getMinutes());
+      if (st) { badge.textContent = st.label; badge.className = `pbadge ${st.open ? 'open-now' : 'closed-now'}`; }
     }
     if (v.photoRef) {
       const ph = el.closest('li').querySelector('.pthumb.ph');
