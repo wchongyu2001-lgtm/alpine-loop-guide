@@ -164,7 +164,7 @@ auto follows the OS preference.
 Header 🌗/☀️/🌙 toggle; pure cycleTheme()/effectiveTheme() in core.js; html[data-theme=dark] palette in
 app.css; early inline script in index.html applies theme pre-paint (v2:theme).
 
-### B36 · status: todo · pillar: maps
+### B36 · status: wip · pillar: maps
 **One-tap "Open in Google Maps" full route.** A button that opens the real Google Maps app/site with the
 whole trip as multi-stop driving directions (origin → day bases → destination), no extra API needed.
 Accept: the button opens a valid Google Maps directions URL covering the day bases in order.
