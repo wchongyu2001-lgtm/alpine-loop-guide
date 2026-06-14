@@ -137,7 +137,7 @@ from the leg distance and the trip's fuel figure (meta.fuelPerH) at a user-edita
 show a trip total. Pure compute in core.js, shown in the Itinerary or a Budget card. Accept: a sensible
 per-leg + total fuel estimate for the route; editing the price updates it; guarded test in test-core.
 
-### B31 · status: todo · pillar: polish
+### B31 · status: wip · pillar: polish
 **Trip totals + departure countdown.** A compact stats strip: total driving distance & time across the
 route, number of nights / planned stops / bookings, and "X days to departure" from today to the trip
 start. Pure compute, offline. Accept: correct totals + countdown for the trip; reads from loaded data.
