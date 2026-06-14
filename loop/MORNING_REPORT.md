@@ -185,3 +185,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: baf738f
+
+### 2026-06-14T18:30Z · B27 Transport continuity check
+- status: done
+- pillar: bookings
+- what: New pure `transportContinuity(bookings)` + a 🔗 Transport continuity section in the Bookings view that parses each transit leg's origin→destination and flags same-time jumps, broken same-day connections, and one-way car rentals with no return.
+- verified: PASS — independent agent confirmed merge 75e8e3d on origin/main, test-core exits 0 with 5 new guards, reproduced each verdict in a module-mode exercise, and confirmed seeded data raises [] (no false positives); live served checks 200 with markers transportContinuity + continuityHtml.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 75e8e3d

@@ -52,7 +52,7 @@ stays, transport, activities) in the trip currency (FX-converted), shown against
 you see how much of the trip is already paid/committed. Accept: the rollup sums the seeded bookings by
 type with a correct grand total; integrates with the existing budget figures.
 
-### B27 · status: wip · pillar: bookings
+### B27 · status: done (75e8e3d) · pillar: bookings
 **Transport continuity check.** Verify the chain of transport bookings makes sense: each leg's arrival
 location should be where the next leg departs, no impossible same-time jumps, and a flagged "no return"
 when an outbound has no matching return. Accept: a deliberately broken chain flags; a clean chain passes.
