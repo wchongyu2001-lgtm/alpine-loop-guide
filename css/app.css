@@ -380,6 +380,25 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .ideacard h4{font-size:1.02em;margin:6px 0 2px}
 .ideacard p{font-size:.82em;color:var(--ink-soft);margin:6px 0 0}
 .ideatop{display:flex;justify-content:space-between;align-items:center}
+/* F5 · capture inbox */
+.inboxpanel{background:var(--paper-2);border:1px solid var(--line);border-radius:14px;
+  padding:12px 14px;margin-bottom:14px}
+.captureform{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.captureform #capurl{flex:2 1 200px}
+.captureform #capnote{flex:1 1 120px}
+.inboxgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.inboxcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.inboxcard.placed{opacity:.62}
+.inboxtop{display:flex;gap:8px;align-items:flex-start}
+.inboxthumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:none;
+  display:flex;align-items:center;justify-content:center;background:var(--paper-2);font-size:1.2em}
+.inboxmeta{flex:1;min-width:0}
+.inboxtitle{width:100%;font-weight:600;border:1px solid transparent;background:transparent;padding:2px 0}
+.inboxtitle:focus{border-bottom-color:var(--line)}
+.inboxlink{font-size:.78em;color:var(--ink-soft);word-break:break-all}
+.inboxnote{width:100%;margin-top:6px;font-size:.85em;resize:vertical}
+.inboxact{margin-top:8px}
+.inboxday{width:100%;font-size:.85em}
 
 @media(max-width:720px){
   .budgrid{grid-template-columns:1fr}

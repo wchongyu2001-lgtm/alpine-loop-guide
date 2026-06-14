@@ -10,5 +10,10 @@
   "theme_color": "#b9531a",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
-  ]
+  ],
+  "share_target": {
+    "action": "./",
+    "method": "GET",
+    "params": { "url": "url", "text": "text", "title": "title" }
+  }
 }

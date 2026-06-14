@@ -1,7 +1,7 @@
 /* App shell: trip switcher, view tabs, hash routing (#trip/view), sync refresh. */
 import { loadRegistry, loadTrip, refreshOverlays, decorateDays } from './data.js';
 import { save, retryQueue } from './sync.js';
-import { esc, cycleTheme, effectiveTheme } from './core.js';
+import { esc, cycleTheme, effectiveTheme, parseShare, buildIdea } from './core.js';
 import { icon } from './icons.js';
 import * as today from './today.js';
 import * as overview from './overview.js';
@@ -62,7 +62,27 @@ async function boot() {
   base = await loadRegistry();
   retryQueue();
   await go();
+  handleShareTarget();
   window.addEventListener('hashchange', go);
+}
+
+// F5 · PWA Web Share Target — a phone "Share → Travel Companion" lands the link
+// in start_url's query (?url=&text=&title=). Turn it into a captured idea on the
+// open trip, drop the params (so a reload doesn't re-add it), and open Ideas.
+function handleShareTarget() {
+  const params = new URLSearchParams(location.search);
+  if (!params.has('url') && !params.has('text') && !params.has('title')) return;
+  const share = parseShare({ url: params.get('url'), text: params.get('text'), title: params.get('title') });
+  if (share && state) {
+    const idea = buildIdea(share);
+    if (idea) {
+      const cur = (state.overlay.ideas && state.overlay.ideas.items) || [];
+      ctx.save('ideas', { items: [idea, ...cur] });
+    }
+  }
+  // Strip the share query and route to Ideas without re-running the share path.
+  history.replaceState(null, '', location.pathname + '#' + (state ? state.trip.id : 'alpine') + '/ideas');
+  go();
 }
 
 async function go() {

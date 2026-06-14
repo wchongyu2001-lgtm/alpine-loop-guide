@@ -12,7 +12,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   bookingRollup, tripEstimate, fuelEstimate, transportContinuity, bookingIcs, tripIcs,
   nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, liftInfo, liftScore, liftAdvice, countryEssentials, tripOverview,
   mapTypeChoice, tripTotals, daysToDeparture, bookingCountdown, dayNote, parseDayHours, openStatus,
-  cycleTheme, effectiveTheme, gmapsRouteUrl } from '../js/core.js';
+  cycleTheme, effectiveTheme, gmapsRouteUrl, ideaDomain, buildIdea, parseShare } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -988,6 +988,27 @@ eq(effectiveTheme('auto', false), 'light', 'effectiveTheme: auto follows OS ligh
   eq(cd2[cd2.length - 1].what, 'Campsites', 'countdown: booked item sinks to bottom');
   eq(cd2[0].status, 'open', 'countdown: top item is still open after one booked');
   eq(bookingCountdown([], start, '2026-06-14', {}), [], 'countdown: no items → empty');
+}
+
+// ---- F5: Ideas 2.0 capture inbox (pure) ----
+{
+  eq(ideaDomain('https://www.instagram.com/reel/abc/'), 'instagram.com', 'ideaDomain: strips www + path');
+  eq(ideaDomain('http://tiktok.com/@x/video/9'), 'tiktok.com', 'ideaDomain: http + handle path');
+  eq(ideaDomain('not a url'), '', 'ideaDomain: non-url → empty');
+
+  const idea = buildIdea({ url: ' https://vm.tiktok.com/Zabc/ ', note: ' lake spot ' }, 'idea-1');
+  eq(idea, { id: 'idea-1', url: 'https://vm.tiktok.com/Zabc/', title: 'vm.tiktok.com', domain: 'vm.tiktok.com', note: 'lake spot', placed: false },
+    'buildIdea: trims, domain fallback title, placed:false');
+  eq(buildIdea({ url: 'https://x.com/p', title: ' My Reel ' }, 'i2').title, 'My Reel', 'buildIdea: explicit title wins');
+  eq(buildIdea({ url: 'mailto:x' }), null, 'buildIdea: non-http → null');
+  eq(buildIdea({ url: '' }), null, 'buildIdea: blank → null');
+
+  eq(parseShare({ url: 'https://insta.com/r/1', title: 'Cool', text: 'see this' }),
+    { url: 'https://insta.com/r/1', title: 'Cool', note: 'see this' }, 'parseShare: explicit url param');
+  eq(parseShare({ text: 'amazing campsite https://maps.app/abc come' }),
+    { url: 'https://maps.app/abc', title: '', note: 'amazing campsite  come' }, 'parseShare: sniffs url out of text');
+  eq(parseShare({ text: 'just a caption' }), null, 'parseShare: no url anywhere → null');
+  eq(parseShare({}), null, 'parseShare: empty share → null');
 }
 
 process.exit(fails ? 1 : 0);

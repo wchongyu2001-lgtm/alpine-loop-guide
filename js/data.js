@@ -12,7 +12,7 @@ export async function loadRegistry() {
 }
 
 // Overlay kinds stored in the Sheet (or localStorage until it's reachable).
-const KINDS = ['itinerary', 'expenses', 'checklists', 'bucket', 'bookings'];
+const KINDS = ['itinerary', 'expenses', 'checklists', 'bucket', 'bookings', 'ideas'];
 
 export async function loadTrip(base, tripId) {
   const trip = base.registry.trips.find(t => t.id === tripId) || base.registry.trips[0];

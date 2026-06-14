@@ -209,6 +209,17 @@ export function parseOsrm(j) {
   const r = j && j.routes && j.routes[0]; if (!r) return null;
   return { km: Math.round(r.distance / 100) / 10, mins: Math.round(r.duration / 60) };
 }
+// Multi-waypoint route WITH road geometry, for drawing the actual driving path on the map.
+export const osrmRouteUrl = (points, m) =>
+  `https://router.project-osrm.org/route/v1/${modeProfile(m)}/${points.map(p => `${p[1]},${p[0]}`).join(';')}?overview=full&geometries=geojson`;
+// → { coords:[[lat,lng]...], km, mins, legs:[{km,mins}] } (coords reordered from OSRM's [lng,lat]).
+export function parseOsrmRoute(j) {
+  const r = j && j.routes && j.routes[0];
+  if (!r || !r.geometry || !Array.isArray(r.geometry.coordinates)) return null;
+  const coords = r.geometry.coordinates.map(c => [c[1], c[0]]);
+  const legs = (r.legs || []).map(l => ({ km: Math.round(l.distance / 100) / 10, mins: Math.round(l.duration / 60) }));
+  return { coords, km: Math.round(r.distance / 100) / 10, mins: Math.round(r.duration / 60), legs };
+}
 
 /* ---- Brand logos (airlines by IATA, providers by domain) ---- */
 export const iataFromFlight = s => { const m = String(s || '').toUpperCase().match(/\b([A-Z0-9]{2})\s?\d/); return m ? m[1] : null; };
@@ -1362,4 +1373,38 @@ export function searchRecords(records, query) {
     const hay = String(r && r.text || '').toLowerCase();
     return tokens.every(t => hay.includes(t));
   });
+}
+
+// F5 · Ideas 2.0 — capture inbox helpers (pure, no DOM/network).
+// ideaDomain: a clean host label from a URL, used as the fallback title when
+// OpenGraph/oEmbed is blocked (Instagram/TikTok) — strips protocol + leading www.
+export function ideaDomain(url) {
+  const m = String(url || '').match(/^https?:\/\/([^/?#]+)/i);
+  if (!m) return '';
+  return m[1].replace(/^www\./i, '').toLowerCase();
+}
+
+// buildIdea: normalize a captured link (+ optional title/note) into an idea card.
+// Title falls back to the bare domain (user-editable later). Returns null for a
+// blank/garbage URL so callers can ignore noise (e.g. an empty share).
+export function buildIdea(input, id) {
+  const url = String((input && input.url) || '').trim();
+  if (!/^https?:\/\//i.test(url)) return null;
+  const domain = ideaDomain(url);
+  const title = String((input && input.title) || '').trim() || domain;
+  const note = String((input && input.note) || '').trim();
+  return { id: id || ('idea-' + Date.now()), url, title, domain, note, placed: false };
+}
+
+// parseShare: pull a shareable URL out of the PWA Web Share Target params.
+// Phones put the link in `url`, but many (Instagram/Android) only fill `text`
+// with "caption https://…" — so sniff the first http(s) URL out of text too.
+export function parseShare(params) {
+  const p = params || {};
+  const fromText = String(p.text || '').match(/https?:\/\/\S+/);
+  const url = (String(p.url || '').trim()) || (fromText ? fromText[0] : '');
+  if (!/^https?:\/\//i.test(url)) return null;
+  const title = String(p.title || '').trim();
+  const note = String(p.text || '').replace(url, '').trim();
+  return { url, title, note };
 }
