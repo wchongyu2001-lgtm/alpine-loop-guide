@@ -13,7 +13,7 @@ If you think of a valuable new item mid-run, append it to the bottom as `todo`.
 
 ## Batch 2 — P1 (on-trip, mobile & live)
 
-### B12 · status: wip · pillar: mobile/live
+### B12 · status: done (64516b2) · pillar: mobile/live
 **Packing list generator.** From the trip length + the day weather forecasts (weather.js) + activity
 types in the plan, generate a suggested packing checklist into the Checklists view (one tap to add).
 Accept: a "Suggest packing list" action adds weather-appropriate items for the Alpine trip (e.g. rain

@@ -121,3 +121,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 
 ### 2026-06-14T10:30:00Z · loop
 - backlog drained — B01–B11 all `done`, no `todo` remaining. No-op iteration, exiting. Trip starts tomorrow (2026-06-15); all four pillars shipped + independently verified. Not self-seeding new work on the eve of the trip to avoid gold-plating the locked field-critical surface.
+
+### 2026-06-14T09:20Z · B12 Packing list generator
+- status: done
+- pillar: mobile/live
+- what: "🎒 Suggest packing list" button in Checklists builds a weather- + plan-aware packing list (rain shell, alpine warm layer, hiking boots for funicular/mountain days, swimwear for lakes) via new pure suggestPacking() in core.js.
+- verified: PASS — independent agent confirmed merge 64516b2 on origin/main, node tools/test-core.mjs exits 0 (10 new suggestPacking guards ok), live js/checklists.js 200 with marker "Suggest packing list" (propagated on retry).
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 64516b2
