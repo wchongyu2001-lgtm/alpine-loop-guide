@@ -4,7 +4,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   placeProxyUrl, placePhotoUrl, placeCacheKey, fmtRating, priceTier, parsePlace,
   modeProfile, osrmUrl, legFallback, fmtDuration, parseOsrm,
   iataFromFlight, airlineLogoUrl, brandDomain, brandLogoUrl, wlShareValid,
-  weatherUrl, weatherCacheKey, pickDaily, wmoIcon, convert, simplifyDebts,
+  weatherUrl, weatherCacheKey, pickDaily, wmoIcon, daylight, convert, simplifyDebts,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
   legGapMins, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
@@ -220,11 +220,17 @@ eq(wlShareValid(''), false, 'wlShareValid: empty → false');
 
 // ---- weather / fx / settle-up ----
 eq(weatherUrl([45.49, 10.61]),
-  'https://api.open-meteo.com/v1/forecast?latitude=45.49&longitude=10.61&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16',
+  'https://api.open-meteo.com/v1/forecast?latitude=45.49&longitude=10.61&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset&timezone=auto&forecast_days=16',
   'weatherUrl');
-eq(pickDaily({ daily: { time: ['2026-08-01', '2026-08-02'], weather_code: [1, 61], temperature_2m_max: [28, 22], temperature_2m_min: [18, 15], precipitation_probability_max: [10, 80] } }, '2026-08-02'),
-  { code: 61, tmax: 22, tmin: 15, precip: 80 }, 'pickDaily finds date');
+eq(pickDaily({ daily: { time: ['2026-08-01', '2026-08-02'], weather_code: [1, 61], temperature_2m_max: [28, 22], temperature_2m_min: [18, 15], precipitation_probability_max: [10, 80], sunrise: ['2026-08-01T06:01', '2026-08-02T06:02'], sunset: ['2026-08-01T20:30', '2026-08-02T20:28'] } }, '2026-08-02'),
+  { code: 61, tmax: 22, tmin: 15, precip: 80, sunrise: '2026-08-02T06:02', sunset: '2026-08-02T20:28' }, 'pickDaily finds date');
 eq(pickDaily({ daily: { time: ['2026-08-01'] } }, '2030-01-01'), null, 'pickDaily out of range → null');
+// B32: daylight summary
+eq(daylight({ sunrise: '2026-06-15T05:38', sunset: '2026-06-15T21:02' }),
+  { rise: '05:38', set: '21:02', length: '15h 24m', golden: '20:02' }, 'daylight computes rise/set/length/golden');
+eq(daylight({ sunrise: null, sunset: null }), null, 'daylight no sun fields → null (degrades)');
+eq(daylight(null), null, 'daylight no weather → null');
+eq(daylight({ sunrise: '2026-12-21T08:05', sunset: '2026-12-21T16:25' }).length, '8h 20m', 'daylight short winter day');
 eq(weatherCacheKey([45.494, 10.606]), 'wx:45.49,10.61', 'weatherCacheKey rounds 2dp');
 eq(weatherCacheKey(null), 'wx:', 'weatherCacheKey no coords');
 eq(wmoIcon(0), '☀️', 'wmo clear'); eq(wmoIcon(61), '🌧️', 'wmo rain'); eq(wmoIcon(71), '❄️', 'wmo snow');

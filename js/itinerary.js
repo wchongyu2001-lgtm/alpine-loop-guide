@@ -5,7 +5,7 @@ import { esc, gmapsPlaceUrl, amapsPlaceUrl, gmapsDirUrl, routeStats, optimizeOrd
   wikiSummaryUrl, wikiGeoUrl, pickSummaryThumb, pickGeoThumb, pickSummaryExtract, thumbCacheKey, factCacheKey,
   splitTime, joinTime, matchBooking, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey,
-  fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon } from './core.js';
+  fmtRating, priceTier, placePhotoUrl, fmtDuration, wmoIcon, daylight } from './core.js';
 import { tripBookings } from './data.js';
 import { BASE } from './sync.js';
 import { enrich } from './places.js';
@@ -191,7 +191,7 @@ function dayCard(day, plan, bookings, state) {
     <div class="dayhead">
       <span class="daynum">${day._n}</span>
       <div>
-        <div class="daydate">${esc(day._label || day.date)}${day.drive ? ` · 🚐 ~${day.drive}h leg` : ''}${day.ll && day._date ? `<span class="wx" data-ll="${day.ll[0]},${day.ll[1]}" data-date="${day._date}"></span>` : ''}</div>
+        <div class="daydate">${esc(day._label || day.date)}${day.drive ? ` · 🚐 ~${day.drive}h leg` : ''}${day.ll && day._date ? `<span class="wx" data-ll="${day.ll[0]},${day.ll[1]}" data-date="${day._date}"></span><span class="dl"></span>` : ''}</div>
         <h3>${esc(day.short)}</h3>
       </div>
       <div class="dayactions">
@@ -349,6 +349,12 @@ function hydrateWeather(root) {
     const ll = el.dataset.ll.split(',').map(Number);
     const w = await dayWeather(ll, el.dataset.date);
     if (w) el.textContent = ` · ${wmoIcon(w.code)} ${Math.round(w.tmax)}°/${Math.round(w.tmin)}°${w.precip ? ' · ' + w.precip + '%' : ''}`;
+    const dl = el.parentElement && el.parentElement.querySelector('.dl');
+    const d = w && daylight(w);
+    if (dl && d) {
+      dl.textContent = ` · 🌅 ${d.rise} 🌇 ${d.set}`;
+      dl.title = `${d.length ? d.length + ' daylight' : 'daylight'}${d.golden ? ` · golden hour ~${d.golden}` : ''}`;
+    }
   });
 }
 
