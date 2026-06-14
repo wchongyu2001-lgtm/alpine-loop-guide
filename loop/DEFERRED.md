@@ -18,3 +18,10 @@ Append one entry per item. Suggested format:
 ## Items
 
 _(none yet)_
+
+## Ideas 2.0 — Telegram/Instagram ingestion (server) — deferred 2026-06-14
+Forwarding a reel/link to the existing trip Telegram bot should create an Ideas-tab card via
+trips-sync (parse title/thumbnail/location). Needs the FastAPI/VPS backend + bot handler
+(TELEGRAM_BOT_TOKEN already configured). Out of the auto-deploy frontend loop scope; build as a
+manual-VPS follow-up after the Ideas 2.0 frontend (F5) lands. The PWA Web Share Target (in F5)
+covers the Instagram→share→app path without the backend.
