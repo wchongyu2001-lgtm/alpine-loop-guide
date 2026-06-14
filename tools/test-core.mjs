@@ -10,7 +10,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, transportContinuity, bookingIcs,
-  nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge } from '../js/core.js';
+  nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -330,6 +330,20 @@ eq(/data\/alpine\.json/.test(sw), true, 'sw.js precaches the Alpine trip data');
 eq(/tc-tiles/.test(sw), true, 'sw.js keeps a dedicated map-tile cache');
 eq(/openstreetmap/.test(sw), true, 'sw.js recognises OSM tile requests');
 eq(/k !== CACHE && k !== TILES/.test(sw), true, 'sw.js preserves the tile cache across shell-cache bumps');
+
+// ---- B14: country essentials (static offline reference) ----
+const it = countryEssentials('IT');
+eq(it.emergency, '112', 'B14: Italy emergency is 112');
+eq(/EUR/.test(it.currency), true, 'B14: Italy currency is EUR');
+eq(/C|F/.test(it.plugs), true, 'B14: Italy plug type includes C/F');
+eq(it.phrases.length > 0, true, 'B14: Italy has language basics');
+eq(countryEssentials('is').name, 'Iceland', 'B14: lookup is case-insensitive');
+eq(countryEssentials('ZZ'), null, 'B14: unknown country → null (graceful)');
+eq(countryEssentials(null), null, 'B14: missing code → null');
+// Every trip in the registry resolves to a known essentials entry.
+const reg = JSON.parse(readFileSync(new URL('../data/trips.json', import.meta.url), 'utf8'));
+const unresolved = reg.trips.filter(t => !countryEssentials(t.country));
+eq(unresolved.map(t => t.id), [], 'B14: every trip has resolvable country essentials');
 
 // ---- B05: unassigned/orphan booking triage (pure) ----
 const ob = orphanBookings([
