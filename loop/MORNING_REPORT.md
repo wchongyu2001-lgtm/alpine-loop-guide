@@ -221,3 +221,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: b58f0fd
+
+### 2026-06-14T22:30Z · B13 Optimize day order
+- status: done
+- pillar: logistics
+- what: The per-day ⚡ optimize button now reorders stops nearest-first AND shows the savings (~X km / ~Y h) in an inline `.optundo` banner with a one-tap undo; new pure `optimizePreview()` in core.js, reorder persists via the itinerary overlay.
+- verified: PASS — independent agent: merge 99310dd on origin/main (optimizePreview/data-undo/.optundo present), test-core exits 0 with new optimizePreview guards (saves ~433km, already-shortest→0 never negative), logic spot-check savedKm=65/savedHours=1.2 on scrambled pts, live served checks 200 (marker optimizePreview, data-undo).
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 99310dd
