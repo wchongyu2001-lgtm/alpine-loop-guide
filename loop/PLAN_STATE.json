@@ -38,12 +38,12 @@
     { "day": 4,  "date": "2026-08-04", "anchor": "Jungfraujoch — Top of Europe", "stops": ["Jungfraujoch railway 08:00–13:30","First→Bachalpsee hike 14:30–17:00","Lake Brienz swim (Iseltwald) 18:00–19:30"], "timed": true, "done": true },
     { "day": 5,  "date": "2026-08-05", "anchor": "Grindelwald First adventure", "stops": ["First Cliff Walk & Flyer 09:00–11:00","Trottibike descent 11:15–12:30","Schilthorn optional 13:30–16:30","Lake Thun swim (Spiez) 17:30–19:30"], "timed": true, "done": true },
     { "day": 6,  "date": "2026-08-06", "anchor": "Zermatt & Matterhorn arrival", "stops": ["Grindelwald→Randa + train 08:30–12:30","Kirchbrücke Matterhorn view 13:30–14:15","Sunnegga & Leisee 14:30–17:00","Raclette night 18:30–20:30"], "timed": true, "done": true },
-    { "day": 7,  "date": "2026-08-07", "anchor": null, "stops": [], "timed": false, "done": false },
-    { "day": 8,  "date": "2026-08-08", "anchor": null, "stops": [], "timed": false, "done": false },
-    { "day": 9,  "date": "2026-08-09", "anchor": null, "stops": [], "timed": false, "done": false },
-    { "day": 10, "date": "2026-08-10", "anchor": null, "stops": [], "timed": false, "done": false },
-    { "day": 11, "date": "2026-08-11", "anchor": null, "stops": [], "timed": false, "done": false },
-    { "day": 12, "date": "2026-08-12", "anchor": null, "stops": [], "timed": false, "done": false },
+    { "day": 7,  "date": "2026-08-07", "anchor": "Gornergrat & Matterhorn finale (Zermatt 2nd day, van put)", "stops": ["Slow camp morning 07:30–08:30","Gornergrat cog railway 09:00–11:30","Riffelsee reflection walk-down 11:30–13:30","Zermatt village + raclette 15:00–18:30"], "timed": true, "done": true },
+    { "day": 8,  "date": "2026-08-08", "anchor": "Drive east → Innsbruck (via Liechtenstein + Fernpass)", "stops": ["Zermatt→Innsbruck via Vaduz 08:30–13:00","Blindsee/Fernsteinsee swim 14:00–15:30","Pitch Innsbruck Kranebitten 16:30–17:30","Old Town wander + beer 18:30–21:00"], "timed": true, "done": true },
+    { "day": 9,  "date": "2026-08-09", "anchor": "Innsbruck & Nordkette (van put)", "stops": ["Nordkettenbahn to ridge 09:00–12:00","Golden Roof & Old Town 12:30–14:30","Bergisel ski-jump opt 15:00–16:30","Tyrolean food night 18:30–21:00"], "timed": true, "done": true },
+    { "day": 10, "date": "2026-08-10", "anchor": "Salzburg — fortress & beer garden", "stops": ["Innsbruck→Salzburg drive 08:30–11:00","Hohensalzburg Fortress 11:30–13:30","Old Town & Getreidegasse 13:30–16:00","Augustiner Bräustübl 18:00–20:30"], "timed": true, "done": true },
+    { "day": 11, "date": "2026-08-11", "anchor": "Hallstatt & Salzkammergut (early)", "stops": ["Salzburg→Hallstatt early 07:30–09:30","Village & Classic view 09:30–11:30","Gosausee mirror-lake swim 12:30–15:00","Five Fingers viewpoint opt 16:00–18:00"], "timed": true, "done": true },
+    { "day": 12, "date": "2026-08-12", "anchor": "Grossglockner High Alpine Road → Zell am See", "stops": ["Toll road + Krimml opt 08:00–10:30","Franz-Josefs-Höhe 11:30–13:00","Edelweissspitze & hairpins 13:30–14:30","Zell am See lakefront swim 16:00–18:30"], "timed": true, "done": true },
     { "day": 13, "date": "2026-08-13", "anchor": null, "stops": [], "timed": false, "done": false },
     { "day": 14, "date": "2026-08-14", "anchor": null, "stops": [], "timed": false, "done": false },
     { "day": 15, "date": "2026-08-15", "anchor": null, "stops": [], "timed": false, "done": false },
@@ -64,5 +64,5 @@
     "per_day": false
   },
 
-  "clean_pass_counter": 6
+  "clean_pass_counter": 7
 }
