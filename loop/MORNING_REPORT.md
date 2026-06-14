@@ -140,3 +140,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - deploy: live (frontend)
 - commit: cb5e914
 - note: Owner inserted Batch 3 (booking-planning, B21–B28) above Batch 2 mid-run; pivoted from the previously-claimed B16 (released back to todo) to honor the new top priority.
+
+### 2026-06-14T12:00:00Z · B22 "Still to book" coverage gaps
+- status: done
+- pillar: bookings
+- what: New pure coverageGaps(days, bookings) in core.js auto-detects un-booked nights (no accommodation) and un-covered overnight base changes (the day's `sleep` differs but no transport spans the move). Road-trip aware: a campervan/motorhome is the bed while held, and any held vehicle covers the driving legs. Renders as a 🧳 "Still to book" section (stillToBookHtml) grouped by date in the Bookings view.
+- verified: PASS — independent agent confirmed merge f06ba5c on origin/main (coverageGaps + stillToBookHtml + .bk-tobook), node tools/test-core.mjs exit 0 with 6 new coverageGaps guards; on real seeded data pre-exchange flags the missing Genova→Firenze/Firenze→Bologna legs with 0 false lodging gaps, and the Alpine campervan suppresses all ~15 base changes (no false-positive flood); live served checks 200 with both markers.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: f06ba5c
