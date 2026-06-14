@@ -12,7 +12,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   bookingRollup, tripEstimate, fuelEstimate, transportContinuity, bookingIcs, tripIcs,
   nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials, tripOverview,
   mapTypeChoice, tripTotals, daysToDeparture, dayNote, parseDayHours, openStatus,
-  cycleTheme, effectiveTheme } from '../js/core.js';
+  cycleTheme, effectiveTheme, gmapsRouteUrl } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -904,5 +904,23 @@ eq(effectiveTheme('light', true), 'light', 'effectiveTheme: explicit light ignor
 eq(effectiveTheme('dark', false), 'dark', 'effectiveTheme: explicit dark ignores OS');
 eq(effectiveTheme('auto', true), 'dark', 'effectiveTheme: auto follows OS dark');
 eq(effectiveTheme('auto', false), 'light', 'effectiveTheme: auto follows OS light');
+
+// ---- B36: one-tap "Open in Google Maps" full route (pure) ----
+{
+  const ds = [
+    { id: 'a', ll: [45.55, 10.62] },
+    { id: 'b', ll: [47.05, 8.31] },
+    { id: 'c', ll: [47.05, 8.31] },   // same base next night → collapses
+    { id: 'd', ll: [46.59, 7.91] },
+    { id: 'e', short: 'no coords' },  // skipped — no ll
+  ];
+  eq(gmapsRouteUrl(ds),
+    'https://www.google.com/maps/dir/45.55,10.62/47.05,8.31/46.59,7.91',
+    'gmapsRouteUrl: bases in order, consecutive dup collapsed, no-coord day skipped');
+  eq(gmapsRouteUrl([{ id: 'a', ll: [1, 2] }]), null, 'gmapsRouteUrl: single stop → null');
+  eq(gmapsRouteUrl([]), null, 'gmapsRouteUrl: no days → null');
+  eq(gmapsRouteUrl(null), null, 'gmapsRouteUrl: null days → null');
+  eq(gmapsRouteUrl([{ ll: [1, 1] }, { ll: [1, 1] }]), null, 'gmapsRouteUrl: all-same base → one stop → null');
+}
 
 process.exit(fails ? 1 : 0);
