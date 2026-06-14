@@ -11,6 +11,57 @@ If you think of a valuable new item mid-run, append it to the bottom as `todo`.
 
 ---
 
+## Batch 3 — BOOKING PLANNING (priority focus — build these first)
+
+> Owner asked to focus on the booking/planning side: capturing, organising, and pressure-testing
+> the reservations that make a trip actually happen. These sit ABOVE Batch 2 so the loop builds them
+> next. Build on the existing bookings model (data/bookings.json + the `bookings` overlay: manual[]
+> + overrides{}) and the Bookings view (js/bookings.js). Frontend-only, no backend/secrets.
+
+### B21 · status: todo · pillar: bookings
+**Manual quick-add booking.** A form in the Bookings view to add a reservation by hand (type
+flight/hotel/train/bus/car/activity/other, title, provider, start datetime, optional end, confirmation #,
+price+currency, pax, location), saved to the `bookings` overlay `manual[]` so it shows in the timeline
+like an imported one. Accept: adding a hotel for the Alpine trip persists, appears in the bookings list
+and on its day, and survives reload.
+
+### B22 · status: todo · pillar: bookings
+**"Still to book" coverage gaps.** Auto-detect what's missing: nights with no accommodation booking,
+and moves between consecutive places/cities with no transport booking. Render a clear "Still to book"
+checklist grouped by date with what's missing. Accept: on the seeded data it lists uncovered nights /
+missing transport legs; a fully-covered stretch shows nothing (no false positives).
+
+### B23 · status: todo · pillar: bookings
+**Booking timeline view.** A dedicated chronological timeline of all of a trip's bookings grouped by
+day, with type icon, time, provider, confirmation #, and price — visually flagging overlaps and gaps.
+Accept: the Alpine bookings render in time order grouped by day; an overlap is visibly flagged.
+
+### B24 · status: todo · pillar: bookings
+**Accommodation coverage strip.** A per-night strip across the trip dates showing which nights are
+covered by a hotel/stay booking and which are uncovered (tap an uncovered night → quick-add). Accept:
+nights with a hotel show covered, nights without show a clear gap, for the seeded trip.
+
+### B25 · status: todo · pillar: bookings
+**Booking action reminders.** Surface time-sensitive booking actions: online check-in window (flights),
+free-cancellation deadline, and hotel check-in/out times — a "Needs attention" list sorted by urgency.
+Accept: a flight/hotel with the relevant fields produces a correctly-sorted reminder; nothing spurious.
+
+### B26 · status: todo · pillar: bookings
+**Booking cost rollup vs budget.** Total committed reservation spend broken down by type (flights,
+stays, transport, activities) in the trip currency (FX-converted), shown against the trip budget so
+you see how much of the trip is already paid/committed. Accept: the rollup sums the seeded bookings by
+type with a correct grand total; integrates with the existing budget figures.
+
+### B27 · status: todo · pillar: bookings
+**Transport continuity check.** Verify the chain of transport bookings makes sense: each leg's arrival
+location should be where the next leg departs, no impossible same-time jumps, and a flagged "no return"
+when an outbound has no matching return. Accept: a deliberately broken chain flags; a clean chain passes.
+
+### B28 · status: todo · pillar: bookings
+**Booking detail drawer.** Tap any booking to expand a detail view: all fields, confirmation # with a
+one-tap Copy, any attachment link, a map link for the location, and add-to-calendar for that single
+booking. Accept: opening an Alpine booking shows its full details and the Copy/map/calendar actions work.
+
 ## Batch 2 — P1 (on-trip, mobile & live)
 
 ### B12 · status: done (64516b2) · pillar: mobile/live
