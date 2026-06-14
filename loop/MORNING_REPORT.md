@@ -266,3 +266,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 2061f72
+
+### 2026-06-14T08:05Z · B20 Trip overview timeline
+- status: done
+- pillar: polish
+- what: New "Overview" tab — one compact row per day (date, headline/first stop, booking markers); tap a day to jump to it in the Itinerary view. Built on a new pure tripOverview() in core.js.
+- verified: independent agent PASS — overview.js/app.js/core.js/itinerary anchor on origin/main (merge 1f6aad0); test-core.mjs exit 0 with 8 tripOverview assertions; local + GitHub Pages served checks 200 with markers on first try.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 1f6aad0
