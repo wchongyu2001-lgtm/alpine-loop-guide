@@ -88,7 +88,7 @@ existing `optimizeRouteOrder` in core.js, with a preview of the time saved and a
 clicking reorders a day to reduce total travel distance; the change is undoable and persists via the
 itinerary overlay.
 
-### B15 · status: todo · pillar: money
+### B15 · status: wip · pillar: money
 **Quick currency converter.** A small converter in the Budget view using fx.js live rates — type an
 amount in the trip currency, see it in your home currency (and vice-versa). Accept: converts both
 directions with the live rate; works offline using the last cached rate.
