@@ -349,3 +349,21 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
   .pname b{font-weight:700}
   a[href]{color:#000;text-decoration:none}
 }
+
+/* B18 · Offline trip search — instant client-side filter over places/notes/bookings. */
+.searchbar{margin:0 0 8px}
+#tripsearch{width:100%;box-sizing:border-box;font:inherit;font-size:1em;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  background:var(--card);color:var(--ink)}
+#tripsearch:focus{outline:none;border-color:var(--terra)}
+.search-hint{margin:0 0 12px}
+.search-count{margin:0 0 8px}
+.search-group{margin:0 0 14px}
+.search-gh{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;
+  font-size:.66em;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 6px}
+.search-row{border:1px solid var(--line);border-radius:8px;background:var(--card);
+  padding:9px 12px;margin:0 0 6px}
+.search-title{font-weight:600}
+.search-sub{margin-top:2px}
+.search-day{font-family:'JetBrains Mono',monospace;font-size:.66em;letter-spacing:.06em;
+  color:var(--ink-soft);margin-top:4px}

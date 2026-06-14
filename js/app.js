@@ -5,6 +5,7 @@ import { esc } from './core.js';
 import { icon } from './icons.js';
 import * as today from './today.js';
 import * as itinerary from './itinerary.js';
+import * as search from './search.js';
 import * as bookings from './bookings.js';
 import * as timeline from './timeline.js';
 import * as map from './map.js';
@@ -13,9 +14,9 @@ import * as checklists from './checklists.js';
 import * as ideas from './ideas.js';
 import * as shipped from './shipped.js';
 
-const VIEWS = { today, itinerary, bookings, timeline, map, budget, checklists, ideas, shipped };
+const VIEWS = { today, itinerary, search, bookings, timeline, map, budget, checklists, ideas, shipped };
 const VIEW_LABELS = {
-  today: 'Today', itinerary: 'Itinerary', bookings: 'Bookings', timeline: 'Timeline', map: 'Map',
+  today: 'Today', itinerary: 'Itinerary', search: 'Search', bookings: 'Bookings', timeline: 'Timeline', map: 'Map',
   budget: 'Budget', checklists: 'Checklists', ideas: 'Ideas', shipped: "What's new",
 };
 
