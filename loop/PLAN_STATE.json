@@ -44,11 +44,11 @@
     { "day": 10, "date": "2026-08-10", "anchor": "Salzburg — fortress & beer garden", "stops": ["Innsbruck→Salzburg drive 08:30–11:00","Hohensalzburg Fortress 11:30–13:30","Old Town & Getreidegasse 13:30–16:00","Augustiner Bräustübl 18:00–20:30"], "timed": true, "done": true },
     { "day": 11, "date": "2026-08-11", "anchor": "Hallstatt & Salzkammergut (early)", "stops": ["Salzburg→Hallstatt early 07:30–09:30","Village & Classic view 09:30–11:30","Gosausee mirror-lake swim 12:30–15:00","Five Fingers viewpoint opt 16:00–18:00"], "timed": true, "done": true },
     { "day": 12, "date": "2026-08-12", "anchor": "Grossglockner High Alpine Road → Zell am See", "stops": ["Toll road + Krimml opt 08:00–10:30","Franz-Josefs-Höhe 11:30–13:00","Edelweissspitze & hairpins 13:30–14:30","Zell am See lakefront swim 16:00–18:30"], "timed": true, "done": true },
-    { "day": 13, "date": "2026-08-13", "anchor": null, "stops": [], "timed": false, "done": false },
-    { "day": 14, "date": "2026-08-14", "anchor": null, "stops": [], "timed": false, "done": false },
-    { "day": 15, "date": "2026-08-15", "anchor": null, "stops": [], "timed": false, "done": false },
-    { "day": 16, "date": "2026-08-16", "anchor": null, "stops": [], "timed": false, "done": false },
-    { "day": 17, "date": "2026-08-17", "anchor": "Return van AM, Venice", "stops": [], "timed": false, "done": false }
+    { "day": 13, "date": "2026-08-13", "anchor": "Into the Dolomites (Toblach base)", "stops": ["Zell am See→Dolomites drive 08:30–12:00","Pitch Camping Olympia Toblach 12:15–13:30","Lago di Dobbiaco swim 14:30–16:30","San Candido/Innichen 16:45–18:15","First Südtirol dinner 19:30–21:00"], "timed": true, "done": true },
+    { "day": 14, "date": "2026-08-14", "anchor": "Lago di Braies + Tre Cime di Lavaredo (relocate to Cortina)", "stops": ["Lago di Braies dawn (beat 9:30 ban) 07:00–09:00","Tre Cime di Lavaredo loop (toll road) 10:00–14:30","Misurina/Antorno golden hour 15:00–16:30","Relocate+pitch Camping Olympic Cortina 17:00–18:30"], "timed": true, "done": true },
+    { "day": 15, "date": "2026-08-15", "anchor": "Seceda & Val Gardena (Sella/Pordoi passes)", "stops": ["Ortisei→Seceda cable car 08:30–11:30","Alpe di Siusi meadow walk 12:00–14:00","Sella/Pordoi drive + Lago di Carezza 14:30–16:30","Pitch Camping Marmotta Pozza 16:45–18:15","South Tyrol wine dinner 19:30–21:30"], "timed": true, "done": true },
+    { "day": 16, "date": "2026-08-16", "anchor": "Back to Venice (Prosecco hills → Mestre)", "stops": ["Slow mountain morning + descend 08:30–11:00","Prosecco Hills lunch Valdobbiadene 12:30–14:30","Treviso wander 15:30–17:00","Mestre pitch + van prep 17:30–19:00","Venice last evening (opt) 19:30–22:30"], "timed": true, "done": true },
+    { "day": 17, "date": "2026-08-17", "anchor": "Return van AM, Venice (no in-app stops — hand-back logistics)", "stops": ["Final van clean/refuel at Mestre 08:00–10:00","Indie Campers Venice/Mestre hand-back 11:00","Venice on foot/vaporetto then onward 12:00+"], "timed": true, "done": true }
   ],
 
   "bookings_to_make": [],
@@ -64,5 +64,5 @@
     "per_day": false
   },
 
-  "clean_pass_counter": 7
+  "clean_pass_counter": 8
 }
