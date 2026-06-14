@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B14",
+      "title": "Country essentials card",
+      "pillar": "offline",
+      "date": "2026-06-15T00:30:00Z",
+      "what": "A new \"Essentials\" tab gives each trip an offline survival card for its destination country: the emergency number (front-and-centre, with separate police/ambulance lines), the local currency, the mains plug type + voltage, and a short list of language basics (hello, thank you, please, yes/no, excuse me, how much?, help!) with the local phrasing. It's pure static reference data baked into the app (no API), so it renders instantly with zero network and is precached by the service worker for full offline use in the field. Each trip now carries a country code (Alpine + Pre-exchange → Italy, Iceland → Iceland); the Alpine (Italy) trip shows emergency 112, Euro (EUR), and Type C/F/L plugs at 230V.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge b0f1bbe on origin/main: js/essentials.js view wired into js/app.js VIEWS, countryEssentials()+COUNTRY_ESSENTIALS in js/core.js, \"country\":\"IT\" on the alpine trip in data/trips.json, and js/essentials.js added to the sw.js precache shell (CACHE bumped v6). node tools/test-core.mjs exits 0 with 8 new B14 guards (Italy 112/EUR/plug C-F, case-insensitive lookup, unknown/null→null, every trip resolves). Live GitHub Pages fetch of js/essentials.js returned HTTP 200 with the countryEssentials marker.",
+      "commit": "b0f1bbe1f368bc5de9bed7827be06ba7d0dfa978",
+      "deploy": "live"
+    },
+    {
       "id": "B19",
       "title": "Weather-aware re-plan nudge on the Today view",
       "pillar": "discovery/live",
