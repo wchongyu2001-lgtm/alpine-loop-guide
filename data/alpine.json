@@ -2798,6 +2798,45 @@
      "done": false
     }
    ]
+  },
+  {
+   "id": "bookings-to-make",
+   "title": "🧾 Bookings to make — what & when (2 people)",
+   "items": [
+    { "t": "CAMPSITES — book ALL 16 nights ~2-3mo ahead (book by early-mid May 2026; Aug peak sells out). Total ~€775 for 16 pitches (van+2). Priority/first-to-sell: Lauterbrunnen, Grindelwald, Zermatt-gateway (Randa), Cortina, Lago di Braies area.", "done": false },
+    { "t": "N1 Camping San Benedetto, Peschiera del Garda (~€48) — book by mid-May", "done": false },
+    { "t": "N2 Camping Lido Luzern (~€60) — book by mid-May", "done": false },
+    { "t": "N3-4 Camping Jungfrau, Lauterbrunnen ×2 (~€128) — book NOW, 3mo ahead (peak)", "done": false },
+    { "t": "N5 Camping Eigernordwand, Grindelwald-Grund (~€58) — book 2-3mo ahead", "done": false },
+    { "t": "N6-7 Camping Attermenzen, Randa (Zermatt) ×2 (~€80) — book 2-3mo ahead", "done": false },
+    { "t": "N8-9 Camping Innsbruck Kranebitten ×2 (~€82) — book 1-2mo ahead", "done": false },
+    { "t": "N10 Camping Nord-Sam, Salzburg (~€44) — book ~1mo ahead", "done": false },
+    { "t": "N11 Camping am See, Obertraun/Hallstatt (~€40) — book ~1-1.5mo ahead", "done": false },
+    { "t": "N12 Seecamp Zell am See, Thumersbach (~€49) — book 1-2mo ahead", "done": false },
+    { "t": "N13 Camping Olympia, Toblach (~€47) — book 1-2mo ahead", "done": false },
+    { "t": "N14 Camping Olympic, Cortina/Fiames (~€51) — book 1-2mo ahead", "done": false },
+    { "t": "N15 Camping Marmotta, Pozza di Fassa (~€45) — book 1-2mo ahead", "done": false },
+    { "t": "N16 Camping Jolly delle Querce, Mestre (~€43, pre-hand-back) — book ~1mo ahead", "done": false },
+    { "t": "CABLE CARS / RAILWAYS — most don't need pre-booking, but Jungfraujoch DOES in Aug. Total for 2 ~€744.", "done": false },
+    { "t": "Jungfraujoch railway (Top of Europe) ~€224/2 — RESERVE TIMESLOT online 1-2wk ahead; first train cheapest; Swiss Travel/Half-Fare cuts cost", "done": false },
+    { "t": "Grindelwald First gondola+activities ~€144/2 (value pick vs Schilthorn) — buy day-of or online; no advance booking", "done": false },
+    { "t": "Gornergrat Bahn (Zermatt) ~€176/2 — buy day-of; Swiss Travel Pass ~50% off; sit RIGHT going up", "done": false },
+    { "t": "Innsbruck Nordkettenbahn ~€88/2 — buy day-of, no advance", "done": false },
+    { "t": "Seceda cable car, Ortisei ~€64/2 — buy day-of; Dolomiti SuperSummer card if multi-lift", "done": false },
+    { "t": "Alpe di Siusi cable car ~€48/2 — buy day-of (note 09-17h car-access ban on the road)", "done": false },
+    { "t": "ROAD TOLLS / VIGNETTES — buy at/before borders. Total ~€163.", "done": false },
+    { "t": "Swiss motorway vignette ~€38 (CHF 40) — buy at the border, valid all year", "done": false },
+    { "t": "Austrian vignette ~€12 (10-day digital) — buy online before the border", "done": false },
+    { "t": "Italian autostrada (A4/A22/A27 segments) ~€45 — pay-as-you-go at tolls", "done": false },
+    { "t": "Tre Cime di Lavaredo toll road ~€30 — pay at the gate (cash/card); arrive Braies before 09:30 vehicle ban", "done": false },
+    { "t": "Grossglockner High Alpine Road ~€38/car single-day — pay at toll booth (closes ~dusk)", "done": false },
+    { "t": "RESTAURANTS / EXPERIENCES worth reserving (value splurges).", "done": false },
+    { "t": "Mürren fondue night (Stägerstübli or similar) ~€70/2 — reserve a few days ahead in Aug", "done": false },
+    { "t": "Augustiner Bräustübl, Salzburg — no booking (beer-hall), just go early", "done": false },
+    { "t": "Pilatus Fräkmüntegg toboggan run ~€16/2 — buy day-of", "done": false },
+    { "t": "Hohensalzburg Fortress + funicular ~€36/2 — buy online to skip queue", "done": false },
+    { "t": "Hallstatt skip-the-line ferry / early village — no booking; arrive before 09:30", "done": false }
+   ]
   }
  ]
 }

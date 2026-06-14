@@ -51,12 +51,49 @@
     { "day": 17, "date": "2026-08-17", "anchor": "Return van AM, Venice (no in-app stops — hand-back logistics)", "stops": ["Final van clean/refuel at Mestre 08:00–10:00","Indie Campers Venice/Mestre hand-back 11:00","Venice on foot/vaporetto then onward 12:00+"], "timed": true, "done": true }
   ],
 
-  "bookings_to_make": [],
+  "bookings_to_make": [
+    { "what": "16 campsites/Stellplatz (book ALL nights)", "category": "campsite", "price_eur_2": 775, "book_by": "early-mid May 2026 (~2-3mo ahead; Aug peak)", "note": "First-to-sell: Lauterbrunnen, Grindelwald, Zermatt-Randa, Cortina, Braies area. Per-night ~€40-64 for van+2. Authored as per-night items in app checklist 'bookings-to-make'." },
+    { "what": "Jungfraujoch railway (Top of Europe)", "category": "railway", "price_eur_2": 224, "book_by": "1-2wk ahead — RESERVE TIMESLOT (only lift that needs advance in Aug)", "note": "First train cheapest; Swiss Travel/Half-Fare discount." },
+    { "what": "Grindelwald First gondola+activities (value pick vs Schilthorn)", "category": "cablecar", "price_eur_2": 144, "book_by": "day-of (no advance)", "note": "Cheaper than Schilthorn; Cliff Walk + First Flyer." },
+    { "what": "Gornergrat Bahn, Zermatt", "category": "railway", "price_eur_2": 176, "book_by": "day-of", "note": "Swiss Travel Pass ~50% off; sit RIGHT going up." },
+    { "what": "Innsbruck Nordkettenbahn", "category": "cablecar", "price_eur_2": 88, "book_by": "day-of", "note": "Funicular + cable car to ridge." },
+    { "what": "Seceda cable car, Ortisei", "category": "cablecar", "price_eur_2": 64, "book_by": "day-of", "note": "Dolomiti SuperSummer card if multi-lift." },
+    { "what": "Alpe di Siusi cable car", "category": "cablecar", "price_eur_2": 48, "book_by": "day-of", "note": "Road has 09-17h car-access ban; cable car avoids it." },
+    { "what": "Swiss motorway vignette", "category": "toll", "price_eur_2": 38, "book_by": "at the border", "note": "CHF 40, valid all year." },
+    { "what": "Austrian vignette (10-day digital)", "category": "toll", "price_eur_2": 12, "book_by": "online before border", "note": "" },
+    { "what": "Italian autostrada (A4/A22/A27 segments)", "category": "toll", "price_eur_2": 45, "book_by": "pay-as-you-go", "note": "" },
+    { "what": "Tre Cime di Lavaredo toll road", "category": "toll", "price_eur_2": 30, "book_by": "pay at gate", "note": "Arrive Braies before 09:30 vehicle ban." },
+    { "what": "Grossglockner High Alpine Road (single day/car)", "category": "toll", "price_eur_2": 38, "book_by": "pay at toll booth", "note": "Closes ~dusk." },
+    { "what": "Mürren fondue night", "category": "restaurant", "price_eur_2": 70, "book_by": "few days ahead in Aug", "note": "Stägerstübli or similar." },
+    { "what": "Pilatus Fräkmüntegg toboggan run", "category": "experience", "price_eur_2": 16, "book_by": "day-of", "note": "" },
+    { "what": "Hohensalzburg Fortress + funicular", "category": "experience", "price_eur_2": 36, "book_by": "online to skip queue", "note": "" }
+  ],
 
   "budget": {
-    "estimated": false,
-    "per_person_eur": null,
-    "breakdown": {}
+    "estimated": true,
+    "currency": "EUR",
+    "per_person_eur": 1863,
+    "total_eur_2": 3726,
+    "per_person_eur_incl_van": 2968,
+    "total_eur_2_incl_van": 5936,
+    "value_optimization": "Campervan IS the bed (no hotels). Cook-in-van breakfasts + ~half dinners; eat-out only the worthwhile splurges (Mürren fondue, Tyrolean/Südtirol). Free Alpine viewpoints + lake swims over paid lifts where possible; chose Grindelwald First over pricier Schilthorn; Swiss Travel/Half-Fare on Jungfraujoch+Gornergrat. Lowest-cost real pitches per night (value swaps noted in nights[]).",
+    "breakdown": {
+      "campervan_booked_ref": 2210,
+      "campsites_16n": 775,
+      "fuel": 519,
+      "tolls_vignettes": 163,
+      "lifts_railways": 744,
+      "food": 842,
+      "activities_entries": 280,
+      "tourist_tax": 64,
+      "subtotal_excl_van": 3387,
+      "contingency_10pct": 339
+    },
+    "assumptions": {
+      "fuel": "~2600km Grand Loop @ 10.5 L/100km @ €1.90/L diesel",
+      "campervan": "Indie Campers Aug peak ~€130/day × 17 days = ~€2210 (already booked; excluded from on-trip total)",
+      "food": "~€50/day for 2 (van breakfast €4 + lunch €18 + avg dinner €28)"
+    }
   },
 
   "checklists": {
