@@ -111,7 +111,7 @@ New "Essentials" view tab; countryEssentials() static table in core.js keyed by 
 the plan drops into any calendar app. Accept: a download produces a valid VCALENDAR with one VEVENT
 per booking/timed stop; opens in a calendar app without errors.
 
-### B20 · status: todo · pillar: polish
+### B20 · status: wip · pillar: polish
 **Trip overview timeline.** A compact at-a-glance overview: each day as a row with its date, headline
 stop and any key booking, so the whole trip is visible without scrolling day cards. Accept: renders
 all Alpine days with date + first place + booking marker; tapping a day jumps to it.
