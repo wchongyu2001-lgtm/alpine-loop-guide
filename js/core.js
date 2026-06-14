@@ -772,31 +772,76 @@ function icsNowStamp() {
   const d = new Date(), p = n => String(n).padStart(2, '0');
   return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}Z`;
 }
-export function bookingIcs(b, dtstamp) {
-  const e = s => String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/([,;])/g, '\\$1').replace(/\r?\n/g, '\\n');
-  const start = icsDateParts(b.start);
+const icsEsc = s => String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/([,;])/g, '\\$1').replace(/\r?\n/g, '\\n');
+// One VEVENT block (array of lines) from a normalized event {uid,summary,start,end,description,location}.
+function icsVevent(ev, dtstamp) {
+  const start = icsDateParts(ev.start);
   const lines = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Travel Companion//Bookings//EN',
     'BEGIN:VEVENT',
-    `UID:${e(b.id || 'booking')}@travel-companion`,
+    `UID:${icsEsc(ev.uid || 'event')}@travel-companion`,
     `DTSTAMP:${dtstamp || icsNowStamp()}`,
     start.date ? `DTSTART;VALUE=DATE:${start.val}` : `DTSTART:${start.val}`,
   ];
-  if (b.end) {
-    const end = icsDateParts(b.end);
+  if (ev.end) {
+    const end = icsDateParts(ev.end);
     lines.push(end.date ? `DTEND;VALUE=DATE:${end.val}` : `DTEND:${end.val}`);
   } else if (!start.date) {
     lines.push('DURATION:PT1H');
   }
-  lines.push(`SUMMARY:${e(b.title)}`);
+  lines.push(`SUMMARY:${icsEsc(ev.summary)}`);
+  if (ev.description) lines.push('DESCRIPTION:' + icsEsc(ev.description));
+  if (ev.location) lines.push('LOCATION:' + icsEsc(ev.location));
+  lines.push('END:VEVENT');
+  return lines;
+}
+// Normalize a booking into a calendar event (shared by single + trip export).
+function bookingEvent(b) {
   const desc = [];
   if (b.provider) desc.push('Provider: ' + b.provider);
   if (b.confirmation) desc.push('Confirmation: ' + b.confirmation);
   if (b.pax && b.pax.length) desc.push('Travellers: ' + b.pax.join(', '));
   if (b.price && b.price.amount) desc.push('Price: ' + b.price.amount + ' ' + (b.price.currency || ''));
-  if (desc.length) lines.push('DESCRIPTION:' + e(desc.join('\n')));
-  if (b.location && b.location.name) lines.push('LOCATION:' + e(b.location.name));
-  lines.push('END:VEVENT', 'END:VCALENDAR');
+  return {
+    uid: b.id || 'booking', summary: b.title, start: b.start, end: b.end,
+    description: desc.join('\n'), location: (b.location && b.location.name) || '',
+  };
+}
+export function bookingIcs(b, dtstamp) {
+  return [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Travel Companion//Bookings//EN',
+    ...icsVevent(bookingEvent(b), dtstamp),
+    'END:VCALENDAR',
+  ].join('\r\n');
+}
+
+// ---- B17: whole-trip calendar export (.ics) — every booking + every timed stop ----
+// `bookings` = the trip's bookings; `days` = decorated days (with ._date and .id);
+// `plans` = the effective dayPlans map (dayId -> ordered stops). A stop becomes a
+// VEVENT only if it has a parseable HH:MM start on a dated day (untimed stops skipped).
+// Floating local times, matching bookingIcs. Pass `dtstamp` for determinism.
+export function tripIcs(bookings, days, plans, dtstamp, tripLabel) {
+  const events = (bookings || []).map(bookingEvent);
+  const pad = n => String(n).padStart(2, '0');
+  const fromMins = m => pad(Math.floor(m / 60)) + ':' + pad(m % 60);
+  (days || []).forEach(d => {
+    if (!d._date) return;
+    ((plans && plans[d.id]) || []).forEach((p, i) => {
+      const [t0, t1] = splitTime(p.time);
+      const a = hhmm(t0);
+      if (a == null) return; // untimed stop — skip
+      const b = hhmm(t1);
+      events.push({
+        uid: 'stop-' + d.id + '-' + i, summary: p.n || 'Stop',
+        start: d._date + 'T' + fromMins(a),
+        end: b == null ? '' : d._date + 'T' + fromMins(b),
+        description: p.note || p.d || '', location: p.n || '',
+      });
+    });
+  });
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Travel Companion//Trip//EN'];
+  if (tripLabel) lines.push('X-WR-CALNAME:' + icsEsc(tripLabel));
+  events.forEach(ev => lines.push(...icsVevent(ev, dtstamp)));
+  lines.push('END:VCALENDAR');
   return lines.join('\r\n');
 }
 

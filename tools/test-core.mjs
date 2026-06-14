@@ -9,7 +9,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   legGapMins, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
-  bookingRollup, tripEstimate, transportContinuity, bookingIcs,
+  bookingRollup, tripEstimate, transportContinuity, bookingIcs, tripIcs,
   nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials } from '../js/core.js';
 
 let fails = 0;
@@ -716,6 +716,40 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   // Timed start, no end → 1-hour default duration.
   const noend = bookingIcs({ id: 'y', type: 'train', title: 'Train', start: '2026-08-08T09:30' }, STAMP).split('\r\n');
   eq(noend.includes('DURATION:PT1H'), true, 'bookingIcs: timed + no end → PT1H default');
+}
+
+// ---- B17: tripIcs whole-trip calendar export (bookings + timed stops) ----
+{
+  const STAMP = '20260614T120000Z';
+  const bookings = [
+    { id: 'b1', type: 'hotel', title: 'Hotel, Bormio', start: '2026-08-05T15:00', end: '2026-08-06T11:00' },
+    { id: 'b2', type: 'train', title: 'Train', start: '2026-08-07T09:30' },
+  ];
+  const days = [
+    { id: 'd1', _date: '2026-08-05' },
+    { id: 'd2', _date: '2026-08-06' },
+    { id: 'd3', _date: null }, // undated day → skipped entirely
+  ];
+  const plans = {
+    d1: [{ n: 'Funicular', time: '9:00–10:30', note: 'Bring a jacket' }, { n: 'Lunch spot' /* untimed */ }],
+    d2: [{ n: 'Spa', time: '14:00' }],
+    d3: [{ n: 'Ghost', time: '08:00' }],
+  };
+  const cal = tripIcs(bookings, days, plans, STAMP, 'Alpine, 2026').split('\r\n');
+  eq(cal[0], 'BEGIN:VCALENDAR', 'tripIcs: starts a VCALENDAR');
+  eq(cal[cal.length - 1], 'END:VCALENDAR', 'tripIcs: ends the VCALENDAR');
+  eq(cal.includes('PRODID:-//Travel Companion//Trip//EN'), true, 'tripIcs: trip PRODID');
+  eq(cal.includes('X-WR-CALNAME:Alpine\\, 2026'), true, 'tripIcs: calendar name escaped');
+  // One VEVENT per booking (2) + per timed stop (Funicular, Spa = 2); untimed + undated skipped.
+  eq(cal.filter(l => l === 'BEGIN:VEVENT').length, 4, 'tripIcs: one VEVENT per booking + timed stop');
+  eq(cal.includes('SUMMARY:Funicular'), true, 'tripIcs: timed stop event present');
+  eq(cal.includes('DTSTART:20260805T090000'), true, 'tripIcs: stop time padded to HH:MM:SS');
+  eq(cal.includes('DTEND:20260805T103000'), true, 'tripIcs: stop end from time range');
+  eq(cal.includes('UID:stop-d1-0@travel-companion'), true, 'tripIcs: stop UID from day+index');
+  eq(cal.includes('DURATION:PT1H'), true, 'tripIcs: timed stop with no end → PT1H');
+  eq(cal.includes('SUMMARY:Lunch spot'), false, 'tripIcs: untimed stop skipped');
+  eq(cal.includes('SUMMARY:Ghost'), false, 'tripIcs: undated day skipped');
+  eq(cal.includes('SUMMARY:Hotel\\, Bormio'), true, 'tripIcs: booking events included + escaped');
 }
 
 // ---- B18: offline trip search (pure token filter) ----

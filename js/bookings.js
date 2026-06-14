@@ -3,7 +3,7 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, gmapsPlaceUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, transportContinuity, bookingIcs, convert } from './core.js';
+import { esc, gmapsUrl, gmapsPlaceUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, transportContinuity, bookingIcs, tripIcs, effectivePlans, convert } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
@@ -53,6 +53,10 @@ export function render(root, ctx) {
         <input id="bkwlurl" placeholder="Paste a Wanderlog trip share link…" />
         <button id="bkwl">↧ Import from Wanderlog</button>
         <span id="bkwlmsg" class="muted"></span>
+      </div>
+      <div class="bkfetchbar">
+        <button id="bkics">📅 Export trip calendar (.ics)</button>
+        <span class="bk-forward-note muted">— all bookings + timed stops as one calendar file.</span>
       </div>
       <details class="bkhelp"><summary>Gmail fetch &amp; cross-device sync need a one-time setup</summary>
         <p class="muted">Your dashboard is a static site — it can't read Gmail or sync edits on its own. Both run through a Google Apps Script that hasn't been redeployed yet:</p>
@@ -163,7 +167,25 @@ export function render(root, ctx) {
   wireAttachments(root, ctx, state);
   wireFetch(root, ctx, state);
   wireWanderlog(root, ctx, state);
+  wireExportIcs(root, state, list);
   wireDetails(root, new Map([...list, ...unassigned].map(b => [b.id, b])));
+}
+
+// B17 — Export the whole trip (every booking + every timed stop) as one .ics file.
+function wireExportIcs(root, state, list) {
+  const btn = root.querySelector('#bkics');
+  if (!btn) return;
+  btn.onclick = () => {
+    const plans = effectivePlans(state.days, (state.overlay.itinerary || {}).dayPlans || null);
+    const ics = tripIcs(list, state.days, plans, null, state.trip.label);
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (state.trip.label || 'trip').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) + '.ics';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
 }
 
 // B28 — Copy confirmation # / download single-booking .ics from the detail drawer.
