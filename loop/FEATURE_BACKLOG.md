@@ -9,7 +9,7 @@ Status keys: todo | wip | done | blocked
 
 ---
 
-## F1 · Drive-leg planner — status: wip
+## F1 · Drive-leg planner — status: done (commit 1cf6749)
 Per-day driving summary + running total for the whole loop.
 - Each day card / a dedicated strip shows: distance (km), drive time, est fuel cost
   (use the van consumption + fuelPerH already in meta; ~€1.90/L), and tolls/vignettes.
