@@ -918,6 +918,52 @@ export function parseEmailStub(subject, body) {
 export const esc = s => String(s ?? '').replace(/[&<>"']/g,
   c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+// B14 · Country essentials — static, offline reference per destination country.
+// No API: a small hand-curated table keyed by ISO-3166 alpha-2. Each entry carries
+// the emergency number, currency, mains plug/voltage and a few language basics so a
+// traveler always has the survival facts even with no signal.
+const COUNTRY_ESSENTIALS = {
+  IT: {
+    name: 'Italy', flag: '🇮🇹',
+    emergency: '112', police: '113', ambulance: '118',
+    currency: 'Euro (EUR, €)',
+    plugs: 'Type C / F / L', voltage: '230 V · 50 Hz',
+    language: 'Italian',
+    phrases: [
+      { en: 'Hello', local: 'Ciao / Buongiorno' },
+      { en: 'Thank you', local: 'Grazie' },
+      { en: 'Please', local: 'Per favore' },
+      { en: 'Yes / No', local: 'Sì / No' },
+      { en: 'Excuse me', local: 'Mi scusi' },
+      { en: 'How much?', local: 'Quanto costa?' },
+      { en: 'Help!', local: 'Aiuto!' },
+    ],
+  },
+  IS: {
+    name: 'Iceland', flag: '🇮🇸',
+    emergency: '112', police: '112', ambulance: '112',
+    currency: 'Icelandic króna (ISK, kr)',
+    plugs: 'Type C / F', voltage: '230 V · 50 Hz',
+    language: 'Icelandic',
+    phrases: [
+      { en: 'Hello', local: 'Halló / Góðan dag' },
+      { en: 'Thank you', local: 'Takk' },
+      { en: 'Please', local: 'Vinsamlegast' },
+      { en: 'Yes / No', local: 'Já / Nei' },
+      { en: 'Excuse me', local: 'Afsakið' },
+      { en: 'How much?', local: 'Hvað kostar þetta?' },
+      { en: 'Help!', local: 'Hjálp!' },
+    ],
+  },
+};
+
+// Look up essentials for a country code (case-insensitive). Returns null if unknown
+// so the view can degrade gracefully rather than throw.
+export function countryEssentials(code) {
+  if (!code) return null;
+  return COUNTRY_ESSENTIALS[String(code).toUpperCase()] || null;
+}
+
 // B18 · Offline trip search — pure, network-free filter over already-loaded records.
 // Each record carries a `text` haystack; every whitespace token of the query must
 // appear (case-insensitive substring) for the record to match. Empty query → [].

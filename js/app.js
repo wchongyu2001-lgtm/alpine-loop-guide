@@ -11,13 +11,14 @@ import * as timeline from './timeline.js';
 import * as map from './map.js';
 import * as budget from './budget.js';
 import * as checklists from './checklists.js';
+import * as essentials from './essentials.js';
 import * as ideas from './ideas.js';
 import * as shipped from './shipped.js';
 
-const VIEWS = { today, itinerary, search, bookings, timeline, map, budget, checklists, ideas, shipped };
+const VIEWS = { today, itinerary, search, bookings, timeline, map, budget, checklists, essentials, ideas, shipped };
 const VIEW_LABELS = {
   today: 'Today', itinerary: 'Itinerary', search: 'Search', bookings: 'Bookings', timeline: 'Timeline', map: 'Map',
-  budget: 'Budget', checklists: 'Checklists', ideas: 'Ideas', shipped: "What's new",
+  budget: 'Budget', checklists: 'Checklists', essentials: 'Essentials', ideas: 'Ideas', shipped: "What's new",
 };
 
 let base, state, view = 'itinerary';

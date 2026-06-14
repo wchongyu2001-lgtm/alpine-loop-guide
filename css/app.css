@@ -375,3 +375,22 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .search-sub{margin-top:2px}
 .search-day{font-family:'JetBrains Mono',monospace;font-size:.66em;letter-spacing:.06em;
   color:var(--ink-soft);margin-top:4px}
+
+/* B14 · Country essentials card */
+.ess-card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:16px;box-shadow:var(--shadow)}
+.ess-title{margin:0 0 12px;font-size:1.1em}
+.ess-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.ess-cell{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--paper)}
+.ess-emerg{border-color:var(--terra)}
+.ess-k{letter-spacing:.12em;font-size:.66em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.ess-v{font-size:1.05em;margin-top:3px}
+.ess-big{font-size:1.7em;font-weight:700;color:var(--terra)}
+.ess-sub{font-size:.78em;color:var(--ink-soft);margin-top:2px}
+.ess-ph-title{margin:16px 0 8px;font-size:.95em}
+.ess-phrases{list-style:none;margin:0;padding:0;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px}
+.ess-phrases li{display:flex;justify-content:space-between;gap:10px;
+  border-bottom:1px dotted var(--line);padding:5px 2px}
+.ess-en{color:var(--ink-soft)}
+.ess-local{font-weight:600;text-align:right}
