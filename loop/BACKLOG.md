@@ -142,7 +142,7 @@ per-leg + total fuel estimate for the route; editing the price updates it; guard
 route, number of nights / planned stops / bookings, and "X days to departure" from today to the trip
 start. Pure compute, offline. Accept: correct totals + countdown for the trip; reads from loaded data.
 
-### B32 · status: todo · pillar: mobile/live
+### B32 · status: wip · pillar: mobile/live
 **Daylight per day.** Show sunrise / sunset (and a golden-hour hint) for each day, pulled from the
 open-meteo daily endpoint weather.js already uses (cached for offline). Useful for driving + photos.
 Accept: each day shows plausible sunrise/sunset; degrades gracefully offline from cache.
