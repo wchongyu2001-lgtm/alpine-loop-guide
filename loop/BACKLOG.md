@@ -82,7 +82,7 @@ matches live with zero network calls; clearing restores the full view.
 
 ## Batch 2 — P2 (logistics, money, discovery)
 
-### B13 · status: todo · pillar: logistics
+### B13 · status: wip · pillar: logistics
 **Optimize day order.** Per day, a button that reorders that day's stops nearest-first using the
 existing `optimizeRouteOrder` in core.js, with a preview of the time saved and an undo. Accept:
 clicking reorders a day to reduce total travel distance; the change is undoable and persists via the
