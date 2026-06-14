@@ -194,3 +194,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 75e8e3d
+
+### 2026-06-14T19:15Z · B28 Booking detail drawer
+- status: done
+- pillar: bookings
+- what: Each booking card now has a tappable "Details" drawer showing all fields, with one-tap Copy of the confirmation #, a Map link, and an 📅 Add to calendar that downloads a single-booking .ics (new pure `bookingIcs()` in core.js — floating-local times, all-day for date-only, PT1H default, iCal escaping).
+- verified: PASS — independent agent confirmed merge dec79aa on origin/main (bookingIcs/detailHtml/data-ics/data-copyconf/.bkdetail present), test-core exits 0 with new .ics guards, live served checks 200 with markers bookingIcs + bkdetail.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: dec79aa
