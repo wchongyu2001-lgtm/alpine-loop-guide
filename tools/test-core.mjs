@@ -10,7 +10,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
   bookingRollup, tripEstimate, transportContinuity, bookingIcs,
-  nextUpcoming, fmtCountdown, searchRecords, fxConvert } from '../js/core.js';
+  nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -466,6 +466,24 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(g2.includes('Hiking boots'), false, 'suggestPacking: no outdoor activity → no boots');
   eq(suggestPacking([{ weather: null, text: '' }]).includes('Reusable water bottle'), true,
     'suggestPacking: no weather → still base essentials');
+}
+
+// ---- B19: weather-aware re-plan nudge (pure) ----
+{
+  const outdoorDay = [{ t: 'view' }, { t: 'hike' }, { t: 'lake' }, { t: 'food' }]; // 3/4 outdoor
+  const rainy = { code: 61, tmax: 16, tmin: 10, precip: 80 };
+  const clear = { code: 0, tmax: 26, tmin: 14, precip: 5 };
+  const r = replanNudge(outdoorDay, rainy);
+  eq(!!r, true, 'replanNudge: rainy + mostly-outdoor day → nudge');
+  eq(r.outdoor, 3, 'replanNudge: counts 3 outdoor stops');
+  eq(r.suggest.includes('museums'), true, 'replanNudge: suggests indoor categories');
+  eq(replanNudge(outdoorDay, clear), null, 'replanNudge: clear day → no nudge (no false positive)');
+  eq(replanNudge([{ t: 'food' }, { t: 'food' }, { t: 'view' }], rainy), null,
+    'replanNudge: mostly-indoor day → no nudge even in rain');
+  eq(replanNudge([{ t: 'view' }], rainy), null, 'replanNudge: single stop → no nudge');
+  eq(replanNudge(outdoorDay, null), null, 'replanNudge: no weather → no nudge');
+  eq(replanNudge([{ t: 'view' }, { t: 'view' }], { code: 45, precip: 10 }), null,
+    'replanNudge: fog/no-rain code → no nudge');
 }
 
 // ---- B21: manual quick-add booking (pure) ----

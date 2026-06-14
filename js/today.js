@@ -1,7 +1,7 @@
 /* Mobile "Today" view — a single, thumb-friendly screen: today's date, the day's
    ordered plan with times, the next upcoming booking, and today's weather.
    Auto-selected when the open trip's date range contains today (see app.js). */
-import { esc, splitTime, wmoIcon, pickTodayDay, nextBooking, effectivePlans, gmapsPlaceUrl, planProgress, nextUpcoming, fmtCountdown } from './core.js';
+import { esc, splitTime, wmoIcon, pickTodayDay, nextBooking, effectivePlans, gmapsPlaceUrl, planProgress, nextUpcoming, fmtCountdown, replanNudge } from './core.js';
 import { tripBookings } from './data.js';
 import { dayWeather } from './weather.js';
 
@@ -14,6 +14,9 @@ function nowIso() { const d = new Date(); return `${todayIso()}T${pad(d.getHours
 const STYLE = `
   .today{max-width:520px;margin:0 auto}
   .t-banner{background:rgba(184,134,11,.14);border:1px solid rgba(184,134,11,.35);border-radius:10px;padding:8px 12px;margin:0 0 12px;font-size:.9rem}
+  .t-nudge{display:flex;gap:9px;align-items:flex-start;background:rgba(70,110,150,.12);border:1px solid rgba(70,110,150,.4);border-radius:10px;padding:9px 12px;margin:0 0 12px;font-size:.88rem;line-height:1.4}
+  .t-nudge .ti{font-size:1.1rem;line-height:1.2}
+  .t-nudge b{font-weight:600}
   .t-head{margin:0 0 14px}
   .t-kick{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#b8860b;font-weight:600}
   .t-date{font-size:1.5rem;margin:2px 0 0;line-height:1.2}
@@ -117,6 +120,7 @@ export function render(root, ctx) {
     <style>${STYLE}</style>
     <div class="today">
       ${banner}
+      <div id="t-nudge"></div>
       <div class="t-head">
         <div class="t-kick">${esc(kicker)}</div>
         <h2 class="t-date">${esc(day ? (day._label || day.date || '') : 'No itinerary')}${wx}</h2>
@@ -134,6 +138,13 @@ export function render(root, ctx) {
     const ll = el.dataset.ll.split(',').map(Number);
     const w = await dayWeather(ll, el.dataset.date);
     if (w) el.textContent = `${wmoIcon(w.code)} ${Math.round(w.tmax)}°/${Math.round(w.tmin)}°${w.precip ? ' · ' + w.precip + '%' : ''}`;
+    // B19: gentle re-plan nudge when a mostly-outdoor day has rain forecast.
+    const slot = root.querySelector('#t-nudge');
+    const n = replanNudge(plan, w);
+    if (slot && n) slot.innerHTML = `<div class="t-nudge">
+        <span class="ti">🌧️</span>
+        <div>Rain's forecast and most of today is outdoors. Consider indoor swaps nearby — <b>${esc(n.suggest.join(', '))}</b>.</div>
+      </div>`;
   });
 
   // Tick the countdowns each minute; self-stops once this view is gone (re-rendered/navigated away).
