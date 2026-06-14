@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B25",
+      "title": "Needs attention — time-sensitive booking reminders sorted by urgency",
+      "pillar": "bookings",
+      "date": "2026-06-14T15:30:00Z",
+      "what": "The Bookings view now leads with a ⏰ Needs attention list that surfaces the booking actions with a deadline, soonest first. It derives a flight's online check-in window straight from departure time (opens ~48h before, closes ~1.5h before) and only shows it once it's actually relevant — already open (flagged urgent), or opening within the next few days — so it never nags you to check in weeks early. It reads a booking's free-cancellation deadline (free_cancellation_until) and a hotel's check-in/check-out times (checkin_time/checkout_time), showing each only while it's still in the future. Anything due within 24h is highlighted urgent. A booking missing the relevant field raises nothing, so there's no spurious noise. The Alpine trip's Rialto Venice stay now carries real check-in (15:00), check-out (11:00) and free-cancellation (13 Aug) fields, so the list shows them in order.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge e1ae08d on origin/main (bookingReminders in js/core.js, remindersHtml ⏰ Needs attention block in js/bookings.js, .bk-remind styles in css/app.css, additive checkin_time/checkout_time/free_cancellation_until on the Rialto booking). node tools/test-core.mjs exits 0 with 7 new bookingReminders guards (sorted-ascending by due, open check-in urgent, beyond-horizon suppressed, no-field hotel raises nothing, bad/empty input → []). Independent throwaway run reproduced correct sort + urgency + no-spurious behaviour. Live served checks 200 with markers bookingReminders + Needs attention.",
+      "commit": "e1ae08d",
+      "deploy": "live"
+    },
+    {
       "id": "B24",
       "title": "Where you sleep — a per-night strip showing which nights are booked and which are gaps",
       "pillar": "bookings",
