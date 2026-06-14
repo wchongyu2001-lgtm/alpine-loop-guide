@@ -3,7 +3,7 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, transportContinuity, convert } from './core.js';
+import { esc, gmapsUrl, gmapsPlaceUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, transportContinuity, bookingIcs, convert } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
@@ -163,6 +163,27 @@ export function render(root, ctx) {
   wireAttachments(root, ctx, state);
   wireFetch(root, ctx, state);
   wireWanderlog(root, ctx, state);
+  wireDetails(root, new Map([...list, ...unassigned].map(b => [b.id, b])));
+}
+
+// B28 — Copy confirmation # / download single-booking .ics from the detail drawer.
+function wireDetails(root, lookup) {
+  root.querySelectorAll('[data-copyconf]').forEach(btn => btn.onclick = e => {
+    e.preventDefault(); e.stopPropagation();
+    navigator.clipboard?.writeText(btn.dataset.copyconf).then(() => { btn.textContent = '✓ Copied'; }, () => {});
+  });
+  root.querySelectorAll('[data-ics]').forEach(btn => btn.onclick = e => {
+    e.preventDefault(); e.stopPropagation();
+    const b = lookup.get(btn.dataset.ics);
+    if (!b) return;
+    const blob = new Blob([bookingIcs(b)], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (b.title || 'booking').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) + '.ics';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
 }
 
 function wireWanderlog(root, ctx, state) {
@@ -483,7 +504,39 @@ function cardBody(b, attachments) {
                <a target="_blank" rel="noopener" title="Apple Maps" href="${amapsUrl(ll, b.location.name)}"></a>` : ''}
         ${b.gmail_link ? `<a target="_blank" rel="noopener" title="Original email" href="${esc(b.gmail_link)}">✉</a>` : ''}
       </span>
-    </div>`;
+    </div>
+    ${detailHtml(b)}`;
+}
+
+// B28 — tap a booking to expand its full details, with one-tap Copy of the
+// confirmation #, a map link, and an add-to-calendar (.ics) download.
+function fullTime(s) {
+  const t = String(s);
+  return t.length > 10
+    ? new Date(t).toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+    : prettyDate(t);
+}
+
+function detailHtml(b) {
+  const ll = b.location && b.location.lat != null ? [b.location.lat, b.location.lng] : null;
+  const rows = [['Type', b.type]];
+  if (b.provider) rows.push(['Provider', b.provider]);
+  rows.push(['Start', fullTime(b.start)]);
+  if (b.end) rows.push(['End', fullTime(b.end)]);
+  if (b.location && b.location.name) rows.push(['Location', b.location.name]);
+  if (b.pax) rows.push(['Travellers', b.pax.join(', ')]);
+  if (b.price && b.price.amount) rows.push(['Price', fmtMoney(b.price.amount, b.price.currency + ' ')]);
+  if (b.notes) rows.push(['Notes', b.notes]);
+  const mapUrl = b.location && b.location.name ? (ll ? gmapsUrl(ll, b.location.name) : gmapsPlaceUrl(b.location.name)) : null;
+  return `<details class="bkdetail"><summary>Details</summary>
+    <dl class="bkdl">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(String(v))}</dd>`).join('')}</dl>
+    ${b.confirmation ? `<div class="bkdetail-conf">conf <b>${esc(b.confirmation)}</b>
+      <button type="button" class="bkmini" data-copyconf="${esc(b.confirmation)}">Copy</button></div>` : ''}
+    <div class="bkdetail-act">
+      ${mapUrl ? `<a class="bkmini" target="_blank" rel="noopener" href="${mapUrl}">📍 Map</a>` : ''}
+      <button type="button" class="bkmini" data-ics="${esc(b.id)}">📅 Add to calendar</button>
+    </div>
+  </details>`;
 }
 
 const time = s => { const t = String(s); return t.length > 10 ? t.slice(11, 16) : prettyDate(t); };
