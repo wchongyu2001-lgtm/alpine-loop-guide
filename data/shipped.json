@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B30",
+      "title": "Campervan fuel cost estimator",
+      "pillar": "logistics",
+      "date": "2026-06-15T00:30:00.000Z",
+      "what": "The Budget view now has a Fuel estimate card for campervan trips. It breaks the route into driving legs between consecutive day bases, measures each leg with the road-scaled distance (haversine ×1.3) between the day coordinates, and estimates litres from the van's consumption figure (meta.fuelPerH, treated as L/100km) and cost from a price/litre you can edit inline — the total and every per-leg figure update live as you change the price (default €1.80/L, remembered in the expenses overlay). Same-base nights (zero-distance legs) are dropped so only real drives show. A new pure fuelEstimate() lives in core.js with a guarded test; the card only appears when the trip models fuel use (so the no-driving Iceland trip is unaffected).",
+      "verified": true,
+      "verify_note": "Independent agent: origin/main 6874fe9 has fuelEstimate in core.js, imported+used in budget.js, guarded B30 test in test-core. node tools/test-core.mjs exits 0 with all 6 B30 assertions ok; sample run confirms sensible legs/totals, price 0 → cost 0, doubling price doubles total. All served-checks 200 incl. live GitHub Pages core.js with fuelEstimate marker.",
+      "commit": "6874fe9",
+      "deploy": "live"
+    },
+    {
       "id": "B29",
       "title": "Satellite view + remembered map layer",
       "pillar": "maps",
