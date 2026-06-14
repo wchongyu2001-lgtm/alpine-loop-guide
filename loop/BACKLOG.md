@@ -25,7 +25,7 @@ price+currency, pax, location), saved to the `bookings` overlay `manual[]` so it
 like an imported one. Accept: adding a hotel for the Alpine trip persists, appears in the bookings list
 and on its day, and survives reload.
 
-### B22 · status: todo · pillar: bookings
+### B22 · status: wip · pillar: bookings
 **"Still to book" coverage gaps.** Auto-detect what's missing: nights with no accommodation booking,
 and moves between consecutive places/cities with no transport booking. Render a clear "Still to book"
 checklist grouped by date with what's missing. Accept: on the seeded data it lists uncovered nights /
