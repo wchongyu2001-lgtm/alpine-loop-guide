@@ -1,6 +1,6 @@
 /* Budget: guide estimates (from v1 data) + actual expenses with splitting,
    multi-currency roll-up (booked items converted to the trip base) + settle-up. */
-import { esc, fmtMoney, computeBalances, convert, simplifyDebts, budgetVsActual, tripEstimate, fxConvert } from './core.js';
+import { esc, fmtMoney, computeBalances, convert, simplifyDebts, budgetVsActual, tripEstimate, fuelEstimate, fxConvert } from './core.js';
 import { tripBookings } from './data.js';
 import { rates } from './fx.js';
 
@@ -26,6 +26,11 @@ export function render(root, ctx) {
   // --- estimates from guide data ---
   const { rows: est, total: estTotal } = tripEstimate(state.days, td.budget, td.meta, mode);
   const hasSplurge = Object.values(td.budget || {}).some(b => typeof b.act === 'object');
+
+  // --- B30: campervan fuel estimate (only when the trip models fuel use) ---
+  const fuelOn = (td.meta.fuelPerH || 0) > 0;
+  const fuelPrice = Number(ov.fuelPrice) > 0 ? Number(ov.fuelPrice) : 1.80;
+  const fuel = fuelOn ? fuelEstimate(state.days, td.meta, fuelPrice) : null;
 
   // --- actuals: manual expenses + priced bookings ---
   const manual = ov.items || [];
@@ -121,6 +126,19 @@ export function render(root, ctx) {
           <select id="convHomeCur">${convList.map(c => `<option ${c === convHome ? 'selected' : ''}>${c}</option>`).join('')}</select>
         </div>
       </div>
+${fuel ? `
+      <div class="budcard" id="fuelcard">
+        <h3>Fuel estimate</h3>
+        <div class="bignum">${fmtMoney(fuel.totalCost, cur)}</div>
+        <div class="muted">${fuel.totalKm} km · ${fuel.totalLitres} L · van @ ${td.meta.fuelPerH} L/100km</div>
+        <div class="convrow">
+          <input id="fuelPrice" type="number" step="0.01" min="0" inputmode="decimal" value="${fuelPrice}" />
+          <span class="convcur">${cur}/L</span>
+        </div>
+        <table class="budtable">
+          ${fuel.legs.map(l => `<tr><td>${esc(l.from)} → ${esc(l.to)}<br><small class="muted">${l.km} km · ${l.litres} L</small></td><td>${fmtMoney(l.cost, cur)}</td></tr>`).join('')}
+        </table>
+      </div>` : ''}
     </div>`;
 
   // --- currency converter (live, no rerender so input focus survives) ---
@@ -133,6 +151,12 @@ export function render(root, ctx) {
   const homeSel = root.querySelector('#convHomeCur');
   if (homeSel) homeSel.onchange = () => {
     const o = exOv(state); o.convHome = homeSel.value;
+    ctx.save('expenses', o); ctx.rerender();
+  };
+
+  const fuelInput = root.querySelector('#fuelPrice');
+  if (fuelInput) fuelInput.onchange = () => {
+    const o = exOv(state); o.fuelPrice = parseFloat(fuelInput.value) || 0;
     ctx.save('expenses', o); ctx.rerender();
   };
 

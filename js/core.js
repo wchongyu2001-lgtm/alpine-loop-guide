@@ -757,6 +757,35 @@ export function tripEstimate(days, budget, meta, mode = 'bu') {
   return { rows, total: rows.reduce((s, e) => s + e.total, 0) };
 }
 
+// ---- B30: campervan fuel cost per driving leg (pure) ----
+// A "leg" is the drive between consecutive day bases. Distance is the road-scaled
+// haversine between their ll (same ×1.3 factor as routeStats); fuel use treats
+// meta.fuelPerH as the van's consumption in litres/100km, so cost = km/100 ×
+// L/100km × pricePerL. Legs under 1km (same base two nights running) are dropped
+// so only real drives show. Returns { legs:[{from,to,km,litres,cost}], totalKm,
+// totalLitres, totalCost }.
+export function fuelEstimate(days, meta, pricePerL) {
+  const lp100 = (meta || {}).fuelPerH || 0;
+  const price = Number(pricePerL) || 0;
+  const ds = (days || []).filter(d => d && Array.isArray(d.ll));
+  const legs = [];
+  for (let i = 1; i < ds.length; i++) {
+    const a = ds[i - 1], b = ds[i];
+    const km = Math.round(haversineKm(a.ll, b.ll) * 1.3);
+    if (km < 1) continue;
+    const litres = Math.round(km / 100 * lp100 * 10) / 10;
+    const cost = Math.round(litres * price * 100) / 100;
+    legs.push({ from: a.short || a.id, to: b.short || b.id, km, litres, cost });
+  }
+  const r2 = n => Math.round(n * 100) / 100, r1 = n => Math.round(n * 10) / 10;
+  return {
+    legs,
+    totalKm: legs.reduce((s, l) => s + l.km, 0),
+    totalLitres: r1(legs.reduce((s, l) => s + l.litres, 0)),
+    totalCost: r2(legs.reduce((s, l) => s + l.cost, 0)),
+  };
+}
+
 // ---- B26: committed booking spend rolled up by type, for "vs budget" (pure) ----
 // Sum every priced booking into the trip base currency via toBase(amount, currency)
 // — pass the same FX-aware converter the Budget view uses; default is identity.

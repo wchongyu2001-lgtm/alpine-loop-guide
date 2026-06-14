@@ -9,7 +9,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, optimizePreview
   legGapMins, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
   buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline, bookingReminders,
-  bookingRollup, tripEstimate, transportContinuity, bookingIcs, tripIcs,
+  bookingRollup, tripEstimate, fuelEstimate, transportContinuity, bookingIcs, tripIcs,
   nextUpcoming, fmtCountdown, searchRecords, fxConvert, replanNudge, countryEssentials, tripOverview,
   mapTypeChoice } from '../js/core.js';
 
@@ -647,6 +647,19 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
   eq(tripEstimate(days, budget, meta, 'sp').rows[0].total, 30 + 20 + 50 + 5 + 16,
     'tripEstimate: sp mode uses the splurge activity tier');
   eq(tripEstimate([], budget, meta).total, 0, 'tripEstimate: no days → 0');
+}
+
+// ---- B30: fuelEstimate ----
+{
+  const days = [{ id: 'd1', short: 'A', ll: [45, 10] }, { id: 'd2', short: 'B', ll: [46, 10] }, { id: 'd3', short: 'C', ll: [46, 10] }];
+  const f = fuelEstimate(days, { fuelPerH: 10 }, 2);
+  eq(f.legs.length, 1, 'fuelEstimate: one driving leg (the zero-distance same-base leg is dropped)');
+  eq(f.legs[0], { from: 'A', to: 'B', km: 145, litres: 14.5, cost: 29 },
+    'fuelEstimate: road-scaled km, litres = km/100×L/100km, cost = litres×price');
+  eq([f.totalKm, f.totalLitres, f.totalCost], [145, 14.5, 29], 'fuelEstimate: totals sum the legs');
+  eq(fuelEstimate(days, { fuelPerH: 10 }, 0).totalCost, 0, 'fuelEstimate: price 0 → no cost');
+  eq(fuelEstimate(days, { fuelPerH: 0 }, 2).totalLitres, 0, 'fuelEstimate: no consumption figure → 0 litres');
+  eq(fuelEstimate([], { fuelPerH: 10 }, 2), { legs: [], totalKm: 0, totalLitres: 0, totalCost: 0 }, 'fuelEstimate: no days → empty');
 }
 
 // ---- B27: transportContinuity ----
