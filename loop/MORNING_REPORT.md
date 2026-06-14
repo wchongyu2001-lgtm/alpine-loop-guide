@@ -284,3 +284,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: c2125a6
+
+### 2026-06-15T00:30Z · B30 Campervan fuel cost estimator
+- status: done
+- pillar: logistics
+- what: New pure fuelEstimate() in core.js + a Budget "Fuel estimate" card — per-leg fuel cost between consecutive day bases (road-scaled distance × meta.fuelPerH as L/100km × editable €/L) with a trip total; price edits update live; only shown when the trip models fuel use.
+- verified: PASS — independent agent: origin/main 6874fe9; test-core exits 0 with 6 B30 assertions ok; sample run sensible (price 0→0, double price→double total); served-checks 200 incl. live Pages core.js.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 6874fe9
