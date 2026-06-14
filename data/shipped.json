@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B29",
+      "title": "Satellite view + remembered map layer",
+      "pillar": "maps",
+      "date": "2026-06-14T23:55:00.000Z",
+      "what": "On the Google Maps backend the Map view now defaults to a satellite layer (best for spotting campervan scenery and terrain) and lets you switch between roadmap / satellite / terrain / hybrid using the built-in map-type control. Whichever layer you pick is remembered in localStorage (key v2:mapType) via a maptypeid_changed listener, so it sticks across reloads instead of snapping back. A new pure mapTypeChoice() in core.js normalises the stored value and falls back to satellite for anything missing or unknown. The Leaflet/OpenStreetMap fallback (used when no key or offline) is untouched — no map-type code, no error.",
+      "verified": true,
+      "verify_note": "Independent agent: origin/main c2125a6 has mapTypeId:mapTypeChoice(stored), v2:mapType read/write + maptypeid_changed listener; core.js mapTypeChoice defaults to satellite; renderLeaflet unchanged. test-core exits 0 (8 new mapTypeChoice tests pass); all 3 live served-checks 200 with markers present.",
+      "commit": "c2125a6",
+      "deploy": "live"
+    },
+    {
       "id": "B28",
       "title": "Campervan pitch-to-book nights",
       "pillar": "bookings",
