@@ -8,7 +8,7 @@ import { assignTrip, computeBalances, routeStats, optimizeOrder, effectivePlans,
   pickTodayDay, nextBooking, flightRoute, bookingWarnings, orphanBookings,
   legGapMins, legFeasibility, dayLoad,
   overpassUrl, parseOverpass, nearbyCacheKey, budgetVsActual, planProgress, suggestPacking,
-  buildManualBooking, coverageGaps, bookingTimeline } from '../js/core.js';
+  buildManualBooking, coverageGaps, accommodationStrip, bookingTimeline } from '../js/core.js';
 
 let fails = 0;
 const eq = (got, want, msg) => {
@@ -488,6 +488,24 @@ eq(dayLoad([]).totalMins, 0, 'dayLoad: empty day → 0 minutes');
     'coverageGaps: ordinary car covers transport but not lodging');
 
   eq(coverageGaps([], clean), [], 'coverageGaps: no days → nothing');
+
+  // ---- B24: accommodationStrip ----
+  const strip = accommodationStrip(days, clean);
+  eq(strip.map(n => n.date), ['2026-07-24', '2026-07-25', '2026-07-26'],
+    'accommodationStrip: one cell per night, departure day excluded');
+  eq(strip.map(n => n.covered), [true, true, true], 'accommodationStrip: all nights covered → true');
+  eq(strip[0].name, 'Milano', 'accommodationStrip: covered night carries booking title');
+  eq(strip[2].name, 'Genova', 'accommodationStrip: checkout-exclusive — night 26 is the Genova stay');
+
+  const partial = accommodationStrip(days, [clean[0]]);  // only Milano hotel (covers 24,25)
+  eq(partial.map(n => n.covered), [true, true, false], 'accommodationStrip: uncovered night → false');
+  eq(partial[2].sleep, 'Hotel Genova', 'accommodationStrip: uncovered cell carries the day base for context');
+
+  const vanStrip = accommodationStrip(vanDays, van);
+  eq(vanStrip.map(n => n.covered), [true, true], 'accommodationStrip: campervan counts as the bed');
+  eq(accommodationStrip([], clean), [], 'accommodationStrip: no days → empty');
+  eq(accommodationStrip([{ _date: '2026-07-24' }], clean), [],
+    'accommodationStrip: single day (departure only) → no nights');
 }
 
 process.exit(fails ? 1 : 0);

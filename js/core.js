@@ -416,6 +416,21 @@ export function coverageGaps(days, bookings) {
   return gaps.sort((a, b) => a.date.localeCompare(b.date) || a.kind.localeCompare(b.kind));
 }
 
+// ---- B24: accommodation coverage strip (pure) ----
+// One cell per night — every dated day except the last (a departure day needs no
+// bed). { date, sleep, covered, name }: covered ⇔ some hotel/campervan booking
+// spans that night (start ≤ date < end, checkout exclusive); name is its title.
+// Same lodging rule as coverageGaps so the strip and "still to book" agree.
+export function accommodationStrip(days, bookings) {
+  const dated = (days || []).filter(d => d._date).sort((a, b) => a._date.localeCompare(b._date));
+  const lodging = (bookings || []).filter(b => b.type === 'hotel' || isCamperBed(b));
+  const cover = date => lodging.find(b => dOnly(b.start) <= date && date < dOnly(b.end || b.start));
+  return dated.slice(0, -1).map(d => {
+    const b = cover(d._date);
+    return { date: d._date, sleep: d.sleep || '', covered: !!b, name: b ? b.title : '' };
+  });
+}
+
 // ---- B06: "Can I make it?" timing feasibility (pure) ----
 const hhmm = s => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(s || '').trim()); return m ? +m[1] * 60 + +m[2] : null; };
 

@@ -3,7 +3,7 @@
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
    redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
    Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, orphanBookings } from './core.js';
+import { esc, gmapsUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, orphanBookings } from './core.js';
 import { tripBookings, allBookings, refreshOverlays } from './data.js';
 import { uploadAttachment, fetchMail, wlImport } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
@@ -62,6 +62,7 @@ export function render(root, ctx) {
       <div id="bksuggest">${suggestionsHtml(state)}</div>
     </div>
     ${warningsHtml(state, list)}
+    ${stripHtml(state, list)}
     ${stillToBookHtml(state, list)}
     ${Object.keys(byDate).sort().map(d => `
       <div class="bk-group">
@@ -104,6 +105,18 @@ export function render(root, ctx) {
     const ov = bkOv(state);
     ov.warnSeen = [...new Set([...(ov.warnSeen || []), b.dataset.dismwarn])];
     ctx.save('bookings', ov); ctx.rerender();
+  });
+
+  root.querySelectorAll('[data-booknight]').forEach(el => el.onclick = () => {
+    const date = el.dataset.booknight;
+    const det = root.querySelector('.bk-add'); det.open = true;
+    const form = root.querySelector('#bkform');
+    form.elements.type.value = 'hotel';
+    form.elements.start.value = date + 'T15:00';
+    const next = new Date(date + 'T12:00'); next.setDate(next.getDate() + 1);
+    form.elements.end.value = next.toISOString().slice(0, 10) + 'T11:00';
+    form.elements.title.focus();
+    det.scrollIntoView({ behavior: 'smooth' });
   });
 
   root.querySelectorAll('[data-assign]').forEach(sel => sel.onchange = () => {
@@ -296,6 +309,27 @@ function warningsHtml(state, list) {
       </div>`).join('')}
   </div>`;
 }
+
+/* ---------- accommodation coverage strip (B24) ---------- */
+
+function stripHtml(state, list) {
+  const nights = accommodationStrip(state.days, list);
+  if (!nights.length) return '';
+  const covered = nights.filter(n => n.covered).length;
+  return `<div class="bk-strip">
+    <h3>🛏 Where you sleep — ${covered}/${nights.length} nights covered</h3>
+    <div class="bk-strip-row">
+      ${nights.map(n => `
+        <div class="bk-night ${n.covered ? 'covered' : 'gap'}"${n.covered ? '' : ` data-booknight="${esc(n.date)}"`}
+             title="${esc(n.covered ? n.name : 'Tap to book a stay for ' + n.date)}">
+          <span class="bk-night-date">${stripDate(n.date)}</span>
+          <span class="bk-night-name">${n.covered ? esc(n.name) : (n.sleep ? esc(n.sleep) : 'No stay')}</span>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+const stripDate = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' });
 
 /* ---------- "still to book" coverage gaps (B22) ---------- */
 
