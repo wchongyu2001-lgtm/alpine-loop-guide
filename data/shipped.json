@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B12",
+      "title": "Suggest a packing list from the weather + your plan",
+      "pillar": "mobile/live",
+      "date": "2026-06-14T09:20:00Z",
+      "what": "The Checklists view has a new “🎒 Suggest packing list” button that builds a packing checklist tailored to your actual trip — no guessing, no generic template. It reads each day's weather forecast (the same open-meteo data the Today view uses, cached so it still works offline) and scans your day plans, then assembles a deduped list: rain shell + waterproof shoes if any day shows rain, a warm fleece/down layer for cold alpine lows, hat & gloves and thermal base layer when it's near freezing, sun hat & sunscreen for hot or sunny days, plus activity-aware extras — hiking boots & a daypack if your plan mentions a funicular, summit or mountain trail, and swimwear & a quick-dry towel if there's a lake or swim. Base travel essentials (passport, charger, power bank, meds, water bottle, walking shoes) are always included, with laundry sheets for trips of five days or more. One tap drops it in as a normal checklist you can tick off.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge 64516b2 on origin/main: pure suggestPacking(dayInfos) in js/core.js derives items from per-day weather + plan text, '🎒 Suggest packing list' button in js/checklists.js gathers weather via weather.js and adds a 'Packing (suggested)' checklist. node tools/test-core.mjs exits 0 with all 10 new suggestPacking guards ok (rain→shell, alpine lows→warm layer, funicular→hiking boots, lake→swimwear, base essentials always, no dups). Local + LIVE served checks 200 with marker 'Suggest packing list' in js/checklists.js (live propagated on retry).",
+      "commit": "64516b2",
+      "deploy": "live"
+    },
+    {
       "id": "B11",
       "title": "Today view shows where you are in the day",
       "pillar": "mobile/live",
