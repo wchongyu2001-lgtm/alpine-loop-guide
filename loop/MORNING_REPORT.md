@@ -320,3 +320,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 1dbf735
+
+### 2026-06-15T04:00Z · B34 "Open now" badges
+- status: done
+- pillar: discovery
+- what: Itinerary places with enrichment hours now show a current-time-correct Open now / Closed (· opens HH:MM) badge; pure openStatus()/parseDayHours() in core.js, .pbadge in itinerary.js + app.css. No backend change.
+- verified: independent agent PASS — artifacts on origin/main (merge 0388334), node tools/test-core.mjs RC=0 with new B34 guards, sanity assertions correct (null hours→null, no false closed state), live Pages served-checks 200 with markers openStatus + pbadge.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: 0388334

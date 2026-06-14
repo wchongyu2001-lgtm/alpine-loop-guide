@@ -152,7 +152,7 @@ Accept: each day shows plausible sunrise/sunset; degrades gracefully offline fro
 can jot reminders ("fill water at…", "ZTL zone — don't drive in") on any day. Accept: typing a note on a
 day persists across reload via the overlay; renders in the day card.
 
-### B34 · status: wip · pillar: discovery
+### B34 · status: done (0388334) · pillar: discovery
 **"Open now" badges.** Where a place has opening-hours from enrichment (places.js), show an Open now /
 Closed badge (and next-open time if closed) on the itinerary place. Accept: a place with hours shows the
 correct badge for the current time; places without hours show nothing (no false state).
