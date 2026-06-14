@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "MAP-GMAPS",
+      "title": "Map view can run on Google Maps",
+      "pillar": "logistics",
+      "date": "2026-06-14T06:45:00Z",
+      "what": "The Map tab now supports a real embedded Google Maps interface (Maps JavaScript API) with all the existing whole-trip / per-day / per-category views, coloured numbered pins, popups and Google/Apple deep links preserved. It activates the moment a Google Maps API key is set in js/config.js (referrer-restricted, safe to expose); until then it falls back to the current Leaflet/OpenStreetMap map so nothing breaks. Add the key (5-min setup, steps in config.js) to switch the interface to Google Maps.",
+      "verified": true,
+      "verify_note": "Built in main session (not the loop). node tools/test-core.mjs exits 0 (sw guard now includes js/config.js); node --check clean on map.js/config.js/sw.js; served checks 200 with markers (map.js 'renderGoogle', config.js 'MAPS_KEY'); empty key correctly selects the Leaflet fallback. Google path awaits the owner's API key for live visual confirmation.",
+      "commit": "pending",
+      "deploy": "live"
+    },
+    {
       "id": "B14",
       "title": "Country essentials card",
       "pillar": "offline",
