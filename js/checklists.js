@@ -1,5 +1,6 @@
 /* Per-trip checklists: packing, pre-trip to-dos. Whole-array sync, last write wins. */
-import { esc } from './core.js';
+import { esc, effectivePlans, suggestPacking } from './core.js';
+import { dayWeather } from './weather.js';
 
 const TEMPLATES = {
   'Packing — van trip': ['Passports + IDP', 'Phone mounts + chargers', 'Power bank', 'Water shoes', 'Rain shells', 'Headlamps', 'Quick-dry towels', 'First-aid kit', 'Reusable bottles', 'Camping chairs'],
@@ -14,6 +15,7 @@ export function render(root, ctx) {
   root.innerHTML = `
     <div class="cl-toolbar">
       <button class="mini" id="cl-new">＋ New list</button>
+      <button class="mini" id="cl-suggest">🎒 Suggest packing list</button>
       <select id="cl-template">
         <option value="">＋ From template…</option>
         ${Object.keys(TEMPLATES).map(t => `<option>${t}</option>`).join('')}
@@ -43,6 +45,18 @@ export function render(root, ctx) {
   root.querySelector('#cl-new').onclick = () => {
     const title = prompt('List title:'); if (!title) return;
     commit([...lists, { id: 'cl' + Date.now(), title, items: [] }]);
+  };
+  root.querySelector('#cl-suggest').onclick = async e => {
+    const btn = e.currentTarget;
+    btn.disabled = true; btn.textContent = 'Suggesting…';
+    const ovPlans = (state.overlay.itinerary || {}).dayPlans || null;
+    const plans = effectivePlans(state.days, ovPlans);
+    const dayInfos = await Promise.all(state.days.map(async d => ({
+      weather: (d.ll && d._date) ? await dayWeather(d.ll, d._date) : null,
+      text: (plans[d.id] || []).map(p => `${p.n || ''} ${p.note || p.d || ''}`).join(' ') + ' ' + (d.short || ''),
+    })));
+    const items = suggestPacking(dayInfos);
+    commit([...lists, { id: 'cl' + Date.now(), title: 'Packing (suggested)', items: items.map(t => ({ t, done: false })) }]);
   };
   root.querySelector('#cl-template').onchange = e => {
     const t = e.target.value; if (!t) return;

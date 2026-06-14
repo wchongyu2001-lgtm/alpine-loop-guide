@@ -176,6 +176,37 @@ export function wmoIcon(c) {
   if (c <= 67) return '🌧️'; if (c <= 77) return '❄️'; if (c <= 82) return '🌧️';
   if (c <= 86) return '❄️'; return '⛈️';
 }
+// B12: suggest a packing list from per-day weather + plan text. Pure → testable.
+// dayInfos: [{ weather: {tmax,tmin,precip,code}|null, text: 'plan names + notes' }]
+export function suggestPacking(dayInfos) {
+  const items = [];
+  const add = (...xs) => xs.forEach(x => { if (!items.includes(x)) items.push(x); });
+  add('Passport / ID', 'Phone + charger', 'Power bank', 'Toiletries', 'Personal medications', 'Reusable water bottle', 'Comfortable walking shoes');
+  if (dayInfos.length >= 5) add('Laundry sheets');
+  let rain = false, cool = false, cold = false, hot = false, mild = false, allText = '';
+  for (const d of dayInfos) {
+    const w = d.weather;
+    if (w) {
+      if ((w.precip != null && w.precip >= 40) || (w.code != null && w.code >= 51)) rain = true;
+      if (w.tmin != null && w.tmin <= 12) cool = true;
+      if (w.tmin != null && w.tmin <= 3) cold = true;
+      if (w.tmax != null && w.tmax >= 24) hot = true;
+      if (w.tmax != null && w.tmax >= 18) mild = true;
+    }
+    allText += ' ' + (d.text || '');
+  }
+  if (rain) add('Rain shell / jacket', 'Waterproof shoes');
+  if (cool) add('Warm layer (fleece/down)');
+  if (cold) add('Hat + gloves', 'Thermal base layer');
+  if (hot) add('Sun hat', 'Lightweight clothing');
+  if (mild) add('Sunglasses', 'Sunscreen');
+  const t = allText.toLowerCase();
+  const has = (...kw) => kw.some(k => t.includes(k));
+  if (has('hik', 'trail', 'summit', 'trek', 'mountain', 'funicular', 'cable', 'gondola', 'glacier')) add('Hiking boots', 'Daypack');
+  if (has('swim', 'lake', 'beach', 'pool', 'spa', 'thermal bath', 'lido')) add('Swimwear', 'Quick-dry towel');
+  return items;
+}
+
 export const convert = (amt, rate) => amt == null ? null : Math.round(amt * rate * 100) / 100;
 export function simplifyDebts(net) {
   const cred = [], deb = [];
