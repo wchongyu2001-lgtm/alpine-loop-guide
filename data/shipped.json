@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B21",
+      "title": "Add a booking by hand — provider, end time, location & travellers",
+      "pillar": "bookings",
+      "date": "2026-06-14T00:00:00Z",
+      "what": "The Bookings view's “＋ Add a booking manually” form now captures a full reservation, not just the basics. Alongside type, title, start time, confirmation # and price, you can now add the provider (e.g. Booking.com), an optional end time, the location, and the travellers on the booking (comma-separated). Whatever you enter is trimmed, auto-filed to the right trip by its start date, and saved into your local bookings overlay's manual list — so a hand-added hotel shows up in the timeline on its own day exactly like a booking imported from Gmail, and survives a reload. Empty optional fields are dropped cleanly so cards stay tidy, and a typed location with no map pin now shows as a 📍 line on the card.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge cb5e914 on origin/main: new pure buildManualBooking() in js/core.js trims fields, files via assignTrip, splits pax on commas, defaults currency, stamps source:'manual'; js/bookings.js form adds provider/end/location/pax inputs and the submit handler routes through buildManualBooking into the manual[] overlay (ctx.save). node tools/test-core.mjs exits 0 with 4 new buildManualBooking guards ok (full hotel→filed to alpine, bare→nulls, blank/defaulted price). LIVE served checks 200 with marker buildManualBooking in js/bookings.js and js/core.js (no propagation lag).",
+      "commit": "cb5e914",
+      "deploy": "live"
+    },
+    {
       "id": "B12",
       "title": "Suggest a packing list from the weather + your plan",
       "pillar": "mobile/live",
