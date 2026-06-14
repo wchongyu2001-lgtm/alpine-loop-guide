@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B28",
+      "title": "Booking detail drawer — tap a booking for the full picture + add-to-calendar",
+      "pillar": "bookings",
+      "date": "2026-06-14T19:15:00Z",
+      "what": "Every booking card in the Bookings view now has a tappable “Details” drawer that expands to show the full record at a glance — type, provider, exact start/end times, location, travellers, price and any notes — laid out as a clean field list. The confirmation number gets a one-tap Copy button (great when an airline or hotel app asks you to paste it), the location gets a direct Map link (Google Maps coords when known, otherwise a name search), and there's an 📅 Add to calendar button that downloads a single-booking .ics file you can open in Apple/Google/Outlook calendar. The .ics is generated locally with no backend: timed bookings export with floating local DTSTART/DTEND, a timed booking with no end gets a sensible 1-hour block, and a date-only booking becomes an all-day event — with commas/special characters properly escaped per the iCalendar spec.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge dec79aa on origin/main (bookingIcs in js/core.js, detailHtml + data-ics + data-copyconf in js/bookings.js, .bkdetail/.bkmini in css/app.css). node tools/test-core.mjs exits 0 with new guards: VCALENDAR/VEVENT wrap, floating-local DTSTART/DTEND, UID from id, DTSTAMP passthrough, comma+LOCATION escaping, conf in DESCRIPTION, date-only→all-day, timed-no-end→PT1H. Live served checks 200 with markers bookingIcs (bookings.js) + bkdetail (app.css).",
+      "commit": "dec79aa",
+      "deploy": "live"
+    },
+    {
       "id": "B27",
       "title": "Transport continuity check — does your travel chain actually connect?",
       "pillar": "bookings",
