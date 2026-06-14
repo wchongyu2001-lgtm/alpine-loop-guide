@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B36",
+      "title": "One-tap “Open full route in Google Maps”",
+      "pillar": "maps",
+      "date": "2026-06-14T00:00:00.000Z",
+      "what": "The Overview tab now has an “Open full route in Google Maps” button that launches Google Maps with the entire trip as one multi-stop driving route — origin → every overnight base in order → final destination — so you can hand the whole loop to the Maps app in a single tap. It builds a standard /maps/dir/ directions deep link from each day's coordinates (no API key, no network needed to construct it), and consecutive nights at the same base collapse into one stop so the route stays clean. On the seeded Alpine grand loop that's a 19-stop driving itinerary. The link opens the native Maps app on a phone. A pure gmapsRouteUrl(days) helper in core.js carries the logic (and hides the button when there aren't two distinct stops to route between), guarded by tests. Frontend-only, no backend, no new deps.",
+      "verified": true,
+      "verify_note": "Independent agent PASS — artifacts on origin/main 9b24880 (gmapsRouteUrl in js/core.js, “Open full route in Google Maps” link in js/overview.js); node tools/test-core.mjs exits 0 with 5 B36 assertions; function fed real alpine.json yields a /maps/dir/ URL of 19 ordered lat,lng stops (consecutive dup collapsed); local + live GitHub Pages served-checks 200 with the feature markers.",
+      "commit": "9b2488080b8e42a71c8cd46903ddd6a038d88d9f",
+      "deploy": "live"
+    },
+    {
       "id": "B35",
       "title": "Dark mode (light / dark / auto theme toggle)",
       "pillar": "polish",
