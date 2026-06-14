@@ -75,7 +75,7 @@ layer if rain forecast, warm layer for alpine temps); items land in the existing
 upcoming booking ("Next: Funicular in 1h 20m"). Updates each minute. Accept: on the current Alpine
 day the Today view shows a correct countdown to the next stop/booking; degrades gracefully if none left.
 
-### B18 · status: todo · pillar: offline
+### B18 · status: wip · pillar: offline
 **Offline trip search.** A search box that instantly filters across the open trip's places, notes and
 bookings, working with no network (operates on already-loaded data). Accept: typing a query filters
 matches live with zero network calls; clearing restores the full view.
