@@ -69,6 +69,10 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
 .pbody:focus-visible{outline:2px solid var(--glacier);outline-offset:2px;border-radius:6px}
 .pname{font-size:.92em}
 .ptime{font-family:'JetBrains Mono',monospace;font-size:.78em;color:var(--terra);margin-left:6px}
+.pbadge{font-size:.7em;font-weight:600;margin-left:6px;padding:1px 6px;border-radius:9px;white-space:nowrap;vertical-align:middle}
+.pbadge:empty{display:none}
+.pbadge.open-now{background:#1b7a3d1a;color:#1b7a3d}
+.pbadge.closed-now{background:#9a9a9a22;color:var(--ink-soft)}
 .pdesc{font-size:.8em;color:var(--ink-soft)}
 .plinks{display:flex;gap:5px;align-items:center}
 .pthumb{flex:0 0 76px;width:76px;height:58px;border-radius:9px;object-fit:cover;align-self:center}
