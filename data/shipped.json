@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B32",
+      "title": "Daylight per day",
+      "pillar": "mobile/live",
+      "date": "2026-06-15T02:00:00.000Z",
+      "what": "Each day in the Itinerary now shows that day's sunrise and sunset alongside the weather chip (e.g. \"🌅 05:38 🌇 21:02\"), with a golden-hour hint and total daylight length in the tooltip — handy for planning drives and photos on the campervan loop. The times come from the open-meteo daily endpoint that weather.js already fetches (now also requesting sunrise/sunset), so there's no extra network call and they're cached per coordinate for offline use: with no signal the last-known forecast still renders the daylight, and if a stale cache predates this feature (no sun fields) the chip simply hides rather than showing anything wrong. A new pure daylight() helper in core.js parses the ISO sunrise/sunset, computes the day length and the evening golden hour (~1h before sunset), and is covered by guarded tests.",
+      "verified": true,
+      "verify_note": "Independent agent: origin/main d6118cb has daylight() + sunrise,sunset in core.js weatherUrl/pickDaily, imported+used in itinerary.js .dl chip. node tools/test-core.mjs exits 0 with all 4 daylight assertions ok (incl. null-degrade when sun fields absent). Logic confirmed: 2026-06-15 → rise 05:38/set 21:02/15h 24m/golden 20:02. Live GitHub Pages core.js served-check 200 with 'function daylight' marker after propagation.",
+      "commit": "d6118cb",
+      "deploy": "live"
+    },
+    {
       "id": "B31",
       "title": "Trip totals + departure countdown",
       "pillar": "polish",
