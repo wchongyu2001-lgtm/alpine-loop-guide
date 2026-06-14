@@ -302,3 +302,12 @@ Live app: https://wchongyu2001-lgtm.github.io/alpine-loop-guide/
 - whatsnew: recorded
 - deploy: live (frontend)
 - commit: 4d49f62
+
+### 2026-06-15T02:00Z · B32 Daylight per day
+- status: done
+- pillar: mobile/live
+- what: Each Itinerary day shows sunrise/sunset (🌅/🌇) by the weather chip, with daylight length + golden-hour hint in the tooltip; sourced from the existing open-meteo daily fetch (now requesting sunrise,sunset), cached for offline, hides cleanly when sun fields absent.
+- verified: PASS — independent agent confirmed daylight()+sunrise,sunset on origin/main d6118cb, test-core.mjs exits 0 (4 daylight asserts ok incl. null-degrade), logic plausible (05:38/21:02/15h 24m), live Pages core.js served-check 200 with marker.
+- whatsnew: recorded
+- deploy: live (frontend)
+- commit: d6118cb
