@@ -2,13 +2,24 @@
    with its date, headline, first planned stop and booking markers, so the whole
    trip is visible without scrolling day cards. Tap a day to jump to it in the
    Itinerary view. Read-only; operates on already-loaded data. */
-import { esc, tripOverview, effectivePlans } from './core.js';
+import { esc, tripOverview, effectivePlans, tripTotals, daysToDeparture, dayDate } from './core.js';
 import { tripBookings } from './data.js';
 import { icon } from './icons.js';
+
+const pad = n => String(n).padStart(2, '0');
+const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
 
 const STYLE = `
   .ov{max-width:640px;margin:0 auto}
   .ov-intro{color:#5d564a;font-size:.92rem;margin:0 0 12px}
+  .ov-count{display:flex;align-items:baseline;gap:10px;border:1px solid rgba(184,134,11,.4);background:rgba(184,134,11,.08);border-radius:12px;padding:12px 14px;margin:0 0 10px}
+  .ov-count b{font-size:1.6rem;line-height:1;color:#b8860b}
+  .ov-count span{color:#5d564a;font-size:.9rem}
+  .ov-stats{list-style:none;margin:0 0 14px;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .ov-stat{border:1px solid rgba(128,128,128,.24);border-radius:12px;padding:10px 12px;background:rgba(128,128,128,.04)}
+  .ov-stat b{display:block;font-size:1.25rem;font-weight:700}
+  .ov-stat span{color:#5d564a;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+  @media (max-width:430px){.ov-count b{font-size:1.35rem}}
   .ov-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
   .ov-row{display:flex;gap:12px;align-items:center;border:1px solid rgba(128,128,128,.24);border-radius:12px;padding:10px 12px;background:rgba(128,128,128,.04);cursor:pointer;text-align:left}
   .ov-row:hover,.ov-row:focus{border-color:rgba(184,134,11,.5);background:rgba(184,134,11,.07);outline:none}
@@ -26,11 +37,16 @@ export function render(root, ctx) {
   const plans = effectivePlans(state.days, (state.overlay.itinerary || {}).dayPlans || null);
   const bookings = tripBookings(state, state.trip.id);
   const rows = tripOverview(state.days, plans, bookings);
+  const totals = tripTotals(state.days, bookings, { plans });
+  const start = state.tripData.meta.start;
+  const dleft = start ? daysToDeparture(dayDate(start, 0).iso, todayIso()) : null;
 
   root.innerHTML = `
     <style>${STYLE}</style>
     <div class="ov">
       <p class="ov-intro">The whole <b>${esc(state.trip.label)}</b> at a glance — ${rows.length} day${rows.length === 1 ? '' : 's'}. Tap a day to open it.</p>
+      ${countdownHtml(dleft)}
+      ${statsHtml(totals)}
       ${rows.length ? `<ol class="ov-list">${rows.map(rowHtml).join('')}</ol>` : '<p class="muted">No days in this trip yet.</p>'}
     </div>`;
 
@@ -39,6 +55,27 @@ export function render(root, ctx) {
     el.onclick = go;
     el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } };
   });
+}
+
+function countdownHtml(d) {
+  if (d == null) return '';
+  const txt = d > 0 ? `<b>${d}</b> <span>day${d === 1 ? '' : 's'} to departure</span>`
+    : d === 0 ? '<b>Today</b> <span>the trip begins</span>'
+    : `<b>Day ${1 - d}</b> <span>trip under way</span>`;
+  return `<div class="ov-count">${txt}</div>`;
+}
+
+function statsHtml(t) {
+  const cells = [
+    [t.km.toLocaleString(), 'km driving'],
+    [`${t.driveHours} h`, 'driving time'],
+    [t.nights, `night${t.nights === 1 ? '' : 's'}`],
+    [t.stops, `planned stop${t.stops === 1 ? '' : 's'}`],
+    [t.bookings, `booking${t.bookings === 1 ? '' : 's'}`],
+    [t.days, `day${t.days === 1 ? '' : 's'}`],
+  ];
+  return `<ul class="ov-stats">${cells.map(([n, l]) =>
+    `<li class="ov-stat"><b>${esc(String(n))}</b><span>${esc(l)}</span></li>`).join('')}</ul>`;
 }
 
 function rowHtml(r) {

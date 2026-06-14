@@ -786,6 +786,33 @@ export function fuelEstimate(days, meta, pricePerL) {
   };
 }
 
+// ---- B31: trip totals + departure countdown (pure) ----
+// At-a-glance stats over the loaded trip. Distance is the road-scaled haversine
+// across the day bases (same routeStats the planner uses); driveHours is the sum
+// of each day's authored `drive` figure (the canonical "~26h" the presets quote);
+// nights counts days with a sleep base; stops sums planned stops (overlay plans
+// override the base plan when passed). Returns whole-number-friendly fields.
+export function tripTotals(days, bookings = [], opts = {}) {
+  const ds = days || [];
+  const plans = (opts && opts.plans) || null;
+  const dist = routeStats(ds.filter(d => Array.isArray(d.ll)).map(d => d.ll));
+  const driveHours = Math.round(ds.reduce((s, d) => s + (Number(d.drive) || 0), 0) * 10) / 10;
+  const nights = ds.filter(d => d.sleep && String(d.sleep).trim()).length;
+  const stops = ds.reduce((s, d) => s + (((plans && plans[d.id]) || d.plan || []).length), 0);
+  return { days: ds.length, km: dist.km, driveHours, nights, stops, bookings: (bookings || []).length };
+}
+
+// Whole days from today (todayISO, YYYY-MM-DD) to the trip start (startISO).
+// >0 = days until departure, 0 = leaves today, <0 = trip under way / past.
+// null when either date is missing or unparseable. UTC-anchored so it never
+// drifts by a day across timezones.
+export function daysToDeparture(startISO, todayISO) {
+  const a = Date.parse(String(todayISO || '') + 'T00:00:00Z');
+  const b = Date.parse(String(startISO || '') + 'T00:00:00Z');
+  if (Number.isNaN(a) || Number.isNaN(b)) return null;
+  return Math.round((b - a) / 86400000);
+}
+
 // ---- B26: committed booking spend rolled up by type, for "vs budget" (pure) ----
 // Sum every priced booking into the trip base currency via toBase(amount, currency)
 // — pass the same FX-aware converter the Budget view uses; default is identity.
