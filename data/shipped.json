@@ -1,6 +1,17 @@
 {
   "features": [
     {
+      "id": "B22",
+      "title": "“Still to book” — auto-spots the nights and travel legs you haven't booked",
+      "pillar": "bookings",
+      "date": "2026-06-14T12:00:00Z",
+      "what": "The Bookings view now shows a 🧳 “Still to book” checklist that pressure-tests your reservations against your itinerary. It flags two kinds of gap: any night with no accommodation booked, and any move where your overnight base changes (the day's “sleep” location differs) but no transport covers the hop. It's smart about road trips — a campervan/motorhome counts as the bed while you've got it, and any vehicle you're holding covers every driving leg, so a van trip on a single rental booking raises nothing. Gaps are grouped by date so you can see at a glance what's left to lock in. On the seeded pre-exchange trip it correctly lists the un-booked Genova→Firenze and Firenze→Bologna legs while showing zero false alarms on the fully-booked hotel nights; the Alpine campervan loop shows clean.",
+      "verified": true,
+      "verify_note": "Independent agent confirmed merge f06ba5c on origin/main (coverageGaps in js/core.js, stillToBookHtml in js/bookings.js, .bk-tobook in css/app.css). node tools/test-core.mjs exits 0 with 6 new coverageGaps guards ok. On real seeded data: pre-exchange flags exactly the missing transport legs with 0 false lodging gaps; the Alpine trip-spanning campervan suppresses all ~15 base changes (only the genuine post-return tail remains). Live served checks 200 with markers coverageGaps + stillToBookHtml.",
+      "commit": "f06ba5c",
+      "deploy": "live"
+    },
+    {
       "id": "B21",
       "title": "Add a booking by hand — provider, end time, location & travellers",
       "pillar": "bookings",
