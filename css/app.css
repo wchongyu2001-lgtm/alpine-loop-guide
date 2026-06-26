@@ -406,7 +406,13 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
   #hero{padding-top:14px}
   .dayactions{flex-direction:column;align-items:flex-end}
   .pthumb{flex-basis:60px;width:60px;height:48px}
-  #map{height:60vh}
+  #map{height:46vh;min-height:260px}   /* was 60vh — less map-dominant, more room to scroll past it */
+}
+
+/* mobile design-audit: global a11y + motion budget */
+:focus-visible{outline:2px solid var(--terra);outline-offset:2px;border-radius:6px}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 
 /* B10 · Print / share — a clean one-page-per-day itinerary handout for an
