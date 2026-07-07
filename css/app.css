@@ -42,6 +42,8 @@ header.top{position:sticky;top:0;z-index:500;background:var(--paper);
 .triptab{padding:5px 14px;border-radius:999px;border:1px solid var(--line);
   text-decoration:none;color:var(--ink);font-size:.88em;background:var(--card)}
 .triptab.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.triptab.overall{border-color:color-mix(in srgb,var(--terra) 55%,var(--line));font-weight:600}
+.triptab.overall.on{background:var(--terra);border-color:var(--terra);color:#fff}
 #hero{padding:22px 16px 6px;max-width:1060px;margin:0 auto}
 .kicker{letter-spacing:.18em;font-size:.7em;text-transform:uppercase;color:var(--terra);font-weight:600}
 #hero h1{font-size:clamp(1.7em,5vw,2.7em);line-height:1.05}

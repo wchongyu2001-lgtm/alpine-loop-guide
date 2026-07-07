@@ -17,18 +17,24 @@ import * as essentials from './essentials.js';
 import * as ideas from './ideas.js';
 import * as shipped from './shipped.js';
 
-const VIEWS = { today, overview, board, itinerary, search, bookings, timeline, map, budget, checklists, essentials, ideas, shipped };
+// Per-trip views (the "Board" is NOT here — it's the top-level Overall, see below).
+const VIEWS = { today, overview, itinerary, search, bookings, timeline, map, budget, checklists, essentials, ideas, shipped };
 const VIEW_LABELS = {
-  today: 'Today', overview: 'Overview', board: 'Board', itinerary: 'Itinerary', search: 'Search', bookings: 'Bookings', timeline: 'Timeline', map: 'Map',
+  today: 'Today', overview: 'Overview', itinerary: 'Itinerary', search: 'Search', bookings: 'Bookings', timeline: 'Timeline', map: 'Map',
   budget: 'Budget', checklists: 'Checklists', essentials: 'Essentials', ideas: 'Ideas', shipped: "What's new",
 };
 
-let base, state, view = 'itinerary';
+let base, state, view = 'itinerary', overallMode = false;
+// "Overall" is a synthetic top-level trip (#all) that renders the unified Board across
+// all trips. It anchors its state to one real trip so the bookings/board overlays it
+// reads+writes stay consistent regardless of which trip tab you last visited.
+const OVERALL_ANCHOR = 'preexchange';
 
 function route() {
   const [t, v] = location.hash.replace('#', '').split('/');
-  return { tripId: t || localStorage.getItem('v2:active') || 'alpine',
-    view: VIEWS[v] ? v : 'itinerary', explicitView: !!VIEWS[v] };
+  const tripId = t || localStorage.getItem('v2:active') || 'all';
+  if (tripId === 'all') return { tripId: 'all', view: 'board', explicitView: true, overall: true };
+  return { tripId, view: VIEWS[v] ? v : 'itinerary', explicitView: !!VIEWS[v], overall: false };
 }
 
 const pad = n => String(n).padStart(2, '0');
@@ -88,6 +94,18 @@ function handleShareTarget() {
 
 async function go() {
   const r = route();
+  overallMode = r.overall;
+  if (overallMode) {
+    // Load (once) an anchor trip's data so the Board has bookings + overlays to read.
+    if (!state || state.trip.id !== OVERALL_ANCHOR) {
+      state = await loadTrip(base, OVERALL_ANCHOR);
+      refreshOverlays(state, renderAll); // background Sheet pull
+    }
+    view = 'board';
+    localStorage.setItem('v2:active', 'all');
+    renderAll();
+    return;
+  }
   view = r.view;
   if (!state || state.trip.id !== r.tripId) {
     state = await loadTrip(base, r.tripId);
@@ -111,16 +129,35 @@ const ctx = {
 
 function renderAll() {
   const td = state.tripData;
-  document.title = td.meta.label + ' · Travel Companion';
-  document.getElementById('triptabs').innerHTML = base.registry.trips.map(t => `
-    <a class="triptab ${t.id === state.trip.id ? 'on' : ''}" href="#${t.id}/${view}">${esc(t.label)}</a>`).join('');
-  document.getElementById('hero').innerHTML = `
-    <div class="kicker">${esc(td.meta.kicker || '')}</div>
-    <h1>${td.meta.h1Html || esc(state.trip.title)}</h1>
-    <div class="sub">${esc(td.meta.sub || '')}</div>`;
-  document.getElementById('viewtabs').innerHTML = Object.keys(VIEWS).map(v => `
-    <a class="viewtab ${v === view ? 'on' : ''}" href="#${state.trip.id}/${v}">${icon(v)}<span>${VIEW_LABELS[v]}</span></a>`).join('');
-  VIEWS[view].render(document.getElementById('view'), ctx);
+  document.title = (overallMode ? 'Overall' : td.meta.label) + ' · Travel Companion';
+
+  // Trip switcher — "🌍 Overall" first, then the three trips.
+  const activeChip = overallMode ? 'all' : state.trip.id;
+  const chips = [`<a class="triptab overall ${activeChip === 'all' ? 'on' : ''}" href="#all">🌍 Overall</a>`]
+    .concat(base.registry.trips.map(t =>
+      `<a class="triptab ${t.id === activeChip ? 'on' : ''}" href="${overallMode ? '#' + t.id : '#' + t.id + '/' + view}">${esc(t.label)}</a>`));
+  document.getElementById('triptabs').innerHTML = chips.join('');
+
+  document.getElementById('hero').innerHTML = overallMode
+    ? `<div class="kicker">All three trips · one plan</div>
+       <h1>The <em>Overall</em> Board</h1>
+       <div class="sub">EVERY BOOKING ON ONE TIMELINE · 24 JUL – 29 AUG 2026 · drag to plan</div>`
+    : `<div class="kicker">${esc(td.meta.kicker || '')}</div>
+       <h1>${td.meta.h1Html || esc(state.trip.title)}</h1>
+       <div class="sub">${esc(td.meta.sub || '')}</div>`;
+
+  // Overall is a single unified view → hide the per-trip view-tab row.
+  const vt = document.getElementById('viewtabs');
+  if (overallMode) {
+    vt.style.display = 'none';
+    vt.innerHTML = '';
+  } else {
+    vt.style.display = '';
+    vt.innerHTML = Object.keys(VIEWS).map(v => `
+      <a class="viewtab ${v === view ? 'on' : ''}" href="#${state.trip.id}/${v}">${icon(v)}<span>${VIEW_LABELS[v]}</span></a>`).join('');
+  }
+
+  (overallMode ? board : VIEWS[view]).render(document.getElementById('view'), ctx);
 }
 
 boot().catch(e => {
