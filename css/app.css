@@ -10,7 +10,7 @@
    untouched (they stay legible). Accent hues carry over from light. */
 html[data-theme="dark"]{
   --paper:#15130f; --paper-2:#1d1a14; --ink:#ece3d2; --ink-soft:#a59c8a;
-  --terra:#d4762f; --glacier:#6fb0b0; --gold:#d2a23a;
+  --terra:#d4762f; --glacier:#6fb0b0; --gold:#d2a23a; --pine:#a1ad74; --rose:#d891a1;
   --line:rgba(236,227,210,.16); --card:#221e17;
   --shadow:0 18px 40px -22px rgba(0,0,0,.7);
 }

@@ -668,6 +668,60 @@ export function accommodationStrip(days, bookings) {
   });
 }
 
+// ---- Board model: one row per calendar date for the planning board (pure) ----
+// Deterministic — no DOM, no fetch. For each date from startIso..endIso inclusive:
+// the bookings whose EFFECTIVE date lands on it (boardOverlay.dayOverride[id] wins
+// over the date part of booking.start), ordered by the saved per-day order array when
+// present else ascending by start time; the unique locations touched that day; and
+// lightweight coverage flags. boardOverlay = { dayOverride:{ [bookingId]:'YYYY-MM-DD' },
+// order:{ [iso]:[bookingId,…] } }. transportGap is left false (no per-date continuity
+// helper is trivially applicable without day.sleep bases).
+const BOARD_WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const BOARD_MO = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const isLodging = b => b && (b.type === 'hotel' || b.type === 'campsite' || isCamperBed(b));
+
+export function boardModel(bookings, boardOverlay, startIso, endIso) {
+  const ov = boardOverlay || {};
+  const dayOverride = ov.dayOverride || {};
+  const order = ov.order || {};
+  const bks = bookings || [];
+  const effDate = b => dayOverride[b.id] || dOnly(b.start);
+  const lodging = bks.filter(isLodging);
+  const end = dOnly(endIso);
+
+  const out = [];
+  for (let iso = dOnly(startIso); iso && iso <= end; iso = addDays(iso, 1)) {
+    let dayBk = bks.filter(b => effDate(b) === iso);
+    const ord = order[iso];
+    if (Array.isArray(ord)) {
+      const rank = id => { const i = ord.indexOf(id); return i < 0 ? ord.length : i; };
+      dayBk = dayBk.slice().sort((a, b) => rank(a.id) - rank(b.id) || String(a.start).localeCompare(String(b.start)));
+    } else {
+      dayBk = dayBk.slice().sort((a, b) => String(a.start).localeCompare(String(b.start)));
+    }
+    const locations = [], seen = new Set();
+    for (const b of dayBk) {
+      const loc = b.location;
+      if (!loc || !loc.name || seen.has(loc.name)) continue;
+      seen.add(loc.name);
+      locations.push({ name: loc.name, ll: loc.lat != null ? [loc.lat, loc.lng] : null });
+    }
+    const noLodging = !lodging.some(b => dOnly(b.start) <= iso && iso < dOnly(b.end || b.start));
+    const [y, m, d] = iso.split('-').map(Number);
+    const wd = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+    out.push({
+      iso,
+      label: `${BOARD_WD[wd]} ${BOARD_MO[m - 1]} ${d}`,
+      weekday: BOARD_WD[wd],
+      dateNum: d,
+      locations,
+      bookings: dayBk,
+      gaps: { noLodging, transportGap: false },
+    });
+  }
+  return out;
+}
+
 // ---- B25: time-sensitive booking action reminders (pure) ----
 // Surface actions you must take before a deadline, sorted by urgency (soonest due
 // first). Each kind is emitted ONLY when its inputs exist, so a booking missing the

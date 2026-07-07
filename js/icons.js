@@ -17,6 +17,7 @@ const PATHS = {
   shipped: '<path d="M12 3l2.1 4.9L19 9l-3.7 3.3L16.5 18 12 15.3 7.5 18l1.2-5.7L5 9l4.9-1.1z"/>',
   essentials: '<path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5z"/><path d="M12 8v4"/><path d="M12 15.5v.5"/>',
   overview: '<rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/>',
+  board: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/><path d="M3 9h18"/>',
   // booking types
   flight: '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7c-.6-.1-1 0-1.4.4l-.6.6c-.4.4-.3 1 .2 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 2.8 5.5c.3.5.9.6 1.3.2l.6-.6c.4-.4.5-.8.4-1.4z"/>',
   hotel: '<path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v3"/>',

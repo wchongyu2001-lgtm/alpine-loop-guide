@@ -5,6 +5,7 @@ import { esc, cycleTheme, effectiveTheme, parseShare, buildIdea } from './core.j
 import { icon } from './icons.js';
 import * as today from './today.js';
 import * as overview from './overview.js';
+import * as board from './board.js';
 import * as itinerary from './itinerary.js';
 import * as search from './search.js';
 import * as bookings from './bookings.js';
@@ -16,9 +17,9 @@ import * as essentials from './essentials.js';
 import * as ideas from './ideas.js';
 import * as shipped from './shipped.js';
 
-const VIEWS = { today, overview, itinerary, search, bookings, timeline, map, budget, checklists, essentials, ideas, shipped };
+const VIEWS = { today, overview, board, itinerary, search, bookings, timeline, map, budget, checklists, essentials, ideas, shipped };
 const VIEW_LABELS = {
-  today: 'Today', overview: 'Overview', itinerary: 'Itinerary', search: 'Search', bookings: 'Bookings', timeline: 'Timeline', map: 'Map',
+  today: 'Today', overview: 'Overview', board: 'Board', itinerary: 'Itinerary', search: 'Search', bookings: 'Bookings', timeline: 'Timeline', map: 'Map',
   budget: 'Budget', checklists: 'Checklists', essentials: 'Essentials', ideas: 'Ideas', shipped: "What's new",
 };
 
