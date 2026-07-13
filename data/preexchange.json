@@ -152,8 +152,45 @@
     { "t": "Travel insurance docs downloaded", "done": false },
     { "t": "Notify bank / enable overseas spending", "done": false },
     { "t": "eSIM for Italy/EU installed", "done": false },
-    { "t": "Trenitalia tickets saved offline", "done": false }
+    { "t": "Trenitalia tickets saved offline", "done": false },
+    { "t": "VERIFY Emirates PNR for EK353/EK205 Jul 24 (no confirmation # in the tracker)", "done": false },
+    { "t": "Check ETIAS status before flying — apply only if live by Jul 2026 (europa.eu travel info)", "done": false }
+   ]
+  },
+  {
+   "id": "px-packing",
+   "title": "🎒 Master packing — 37 days (Italy → Alps → Iceland)",
+   "items": [
+    { "t": "DOCS · Passports valid ≥6 months past Aug 29 (both travellers)", "done": false },
+    { "t": "DOCS · International Driving Permit + physical licence (BOTH drivers, both vans)", "done": false },
+    { "t": "DOCS · Offline copies of EVERY confirmation: flights, 6 hotels, 2 vans, campsites, lagoons", "done": false },
+    { "t": "DOCS · Travel insurance covering glacier hikes + 3000m altitude + campervan excess", "done": false },
+    { "t": "MONEY · EUR + CHF cash (some campsites/tolls cash-only); Iceland is card-only", "done": false },
+    { "t": "MONEY · 2 cards (Visa + Mastercard) + bank travel notice", "done": false },
+    { "t": "CLOTHES · Waterproof shell + rain pants (Alps AND Iceland)", "done": false },
+    { "t": "CLOTHES · Fleece + thermal base layer (Jungfraujoch ~0°C, Iceland nights 5-8°C)", "done": false },
+    { "t": "CLOTHES · Hiking boots (worn-in — Tre Cime + 2 glacier hikes) + trail socks", "done": false },
+    { "t": "CLOTHES · Swimwear ×2 + quick-dry towels (lake swims + 4 Iceland lagoons)", "done": false },
+    { "t": "CLOTHES · Beanie + gloves + sun hat + sunglasses", "done": false },
+    { "t": "CLOTHES · One decent city outfit (Milan/Florence dinners)", "done": false },
+    { "t": "TECH · EU adapter + SWISS type-J adapter (EU plugs don't all fit CH sockets)", "done": false },
+    { "t": "TECH · Power bank + phone mounts + all cables", "done": false },
+    { "t": "TECH · Offline maps: Google Maps areas + vedur.is + safetravel.is (Iceland)", "done": false },
+    { "t": "TECH · eSIM covering EU + Switzerland + Iceland (CH often excluded from EU plans!)", "done": false },
+    { "t": "HEALTH · Meds + first-aid kit + sunscreen (glacier glare) + motion-sickness tabs", "done": false },
+    { "t": "VAN · Headlamps, earplugs + sleep mask, reusable bottles, laundry bag + detergent sheets", "done": false },
+    { "t": "VAN · Packing cubes / soft duffels (hard shells don't stow in a campervan)", "done": false }
    ]
   }
+ ],
+ "bookings_to_make": [
+  {"what": "⚠️ GAP: Venice → Milan train, Aug 19", "category": "railway", "price_eur_2": 80, "book_by": "NOW — book by 2026-07-16 (Frecciarossa prices climb)", "note": "Rialto checks out Aug 19 but flight W6 to Reykjavík departs MILAN MXP Aug 20 09:00. Book Venezia S.Lucia → Milano Centrale.", "url": "https://www.trenitalia.com/en.html"},
+  {"what": "⚠️ GAP: Milan Malpensa hotel, night of Aug 19", "category": "hotel", "price_eur_2": 110, "book_by": "NOW — book by 2026-07-16", "note": "09:00 departure = be at MXP ~06:30. Sleep at an MXP airport hotel (e.g. Moxy/Sheraton MXP) or near Milano Centrale + 05:25 Malpensa Express.", "url": "https://www.booking.com/searchresults.html?ss=Milan+Malpensa+Airport&checkin=2026-08-19&checkout=2026-08-20&group_adults=2"},
+  {"what": "Uffizi Galleries timed entry, Jul 30", "category": "experience", "price_eur_2": 58, "book_by": "NOW — book by 2026-07-15 (summer slots sell out)", "note": "Official site only (€4 booking fee) — avoid resellers.", "url": "https://www.uffizi.it/en/tickets"},
+  {"what": "Florence Duomo — Brunelleschi dome climb, Jul 29", "category": "experience", "price_eur_2": 60, "book_by": "NOW — book by 2026-07-14 (dome slots gone weeks ahead)", "note": "Brunelleschi Pass gives the dome + baptistery + museum; timed dome slot is mandatory. Cathedral floor itself is free.", "url": "https://duomo.firenze.it/en/homepage"},
+  {"what": "Trenitalia: Genova → Firenze, Jul 28", "category": "railway", "price_eur_2": 50, "book_by": "book by 2026-07-20 (Intercity prices rise)", "note": "Via Pisa. If doing Cinque Terre en route, get off at Monterosso/La Spezia — Cinque Terre Express is unreserved regional.", "url": "https://www.trenitalia.com/en.html"},
+  {"what": "Trenitalia: Firenze → Bologna, Jul 30 eve", "category": "railway", "price_eur_2": 30, "book_by": "book by 2026-07-22", "note": "Frecciarossa 37min or regional 1h30 (regional needs no booking).", "url": "https://www.trenitalia.com/en.html"},
+  {"what": "Train: Bologna → Venezia Mestre, Aug 1 AM (van pickup)", "category": "railway", "price_eur_2": 40, "book_by": "book by 2026-07-22", "note": "Indie Campers pickup (conf V43VXZ) — confirm pickup TIME + depot address, then pick a train that lands ≥1h before.", "url": "https://www.trenitalia.com/en.html"},
+  {"what": "Milan Duomo rooftop, Jul 25 09:00", "category": "experience", "price_eur_2": 40, "book_by": "book by 2026-07-20 (skip the queue)", "note": "Official Duomo di Milano site — Culture Pass or rooftop-by-stairs ticket.", "url": "https://ticket.duomomilano.it/en/"}
  ]
 }

@@ -1054,11 +1054,13 @@ const addDays = (iso, n) => {
 };
 // Sell-out risk weight by category: campsites sell out first, then the
 // Jungfraujoch timeslot, then time-sensitive bookings, then day-of items.
-const RISK = { campsite: 0, railway: 1, restaurant: 2, experience: 3, cablecar: 4, toll: 5 };
+const RISK = { campsite: 0, hotel: 0, railway: 1, restaurant: 2, experience: 3, cablecar: 4, toll: 5 };
 // Map prose deadlines to a concrete book-by date relative to the trip start.
 // Returns ISO string, or null for "no deadline / buy day-of".
 function deriveBookBy(bookBy, startISO) {
   const p = String(bookBy || '').toLowerCase();
+  const iso = p.match(/(\d{4}-\d{2}-\d{2})/);          // explicit "book by 2026-07-15"
+  if (iso) return iso[1];
   if (/day-of|pay-as-you-go|pay at|at the border/.test(p)) return null;
   if (/may 2026/.test(p)) return '2026-05-15';            // campsites: mid-May, ~2.5mo ahead
   if (/2-3 ?mo|2-3mo|months? ahead/.test(p)) return addDays(startISO, -75);
@@ -1081,7 +1083,7 @@ export function bookingCountdown(items, startISO, todayISO, booked = {}) {
     const risk = RISK[it.category] != null ? RISK[it.category] : 9;
     return {
       what: it.what, category: it.category, note: it.note || '', price: it.price_eur_2 || 0,
-      book_by: it.book_by || '', bookByISO, daysLeft, status, dayOf, urgency, risk,
+      url: it.url || '', book_by: it.book_by || '', bookByISO, daysLeft, status, dayOf, urgency, risk,
     };
   }).sort((a, b) => {
     // booked items drop to the bottom; then by sell-out risk; then by deadline.

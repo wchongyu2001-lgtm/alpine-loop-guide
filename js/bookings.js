@@ -386,7 +386,7 @@ function remindersHtml(list) {
 // Live-date baseline (local), YYYY-MM-DD — countdowns recompute every render.
 const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
 
-const CAT_LABEL = { campsite: '🏕 Campsite', railway: '🚞 Railway', cablecar: '🚠 Cable car', toll: '🛣 Toll / vignette', restaurant: '🍽 Restaurant', experience: '🎟 Experience' };
+const CAT_LABEL = { campsite: '🏕 Campsite', hotel: '🏨 Hotel', railway: '🚞 Railway', cablecar: '🚠 Cable car', toll: '🛣 Toll / vignette', restaurant: '🍽 Restaurant', experience: '🎟 Experience' };
 
 function daysLeftLabel(c) {
   if (c.status === 'booked') return 'booked ✓';
@@ -420,6 +420,7 @@ function countdownHtml(state) {
               <span class="bk-cd-by">${c.bookByISO ? `book by ${cdDate(c.bookByISO)}` : esc(c.book_by)}</span>
             </div>
             ${c.note ? `<div class="bk-cd-note muted">${esc(c.note)}</div>` : ''}
+            ${c.url && c.status !== 'booked' ? `<a class="bk-cd-book" href="${esc(c.url)}" target="_blank" rel="noopener">Book ↗</a>` : ''}
           </div>
           <span class="bk-cd-left">${daysLeftLabel(c)}</span>
         </div>`).join('')}

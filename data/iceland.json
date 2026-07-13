@@ -992,5 +992,40 @@
    "wiki": "Swimming in Iceland"
   }
  ],
- "checklists": []
+ "checklists": [
+  {"id": "is-pack", "title": "🎒 Iceland add-ons (on top of master packing)", "items": [
+   {"t": "Thermal base layer top+bottom (Aug nights 5–8°C)", "done": false},
+   {"t": "Waterproof shell jacket + rain pants (wind-driven rain)", "done": false},
+   {"t": "Fleece midlayer + beanie + gloves", "done": false},
+   {"t": "Swimsuit ×2 + quick-dry towel (4 lagoon evenings)", "done": false},
+   {"t": "Flip-flops for lagoon changing rooms", "done": false},
+   {"t": "Sturdy hiking boots — REQUIRED for both glacier hikes", "done": false},
+   {"t": "Warm hiking socks ×3", "done": false},
+   {"t": "Sleep mask (bright until ~22:30 in late Aug)", "done": false},
+   {"t": "Motion-sickness tablets for the whale boat", "done": false},
+   {"t": "Sunglasses + sunscreen (glacier glare)", "done": false},
+   {"t": "Cards only — Iceland is cashless, no ISK cash needed", "done": false}
+  ]},
+  {"id": "is-van", "title": "🚐 Van & road prep", "items": [
+   {"t": "Van pickup 13:00 Aug 20, Iðavellir 11 Keflavík — conf ICE00283; walk-around video + test stove/heater", "done": false},
+   {"t": "Bónus stock-up right after pickup (cheapest chain)", "done": false},
+   {"t": "Download offline: Google Maps Iceland + vedur.is app + safetravel.is alerts", "done": false},
+   {"t": "Ask rental for N1/Orkan fuel discount fob", "done": false},
+   {"t": "Vík + Skaftafell campsites = NO reservations, often full by 16:00 in Aug — arrive early those days", "done": false},
+   {"t": "Van return 09:30 Aug 29 — fuel receipt from last Keflavík station + photos", "done": false}
+  ]}
+ ],
+ "bookings_to_make": [
+  {"what": "Blue Lagoon — Comfort, Aug 28 evening", "category": "experience", "price_eur_2": 190, "book_by": "NOW — book by 2026-07-15 (MANDATORY pre-book; evening slots gone 3–4wk ahead)", "note": "The classic farewell soak. Dynamic pricing — earlier = cheaper.", "url": "https://www.bluelagoon.com/day-visit/the-blue-lagoon"},
+  {"what": "Sky Lagoon — Saman pass, Aug 20 evening", "category": "experience", "price_eur_2": 165, "book_by": "NOW — book by 2026-07-16 (Aug evenings sell out)", "note": "Saman = cheapest pass that includes the 7-step Skjól ritual.", "url": "https://www.skylagoon.com/booking"},
+  {"what": "Skaftafell glacier hike (Falljökull), Aug 23", "category": "experience", "price_eur_2": 205, "book_by": "NOW — book by 2026-07-17 (sells out weeks ahead)", "note": "Svínafellsjökull tours were DISCONTINUED — all Skaftafell hikes now run on Falljökull. Icelandic Mountain Guides, meet at Skaftafell booking centre.", "url": "https://www.mountainguides.is/tour/glacier-hike-adventure"},
+  {"what": "Jökulsárlón Zodiac boat, Aug 23 ~16:00", "category": "experience", "price_eur_2": 230, "book_by": "NOW — book by 2026-07-17 (small boats, Aug sells out)", "note": "Zodiac 16,600 ISK pp (1h15) or Amphibian 7,100 ISK pp (40min, more capacity). Check-in 30min before.", "url": "https://icelagoon.is/booking/"},
+  {"what": "Sólheimajökull glacier hike, Aug 22 ~13:30", "category": "experience", "price_eur_2": 200, "book_by": "book by 2026-07-24 (1–2wk ahead)", "note": "Troll Expeditions 3h hike, from ~$107pp. Meet AT Sólheimajökull car park 20min early — pick the 13:30 departure.", "url": "https://troll.is/tour/solheimajokull-3-hour-glacier-hike/"},
+  {"what": "Húsavík whale watching (North Sailing), Aug 26 AM", "category": "experience", "price_eur_2": 180, "book_by": "book by 2026-08-05 (Aug boats fill weeks out)", "note": "Original tour 12,990 ISK pp. Promo code SUMMER2026 = 10% off online. Free cancel to 24h.", "url": "https://www.northsailing.is/tour/husavik-original-whale-watching/"},
+  {"what": "Snæfellsjökull glacier, Aug 27 — DECIDE: summit hike vs ATV", "category": "experience", "price_eur_2": 240, "book_by": "book by 2026-07-27 (condition-dependent)", "note": "⚠️ Go West summit hike is FULL-DAY from 09:00 at Arnarstapi (your plan had it 15:00 — day must be reshuffled). Late-Aug ascents are condition-dependent — email to confirm. PM-friendly fallback: Summit Guides ATV tour https://www.summitguides.is/atv-tour-snaefellsjokull", "url": "https://www.gowest.is/snaefellsjokull-glacier-hike-full-day-summit-hike"},
+  {"what": "Earth Lagoon (Mývatn Nature Baths), Aug 25 20:00", "category": "experience", "price_eur_2": 120, "book_by": "book by 2026-08-05", "note": "Essential from 7,900 ISK pp / Signature (towel+drink) 9,900. Open to 22:00. (myvatnnaturebaths.is now = earthlagoon.is)", "url": "https://booking.earthlagoon.is/"},
+  {"what": "Secret Lagoon, Flúðir — Aug 21 late pm", "category": "experience", "price_eur_2": 55, "book_by": "book by 2026-08-01 (capacity-capped)", "note": "~3,800–4,200 ISK pp. Open to 20:00 in Aug.", "url": "https://secretlagoon.is/booking/"},
+  {"what": "Reykjavík Eco-Campsite — night of Aug 20", "category": "campsite", "price_eur_2": 40, "book_by": "book by 2026-07-20 (one of only two Iceland sites worth pre-booking)", "note": "All other nights (Flúðir, Vík, Höfn, Egilsstaðir, Mývatn, Borgarnes, Keflavík) are first-come — no booking possible.", "url": "https://reykjavikcampsite.is/"},
+  {"what": "Hamrar campsite, Akureyri — night of Aug 26", "category": "campsite", "price_eur_2": 45, "book_by": "book by 2026-08-05", "note": "~2,500 ISK pp + 1,500 ISK electricity; pay online, pick pitch on arrival.", "url": "https://reisa.is/hamrar/"}
+ ]
 }

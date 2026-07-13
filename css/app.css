@@ -280,6 +280,10 @@ main{max-width:1060px;margin:0 auto;padding:14px 16px 80px}
   color:var(--ink-soft);background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
 .bk-cd-by{font-size:.78em;color:var(--ink-soft)}
 .bk-cd-note{font-size:.76em;margin-top:3px;line-height:1.35}
+.bk-cd-book{display:inline-block;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:.72em;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--paper);background:var(--terra);
+  border-radius:6px;padding:3px 10px;text-decoration:none}
+.bk-cd-book:hover{filter:brightness(1.08)}
 .bk-cd-left{font-family:'JetBrains Mono',monospace;font-size:.74em;white-space:nowrap;align-self:center;color:var(--ink-soft)}
 .bk-cd-card.u-overdue .bk-cd-left,.bk-cd-card.u-urgent .bk-cd-left{color:var(--terra);font-weight:600}
 .tl-intro p{font-size:.9em;color:var(--ink-soft)}
