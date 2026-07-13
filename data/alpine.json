@@ -2802,6 +2802,10 @@
     {
      "t": "Van: check height/length for Stelvio & tunnels",
      "done": false
+    },
+    {
+     "t": "Install Park4Night + ACSI apps — backup pitches/overnight spots when a first-come site (Eigernordwand, Attermenzen) is full",
+     "done": false
     }
    ]
   },
