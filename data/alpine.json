@@ -62,7 +62,7 @@
    "wiki": "Lake Garda",
    "short": "Lake Garda",
    "note": "Ease into van life on Italy's biggest lake — a warm first night before the mountains begin.",
-   "sleep": "Camping San Benedetto, Peschiera del Garda (lakeside van pitch, ~€42–55/night for 2 + van in Aug; book ~2 mths ahead)",
+   "sleep": "Butterfly Camping Village, Peschiera del Garda (lakeside van pitch, ~€42–55/night for 2 + van in Aug; book online NOW — Aug peak)",
    "badges": [],
    "why": [
     "Sirmione's thermal peninsula and Scaliger water-castle",
@@ -1599,7 +1599,7 @@
    "wiki": "Seceda",
    "short": "Val Gardena & Seceda",
    "note": "Seceda's tilted knife-edge ridge, alpine meadows, and the great Dolomite passes.",
-   "sleep": "Camping Marmotta, Pozza di Fassa (Strada de Sèn Jan, in Val di Fassa ~30 min S of Ortisei over the passes ~€38–52/night for 2 + van in Aug; quiet riverside pitches, pool, on the bus line for the Catinaccio/Vajolet lifts — a great-value Dolomites base on the far side of the Sella loop you drive today). Day-trip the Seceda cable car from Ortisei and the Alpe di Siusi gondola, then drop down here over the Pordoi/Sella passes for the wine-country last night. Book 1–2 mths ahead for peak Aug. Value swaps: Camping Vidor in Pozza (large, full facilities) ~€40–54, or — if you'd rather end in the city — Camping Moosbauer in Bolzano ~€42–56 with a direct bus to the centre and an easy A22 launch to Venice next morning.",
+   "sleep": "Camping Vidor Family & Wellness, Pozza di Fassa (Strada de Sèn Jan, in Val di Fassa ~30 min S of Ortisei over the passes ~€38–52/night for 2 + van in Aug; quiet riverside pitches, pool, on the bus line for the Catinaccio/Vajolet lifts — a great-value Dolomites base on the far side of the Sella loop you drive today). Day-trip the Seceda cable car from Ortisei and the Alpe di Siusi gondola, then drop down here over the Pordoi/Sella passes for the wine-country last night. Book 1–2 mths ahead for peak Aug. Value swaps: Camping Catinaccio Rosengarten in Pozza ~€40–54, or — if you'd rather end in the city — Camping Moosbauer in Bolzano ~€42–56 with a direct bus to the centre and an easy A22 launch to Venice next morning.",
    "badges": [],
    "why": [
     "Seceda's surreal tilted ridgeline",
@@ -1694,11 +1694,11 @@
     },
     {
      "id": "wl-seceda-pitch",
-     "n": "Pitch Camping Marmotta, Pozza di Fassa",
+     "n": "Pitch Camping Vidor, Pozza di Fassa",
      "t": "act",
      "ll": [46.43, 11.683],
      "time": "16:45–18:15",
-     "d": "Check in at Camping Marmotta (Strada de Sèn Jan, Val di Fassa, ~€38–52/night for 2) — quiet riverside pitches + pool, great-value last Dolomites base. Book 1–2 mths ahead."
+     "d": "Check in at Camping Vidor (Strada de Sèn Jan, Val di Fassa, ~€38–52/night for 2) — quiet riverside pitches + pool, great-value last Dolomites base. Book 1–2 mths ahead."
     },
     {
      "id": "wl-seceda-dinner",
