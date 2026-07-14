@@ -1,11 +1,10 @@
 /* Bookings timeline: pipeline + Wanderlog-seeded + manual; unassigned inbox.
    Attachments: drag-drop / 📎 → stored locally (IndexedDB) so it works with no
    backend; also uploaded to Drive best-effort for cross-device once Code.gs is
-   redeployed. Metadata (name, local id, optional Drive url) lives in the overlay.
-   Fetch from Gmail: on-demand suggestions parsed by core.parseEmailStub. */
-import { esc, gmapsUrl, gmapsPlaceUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, parseEmailStub, wlShareValid, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, transportContinuity, bookingIcs, tripIcs, effectivePlans, convert, bookingCountdown } from './core.js';
-import { tripBookings, allBookings, refreshOverlays } from './data.js';
-import { uploadAttachment, fetchMail, wlImport } from './sync.js';
+   redeployed. Metadata (name, local id, optional Drive url) lives in the overlay. */
+import { esc, gmapsUrl, gmapsPlaceUrl, amapsUrl, flightStatusUrl, fmtMoney, buildManualBooking, bookingWarnings, coverageGaps, accommodationStrip, bookingReminders, orphanBookings, bookingRollup, tripEstimate, transportContinuity, bookingIcs, tripIcs, effectivePlans, convert, bookingCountdown } from './core.js';
+import { tripBookings, allBookings } from './data.js';
+import { uploadAttachment } from './sync.js';
 import { putFile, openLocal, hasIDB } from './attachments.js';
 import { rates } from './fx.js';
 import { icon } from './icons.js';
@@ -20,12 +19,9 @@ const MAX_MB = 10;
 // Forward booking confirmations here; the daily pipeline sync imports them into this timeline.
 const INBOUND_ADDR = 'wchongyu2001@gmail.com';
 
-let lastMail = null;       // fetched suggestions survive rerenders
-let pendingEmail = null;   // suggestion being added via the manual form
 let pendingAttach = null;  // booking id awaiting file-picker result
 
 export function render(root, ctx) {
-  pendingEmail = null; // prefilled form dies with each rerender; don't leak into a later manual add
   const { state } = ctx;
   const list = tripBookings(state, state.trip.id);
   if (!fxRates) rates(state.trip.currency || 'EUR').then(r => { fxRates = r; ctx.rerender(); });
@@ -46,28 +42,9 @@ export function render(root, ctx) {
       </div>
       <div class="lastsync">${esc(syncLabel(state))}</div>
       <div class="bkfetchbar">
-        <button id="bkfetch">📥 Fetch from Gmail</button>
-        <span id="bkfetcherr" class="muted"></span>
-      </div>
-      <div class="bkfetchbar bkwlbar">
-        <input id="bkwlurl" placeholder="Paste a Wanderlog trip share link…" />
-        <button id="bkwl">↧ Import from Wanderlog</button>
-        <span id="bkwlmsg" class="muted"></span>
-      </div>
-      <div class="bkfetchbar">
         <button id="bkics">📅 Export trip calendar (.ics)</button>
         <span class="bk-forward-note muted">— all bookings + timed stops as one calendar file.</span>
       </div>
-      <details class="bkhelp"><summary>Gmail fetch &amp; cross-device sync need a one-time setup</summary>
-        <p class="muted">Your dashboard is a static site — it can't read Gmail or sync edits on its own. Both run through a Google Apps Script that hasn't been redeployed yet:</p>
-        <ol class="muted">
-          <li>Open the Apps Script project (the old bucket-list one).</li>
-          <li>Replace its code with <code>apps-script/Code.gs</code> from this repo; re-paste your Telegram token at the top.</li>
-          <li>Deploy → Manage deployments → edit → <b>New version</b> (same /exec URL), and approve the new Gmail + Drive permissions.</li>
-        </ol>
-        <p class="muted">Until then, PDF attachments still work — they're stored locally on this device.</p>
-      </details>
-      <div id="bksuggest">${suggestionsHtml(state)}</div>
     </div>
     ${remindersHtml(list)}
     ${countdownHtml(state)}
@@ -168,13 +145,7 @@ export function render(root, ctx) {
       start: f.get('start'), end: f.get('end'), location: f.get('location'),
       conf: f.get('conf'), amount: f.get('amount'), currency: f.get('currency'), pax: f.get('pax'),
     }, state.registry.trips, state.trip.currency, id);
-    if (pendingEmail) booking.source = 'email-fetch';
     ov.manual = [...(ov.manual || []), booking];
-    if (pendingEmail) {
-      if (pendingEmail.attachments.length) ov.attachments = { ...(ov.attachments || {}), [id]: pendingEmail.attachments };
-      ov.emailSeen = [...(ov.emailSeen || []), pendingEmail.id];
-      pendingEmail = null;
-    }
     ctx.save('bookings', ov); ctx.rerender();
   };
 
@@ -185,8 +156,6 @@ export function render(root, ctx) {
   };
 
   wireAttachments(root, ctx, state);
-  wireFetch(root, ctx, state);
-  wireWanderlog(root, ctx, state);
   wireExportIcs(root, state, list);
   wireDetails(root, new Map([...list, ...unassigned].map(b => [b.id, b])));
 }
@@ -226,23 +195,6 @@ function wireDetails(root, lookup) {
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
-}
-
-function wireWanderlog(root, ctx, state) {
-  const btn = root.querySelector('#bkwl');
-  if (!btn) return;
-  const inp = root.querySelector('#bkwlurl'), msg = root.querySelector('#bkwlmsg');
-  btn.onclick = async () => {
-    const url = inp.value.trim();
-    if (!wlShareValid(url)) { msg.textContent = 'Enter a wanderlog.com share link.'; return; }
-    btn.disabled = true; msg.textContent = '⏳ importing…';
-    try {
-      const d = await wlImport(url, state.trip.id);
-      msg.textContent = d.summary || (d.ok ? `✓ +${d.places} places, +${d.reservations} reservations` : 'Import failed');
-      if (d.ok) { await refreshOverlays(state, () => {}); ctx.rerender(); }
-    } catch (e) { msg.textContent = 'Import failed: ' + e.message; }
-    btn.disabled = false;
-  };
 }
 
 /* ---------- attachments ---------- */
@@ -306,55 +258,6 @@ const fileB64 = f => new Promise((res, rej) => {
 function cardMsg(root, bid, text) {
   const el = root.querySelector(`.bkcard[data-bid="${CSS.escape(bid)}"] .bkmsg`);
   if (el) el.textContent = text;
-}
-
-/* ---------- fetch from Gmail ---------- */
-
-function wireFetch(root, ctx, state) {
-  const btn = root.querySelector('#bkfetch');
-  btn.onclick = async () => {
-    btn.disabled = true; btn.textContent = '⏳ Fetching…';
-    try {
-      lastMail = await fetchMail();
-      ctx.rerender();
-    } catch (err) {
-      root.querySelector('#bkfetcherr').textContent = 'Needs setup ↓ (' + err.message + ')';
-      root.querySelector('.bkhelp').open = true;
-      btn.disabled = false; btn.textContent = '📥 Fetch from Gmail';
-    }
-  };
-  root.querySelectorAll('[data-addmail]').forEach(b => b.onclick = () => {
-    const m = visibleMail(state)[+b.dataset.addmail];
-    if (!m) return;
-    const stub = m._stub;
-    const det = root.querySelector('.bk-add'); det.open = true;
-    const form = root.querySelector('#bkform');
-    form.elements.type.value = TYPES.includes(stub.type) ? stub.type : 'other';
-    form.elements.title.value = stub.title;
-    if (stub.start) form.elements.start.value = stub.start + 'T12:00';
-    form.elements.conf.value = stub.confirmation || '';
-    pendingEmail = { id: m.id, attachments: m.attachments || [] };
-    det.scrollIntoView({ behavior: 'smooth' });
-  });
-  root.querySelectorAll('[data-dismail]').forEach(b => b.onclick = () => {
-    const m = visibleMail(state)[+b.dataset.dismail];
-    if (!m) return;
-    const ov = bkOv(state);
-    ov.emailSeen = [...(ov.emailSeen || []), m.id];
-    ctx.save('bookings', ov); ctx.rerender();
-  });
-}
-
-// Suggestions not yet added/dismissed and not matching an existing confirmation #.
-function visibleMail(state) {
-  if (!lastMail) return [];
-  const seen = new Set(bkOv(state).emailSeen || []);
-  const confs = new Set(allBookings(state).map(b => (b.confirmation || '').toLowerCase()).filter(Boolean));
-  return lastMail.filter(m => {
-    if (seen.has(m.id)) return false;
-    m._stub = m._stub || parseEmailStub(m.subject, m.body);
-    return !(m._stub.confirmation && confs.has(m._stub.confirmation.toLowerCase()));
-  });
 }
 
 /* ---------- booking action reminders (B25) ---------- */
@@ -554,22 +457,6 @@ function stillToBookHtml(state, list) {
           </div>`).join('')}
       </div>`).join('')}
   </div>`;
-}
-
-function suggestionsHtml(state) {
-  if (!lastMail) return '';
-  const vis = visibleMail(state);
-  if (!vis.length) return '<p class="muted">No new confirmation emails found.</p>';
-  return `<h3>✉ Found in Gmail (${vis.length})</h3>` + vis.map((m, i) => `
-    <div class="bk-suggest">
-      <div class="bktitle">${esc(m._stub.title)}</div>
-      <div class="bkmeta">${esc(m.from)} · ${prettyDate(String(m.date).slice(0, 10))}${m._stub.confirmation ? ` · conf <b>${esc(m._stub.confirmation)}</b>` : ''}</div>
-      ${(m.attachments || []).map(a => `<a class="bkchip" target="_blank" rel="noopener" href="${esc(a.url)}">📎 ${esc(a.name)}</a>`).join('')}
-      <div class="bk-suggest-act">
-        <button data-addmail="${i}">＋ Add as booking</button>
-        <button data-dismail="${i}" class="ghost">Dismiss</button>
-      </div>
-    </div>`).join('');
 }
 
 /* ---------- cards ---------- */

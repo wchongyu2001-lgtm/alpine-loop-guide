@@ -6,7 +6,7 @@
 export const BASE = 'https://markets-dashboard.duckdns.org/trips-sync';
 // Soft guard against anonymous writes. Public by design (static client) — the
 // real protections are the CORS origin allow-list + accepted-public-data choice.
-const TOKEN = '7b96af2a24b67e9da2b95c1283460314a4fe5469014e593a';
+const TOKEN = '78185ddeef19520b28e1132e68bdf1f0fcf27f64f479e8dd';
 const LS = (trip, kind) => `v2:${trip}:${kind}`;
 const QUEUE_KEY = 'v2:queue';
 
